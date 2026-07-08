@@ -1,0 +1,29 @@
+@use 'abstracts' as *;
+
+
+.header {
+    @include flex($direction: column, $gap: 16px);
+    width: 100%;
+    max-width: 375px;
+    min-height: 55px;
+    padding: 12px 0px;
+    box-sizing: border-box;
+
+     @include md {
+            padding: 40px 0;;
+        }
+
+    &__logo-link {
+        @include flex($display: inline-flex);
+    }
+
+    &__logo-icon {
+        width: 120px;
+        height: auto;
+        display: block;
+
+        @include md {
+            width: 180px;
+        }
+    }
+}

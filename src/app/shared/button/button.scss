@@ -5,12 +5,12 @@
   min-height: 56px;
   padding: 4px 16px;
   border: none;
-  font-size: 1rem;
+  @include font(1rem, 600);
   cursor: pointer;
   box-sizing: border-box;
 
   &--primary {
-    background-color: $color-secondary;
-    color: $color-primary;
+    background-color: $color-cream;
+    color: $color-leaf;
   }
 }

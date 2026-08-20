@@ -1,5 +1,25 @@
 @use 'abstracts' as *;
 
+html,
+body {
+  overflow-x: hidden;
+}
+
 body {
   background-color: $color-primary;
+}
+
+*{
+  margin:0;
+}
+
+.wrapper {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 16px;
+
+   @include md {
+    padding: 0 32px;
+  }
 }

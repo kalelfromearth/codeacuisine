@@ -1,0 +1,39 @@
+@use 'typography' as *;
+
+@mixin flex($direction: row, $align: center, $justify: center, $gap: 0, $display: flex) {
+  display: $display;
+  flex-direction: $direction;
+  align-items: $align;
+  justify-content: $justify;
+  gap: $gap;
+}
+
+@mixin font($size: 1rem, $weight: 400, $family: $font-family-quicksand, $color: null) {
+  font-family: $family;
+  font-size: $size;
+  font-weight: $weight;
+
+  @if $color {
+    color: $color;
+  }
+}
+
+//Breakpoints
+
+@mixin md {
+  @media (min-width: 768px) {
+    @content;
+  }
+}
+
+@mixin lg {
+  @media (min-width: 992px) {
+    @content;
+  }
+}
+
+@mixin xl {
+  @media (min-width: 1200px) {
+    @content;
+  }
+}

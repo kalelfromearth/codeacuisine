@@ -1,1 +1,88 @@
 @use 'abstracts' as *;
+
+:host {
+  @include flex($direction: column, $align: stretch, $justify: flex-start);
+  height: 100dvh;
+}
+
+.landingpage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  color: $color-cream;
+
+  .wrapper {
+    @include flex($direction: column, $align: flex-start);
+    height: 100%;
+    max-width: 220px;
+    margin: 0;
+    padding-bottom: 34px;
+    box-sizing: border-box;
+  }
+}
+
+.hero {
+  &__eyebrow {
+    margin-top: 20px;
+    @include font(1.5rem, 600);
+  }
+
+  &__title {
+    margin-top: 8px;
+    @include font(4rem, 700, $font-family-ubuntu);
+  }
+
+  &__cta {
+    display: inline-block;
+    margin-top: 32px;
+  }
+
+  &__plates {
+    position: fixed;
+    top: 0;
+    right: -35px;
+    z-index: 1;
+    @include flex($direction: column);
+
+    @include md {
+      right: 0;
+    }
+  }
+
+  &__plates-image {
+    width: 115px;
+
+    @include md {
+      width: 240px;
+    }
+
+    @include lg {
+      width: 320px;
+    }
+
+    @include xl {
+      width: 400px;
+    }
+  }
+}
+
+.cookbook-teaser {
+  margin-top: auto;
+
+  &__question {
+    @include font(1.5rem, 500, $font-family-ubuntu);
+  }
+
+  &__link {
+    display: inline-block;
+    margin-top: 8px;
+    @include font(1.125rem, 500);
+    color: inherit;
+    text-decoration: none;
+  }
+
+  &__arrow {
+    font-size: 1.25rem;
+  }
+}

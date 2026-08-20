@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<!--
+  UNSICHER: Schriftart aus Screenshot nicht zweifelsfrei identifizierbar.
+  Gewählt: Quicksand (rundes Sans-Serif), da es dem Screenshot optisch am
+  nächsten kommt (runde Formen bei "a", "g", "s"). Bitte Originaldatei
+  (Figma-Export) prüfen, falls exakte Schriftart bekannt ist.
+-->
+<!--
+  UNSICHER: exakte Abstände/Schriftgrößen wurden aus einem 256x573px
+  Screenshot per Pixel-Messung abgeleitet (kleine Auflösung → +/- 1-2px
+  Toleranz möglich). Button-Rahmenfarbe/-schatten ebenfalls geschätzt.
+-->
+<style>
+  :root{
+    --color-bg: #396039;
+    --color-text: #FAF0E6;
+    --color-cta-bg: #FAF0E6;
+    --color-cta-text: #1F8E1D;
+    --color-button-border: rgba(255,255,255,0.18);
+    --font-family: "Quicksand", sans-serif;
+    --card-width: 256px;
+    --card-height: 573px;
+    --space-6: 6px;
+    --space-8: 8px;
+    --space-14: 14px;
+    --space-24: 24px;
+    --space-30: 30px;
+    --space-34: 34px;
+    --radius-button: 6px;
+  }
+  body{ margin:0; background:#22391f; }
+</style>
+</helmet>
+<div class="card" style="position:relative;width:var(--card-width);height:var(--card-height);background:var(--color-bg);overflow:hidden;font-family:var(--font-family);">
+  <img class="card__decoration" src="plates-decoration.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;pointer-events:none;" />
+  <div class="card__content" style="position:relative;z-index:1;display:flex;flex-direction:column;height:100%;padding:var(--space-14);box-sizing:border-box;">
+    <div class="card__logo" style="display:flex;align-items:center;gap:var(--space-8);">
+      <img class="card__logo-icon" src="logo-icon.png" alt="Code à Cuisine Logo" style="width:30px;height:32px;display:block;" />
+      <span class="card__logo-text" style="font-weight:700;font-size:13px;line-height:15px;color:var(--color-text);white-space:nowrap;">Code à<br />Cuisine</span>
+    </div>
+    <div class="card__hero" style="margin-top:var(--space-30);">
+      <p class="card__eyebrow" style="font-weight:600;font-size:15px;line-height:20px;color:var(--color-text);margin:0 0 var(--space-8) 0;max-width:150px;">AI-Powered<br />recipe generator</p>
+      <h1 class="card__headline" style="font-weight:700;font-size:42px;line-height:50px;color:var(--color-text);margin:0 0 var(--space-24) 0;max-width:180px;">Code à<br />Cuisine</h1>
+      <button class="card__cta" style="background:var(--color-cta-bg);color:var(--color-cta-text);border:1px solid var(--color-button-border);border-radius:var(--radius-button);padding:var(--space-8) var(--space-24);font-family:var(--font-family);font-weight:600;font-size:15px;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,0.15);white-space:nowrap;" style-hover="opacity:0.85;">Get started</button>
+    </div>
+    <div class="card__footer" style="margin-top:auto;padding-bottom:var(--space-34);">
+      <p class="card__footer-heading" style="font-weight:700;font-size:21px;line-height:26px;color:var(--color-text);margin:0 0 var(--space-14) 0;max-width:150px;">Hungry for<br />inspiration?</p>
+      <a class="card__footer-link" href="#" style="display:inline-flex;align-items:center;gap:var(--space-6);font-weight:500;font-size:15px;color:var(--color-text);text-decoration:none;" style-hover="color:#ffffff;">Go to cookbook <span class="card__footer-arrow" style="font-size:16px;">&#8594;</span></a>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:256,&quot;height&quot;:573}}"></script>
+</body>
+</html>

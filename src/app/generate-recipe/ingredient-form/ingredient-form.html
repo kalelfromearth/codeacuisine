@@ -42,19 +42,11 @@
         [attr.aria-invalid]="ingredientForm.controls.amount.touched && ingredientForm.controls.amount.invalid"
         [attr.aria-describedby]="ingredientForm.controls.amount.touched && ingredientForm.controls.amount.invalid ? 'ingredient-amount-error' : null"
       />
-      <div class="ingredient-form__unit-field">
-        <select
-          class="ingredient-form__unit-select"
-          formControlName="unit"
-          aria-label="Unit"
-          (change)="applyUnitLimit($event)"
-        >
-          @for (unit of units; track unit) {
-            <option [value]="unit">{{ unit }}</option>
-          }
-        </select>
-        <span class="ingredient-form__unit-arrow" aria-hidden="true"></span>
-      </div>
+      <app-unit-select
+        [control]="ingredientForm.controls.unit"
+        [units]="units"
+        (unitChange)="applyUnitLimit($event)"
+      ></app-unit-select>
       <button
         class="ingredient-form__add-button"
         type="submit"

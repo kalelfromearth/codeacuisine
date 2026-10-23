@@ -7,7 +7,13 @@ import {
   UNIT_LABELS,
 } from '../ingredient.model';
 import { amountWithinUnitLimit } from '../ingredient-amount.validator';
+import {
+  BLOCKED_AMOUNT_KEYS,
+  buildAmountErrorMessage,
+  capAmountToUnitLimit,
+} from '../ingredient-amount.rules';
 import { InfoTip } from '../../shared/info-tip/info-tip';
+import { UnitSelect } from '../unit-select/unit-select';
 import {
   IngredientListService,
   MAX_INGREDIENTS,
@@ -22,14 +28,12 @@ type IngredientFormControls = {
 
 @Component({
   selector: 'app-ingredient-form',
-  imports: [ReactiveFormsModule, InfoTip],
+  imports: [ReactiveFormsModule, InfoTip, UnitSelect],
   templateUrl: './ingredient-form.html',
   styleUrl: './ingredient-form.scss',
 })
 export class IngredientForm {
   private readonly ingredientList = inject(IngredientListService);
-
-  private readonly blockedAmountKeys = ['e', 'E', '+', '-', '.', ','];
 
   readonly minIngredients = MIN_INGREDIENTS;
   readonly maxIngredients = MAX_INGREDIENTS;
@@ -66,7 +70,7 @@ export class IngredientForm {
 
   /** Prevents typing characters that are not part of a whole number. */
   blockNonWholeNumberKeys(event: KeyboardEvent): void {
-    if (this.blockedAmountKeys.includes(event.key)) {
+    if (BLOCKED_AMOUNT_KEYS.includes(event.key)) {
       event.preventDefault();
     }
   }
@@ -90,32 +94,17 @@ export class IngredientForm {
   }
 
   /** Applies the limit of the newly selected unit to the amount and revalidates it. */
-  applyUnitLimit(event: Event): void {
-    const selectedUnit = (event.target as HTMLSelectElement).value as IngredientUnit;
-    const amountControl = this.ingredientForm.controls.amount;
+  applyUnitLimit(selectedUnit: IngredientUnit): void {
     this.ingredientForm.controls.unit.setValue(selectedUnit);
-    if (amountControl.value > this.getCurrentMaxAmount()) {
-      amountControl.setValue(this.getCurrentMaxAmount());
-    }
-    amountControl.updateValueAndValidity();
+    capAmountToUnitLimit(this.ingredientForm.controls.amount, selectedUnit);
   }
 
   /** Returns the error message for the amount field, or an empty string if it is valid. */
   getAmountErrorMessage(): string {
-    const errors = this.ingredientForm.controls.amount.errors;
-    if (!errors) {
-      return '';
-    }
-    if (errors['required']) {
-      return 'Please enter an amount.';
-    }
-    if (errors['min']) {
-      return `The amount must be at least ${MIN_INGREDIENT_AMOUNT}.`;
-    }
-    if (errors['max']) {
-      return `The maximum is ${errors['max'].max} ${this.getCurrentUnitLabel()}.`;
-    }
-    return 'Please use whole numbers only, without decimals.';
+    return buildAmountErrorMessage(
+      this.ingredientForm.controls.amount.errors,
+      this.ingredientForm.controls.unit.value,
+    );
   }
 
   private resetForm(): void {

@@ -6,19 +6,79 @@
   } @else {
     <ul class="ingredient-list__items">
       @for (ingredient of ingredients(); track $index) {
-        <li class="ingredient-list__item">
-          <span class="ingredient-list__amount">{{ formatAmount(ingredient) }}</span>
+        <li
+          class="ingredient-list__item"
+          [class.ingredient-list__item--editing]="isEditing($index)"
+          (keydown.escape)="cancelEditing()"
+        >
+          @if (isEditing($index)) {
+            <form
+              id="ingredient-edit-form"
+              class="ingredient-list__edit-form"
+              animate.enter="ingredient-list__edit-form--enter"
+              [class.ingredient-list__edit-form--closing]="isClosing($index)"
+              [formGroup]="editForm"
+              (ngSubmit)="saveEditing()"
+              (animationend)="finishClosing($event)"
+              novalidate
+            >
+              <input
+                class="ingredient-list__edit-amount"
+                type="number"
+                min="1"
+                [attr.max]="getCurrentMaxAmount()"
+                step="1"
+                inputmode="numeric"
+                formControlName="amount"
+                [attr.aria-label]="'Amount of ' + ingredient.name"
+                [attr.aria-invalid]="editForm.controls.amount.touched && editForm.controls.amount.invalid"
+                (keydown)="blockNonWholeNumberKeys($event)"
+                (input)="limitAmountToMaximum($event)"
+              />
+              <app-unit-select
+                [control]="editForm.controls.unit"
+                [units]="units"
+                [label]="'Unit of ' + ingredient.name"
+                (unitChange)="applyUnitLimit($event)"
+              ></app-unit-select>
+            </form>
+          } @else {
+            <span class="ingredient-list__amount">{{ formatAmount(ingredient) }}</span>
+          }
           <span class="ingredient-list__name">{{ ingredient.name }}</span>
-          <button
-            class="ingredient-list__remove-button"
-            type="button"
-            [attr.aria-label]="'Remove ' + ingredient.name"
-            (click)="removeIngredient($index)"
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
-            </svg>
-          </button>
+          <span class="ingredient-list__actions">
+            @if (isEditing($index)) {
+              <button
+                class="ingredient-list__icon-button"
+                type="submit"
+                form="ingredient-edit-form"
+                [attr.aria-label]="'Save changes to ' + ingredient.name"
+              >
+                <span class="ingredient-list__icon ingredient-list__icon--check" aria-hidden="true"></span>
+              </button>
+            } @else {
+              <button
+                class="ingredient-list__icon-button"
+                type="button"
+                [attr.data-edit-position]="$index"
+                [attr.aria-label]="'Edit ' + ingredient.name"
+                (click)="startEditing($index)"
+              >
+                <span class="ingredient-list__icon ingredient-list__icon--edit" aria-hidden="true"></span>
+              </button>
+            }
+            <button
+              class="ingredient-list__icon-button"
+              type="button"
+              [attr.aria-label]="'Remove ' + ingredient.name"
+              (click)="removeIngredient($index)"
+            >
+              <span class="ingredient-list__icon ingredient-list__icon--delete" aria-hidden="true"></span>
+            </button>
+          </span>
+          @if (isEditing($index) && editForm.controls.amount.touched && editForm.controls.amount.invalid) {
+            <p class="ingredient-list__error" role="alert">{{ getAmountErrorMessage() }}</p>
+          }
         </li>
       }
     </ul>

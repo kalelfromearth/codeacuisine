@@ -1,0 +1,13 @@
+<div class="unit-select">
+  <select
+    class="unit-select__select"
+    [formControl]="control()"
+    [attr.aria-label]="label()"
+    (change)="emitUnitChange($event)"
+  >
+    @for (unit of units(); track unit) {
+      <option [value]="unit">{{ unit }}</option>
+    }
+  </select>
+  <span class="unit-select__arrow" aria-hidden="true"></span>
+</div>

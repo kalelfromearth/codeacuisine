@@ -5,7 +5,7 @@
 }
 
 .preferences {
-  padding: 16px 0 48px;
+  padding: 16px 0 120px;
   color: $color-text;
 
   &__content {
@@ -36,5 +36,22 @@
 
   &__title {
     @include page-title;
+  }
+
+  &__form {
+    width: 100%;
+
+    @include md {
+      max-width: 900px;
+    }
+  }
+
+  &__steppers {
+    @include flex($align: flex-start, $justify: flex-start, $gap: 24px 64px);
+    flex-wrap: wrap;
+
+    @include md {
+      justify-content: center;
+    }
   }
 }

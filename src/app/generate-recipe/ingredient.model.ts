@@ -20,11 +20,10 @@ export interface Ingredient {
   unit: IngredientUnit;
 }
 
-/** Returns the amount with a short unit, for example "100g", "250ml" or "2 pieces". */
+/** Returns the amount with a short unit, for example "100g" or "250ml", and only the number for pieces. */
 export function formatIngredientAmount(ingredient: Ingredient): string {
   if (ingredient.unit === 'piece') {
-    return `${ingredient.amount} ${ingredient.amount === 1 ? 'piece' : 'pieces'}`;
+    return `${ingredient.amount}`;
   }
-  const shortUnit = ingredient.unit === 'gram' ? 'g' : 'ml';
-  return `${ingredient.amount}${shortUnit}`;
+  return `${ingredient.amount}${UNIT_LABELS[ingredient.unit]}`;
 }

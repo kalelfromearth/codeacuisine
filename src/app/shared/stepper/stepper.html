@@ -1,0 +1,37 @@
+<div class="stepper" role="group" [attr.aria-labelledby]="labelId">
+  <p class="stepper__label" [id]="labelId">{{ label() }}</p>
+  <div class="stepper__controls">
+    <button
+      class="stepper__button"
+      type="button"
+      [attr.aria-label]="getDecreaseLabel()"
+      [disabled]="isAtMinimum()"
+      (click)="decrease()"
+    >
+      <span class="stepper__icon stepper__icon--minus" aria-hidden="true"></span>
+    </button>
+    <output class="stepper__output">
+      <span class="stepper__value">{{ control().value }}</span>
+      <span class="stepper__unit">
+        <span class="stepper__unit-text">{{ getUnitLabel() }}</span>
+        <span class="stepper__unit-sizer" aria-hidden="true">{{ unitPlural() }}</span>
+      </span>
+    </output>
+    <button
+      class="stepper__button"
+      type="button"
+      [attr.aria-label]="getIncreaseLabel()"
+      [disabled]="isAtMaximum()"
+      (click)="increase()"
+    >
+      <span class="stepper__icon stepper__icon--plus" aria-hidden="true"></span>
+    </button>
+  </div>
+  <div role="status">
+    @if (isBubbleVisible()) {
+      <p class="stepper__bubble" animate.enter="stepper__bubble--enter" animate.leave="stepper__bubble--leave">
+        {{ bubbleText() }}
+      </p>
+    }
+  </div>
+</div>

@@ -19,6 +19,15 @@ export class IngredientListService {
     });
   }
 
+  /** Replaces the ingredient at the given position with the changed one. */
+  updateIngredient(position: number, changedIngredient: Ingredient): void {
+    this.ingredients.update(function (currentList) {
+      return currentList.map(function (ingredient, currentPosition) {
+        return currentPosition === position ? changedIngredient : ingredient;
+      });
+    });
+  }
+
   /** Removes the ingredient at the given position from the list. */
   removeIngredient(position: number): void {
     this.ingredients.update(function (currentList) {

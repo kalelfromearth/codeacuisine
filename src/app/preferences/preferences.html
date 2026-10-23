@@ -7,5 +7,28 @@
       Ingredients
     </a>
     <h1 class="preferences__title">Choose your preferences</h1>
+
+    <form class="preferences__form" [formGroup]="preferencesForm" novalidate>
+      <div class="preferences__steppers">
+        <app-stepper
+          label="How many portions you need?"
+          [control]="preferencesForm.controls.servings"
+          [min]="minServings"
+          [max]="maxServings"
+          unitSingular="Portion"
+          unitPlural="Portions"
+        ></app-stepper>
+        <app-stepper
+          label="How many are cooking?"
+          [control]="preferencesForm.controls.cooks"
+          [min]="minCooks"
+          [max]="maxCooks"
+          unitSingular="Person"
+          unitPlural="Persons"
+          [bubbleValue]="maxCooks"
+          bubbleText="WOW! Extreme cooking, yeah!"
+        ></app-stepper>
+      </div>
+    </form>
   </div>
 </main>

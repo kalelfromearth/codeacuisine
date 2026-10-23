@@ -1,0 +1,149 @@
+@use 'abstracts' as *;
+
+$stepper-shadow-hover: 0 2px 8px 2px rgba($color-text, 0.4);
+$stepper-shadow-pressed: $stepper-shadow-hover, 0 0 14px 6px rgba($color-text, 0.25);
+
+:host {
+  display: block;
+}
+
+@keyframes stepper-bubble-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.stepper {
+  @include flex($direction: column, $align: flex-start, $justify: flex-start, $gap: 16px);
+  position: relative;
+  color: $color-text;
+
+  &__label {
+    @include font(1.25rem, 500);
+  }
+
+  &__controls {
+    @include flex($justify: flex-start, $gap: 16px);
+    @include font(1.25rem, 400);
+  }
+
+  &__button {
+    @include flex;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: none;
+    background: none;
+    border-radius: 4px;
+    color: $color-text;
+    cursor: pointer;
+    transition: box-shadow 0.35s ease;
+
+    @media (hover: hover) {
+      &:hover:not(:disabled) {
+        box-shadow: $stepper-shadow-hover;
+      }
+    }
+
+    &:active:not(:disabled) {
+      box-shadow: $stepper-shadow-pressed;
+      transition-duration: 0.1s;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+  }
+
+  &__icon {
+    width: 30px;
+    height: 30px;
+    background-color: currentColor;
+    mask-position: center;
+    mask-repeat: no-repeat;
+    mask-size: contain;
+
+    &--minus {
+      mask-image: url('images/icons/minus-chips.svg');
+    }
+
+    &--plus {
+      mask-image: url('images/icons/plus-chips.svg');
+    }
+  }
+
+  &__output {
+    @include flex($justify: flex-start, $gap: 16px);
+  }
+
+  &__value {
+    min-width: 28px;
+    padding: 2px 6px;
+    background-color: $color-highlight;
+    text-align: center;
+  }
+
+  &__unit {
+    display: grid;
+  }
+
+  &__unit-text,
+  &__unit-sizer {
+    grid-area: 1 / 1;
+  }
+
+  &__unit-sizer {
+    visibility: hidden;
+  }
+
+  &__bubble {
+    @include font(1.125rem, 600, $color: $color-cream);
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    z-index: 5;
+    width: max-content;
+    max-width: 240px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background-color: $color-text;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    transform-origin: 24px top;
+
+    &::before {
+      content: '';
+      position: absolute;
+      bottom: 100%;
+      left: 16px;
+      border: 8px solid transparent;
+      border-bottom-color: $color-text;
+    }
+
+    &--enter {
+      animation: stepper-bubble-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    &--leave {
+      animation: stepper-bubble-pop 0.2s ease reverse forwards;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      &--enter,
+      &--leave {
+        animation: none;
+      }
+    }
+  }
+}

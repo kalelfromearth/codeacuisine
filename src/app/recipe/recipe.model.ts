@@ -4,10 +4,15 @@ export const RECIPE_TIME_CATEGORIES = ['quick', 'medium', 'complex'] as const;
 export const RECIPE_CUISINES = ['german', 'italian', 'indian', 'japanese', 'gourmet', 'fusion'] as const;
 export const RECIPE_DIETS = ['vegetarian', 'vegan', 'keto', 'none'] as const;
 
+export const MIN_SERVINGS = 1;
+export const MAX_SERVINGS = 12;
+export const MIN_COOKS = 1;
+export const MAX_COOKS = 4;
+
 export type RecipeTimeCategory = (typeof RECIPE_TIME_CATEGORIES)[number];
 export type RecipeCuisine = (typeof RECIPE_CUISINES)[number];
 export type RecipeDiet = (typeof RECIPE_DIETS)[number];
-export type CookCount = 1 | 2;
+export type CookCount = 1 | 2 | 3 | 4;
 
 /** Payload sent from Angular to the n8n workflow to generate recipes. */
 export interface RecipeRequest {

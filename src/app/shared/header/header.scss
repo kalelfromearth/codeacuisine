@@ -5,6 +5,7 @@
     @include flex($direction: column, $gap: 16px);
     position: relative;
     z-index: 2;
+    color: $color-cream;
     width: 100%;
     max-width: 375px;
     min-height: 55px;
@@ -17,12 +18,19 @@
 
     &__logo-link {
         @include flex($display: inline-flex);
+        color: inherit;
+    }
+
+    &--light {
+        color: $color-heading;
     }
 
     &__logo-icon {
-        width: 120px;
-        height: auto;
         display: block;
+        width: 120px;
+        aspect-ratio: 95 / 32;
+        background-color: currentColor;
+        mask: url('/images/logo/logoCodeACuisineBeige.svg') center / contain no-repeat;
 
         @include md {
             width: 180px;

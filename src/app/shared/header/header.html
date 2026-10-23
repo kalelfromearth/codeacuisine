@@ -1,7 +1,7 @@
-<header class="header">
+<header class="header" [class.header--light]="background() === 'light'">
   <div class="wrapper">
     <a href="/" class="header__logo-link" aria-label="Code à Cuisine Startseite">
-      <img class="header__logo-icon" src="/images/logo/logoCodeACuisineBeige.svg" alt="">
+      <span class="header__logo-icon" aria-hidden="true"></span>
     </a>
   </div>
 </header>

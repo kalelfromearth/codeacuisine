@@ -1,0 +1,26 @@
+<section class="ingredient-list" aria-labelledby="ingredient-list-title">
+  <h2 class="ingredient-list__title" id="ingredient-list-title">List of your Ingredients</h2>
+
+  @if (ingredients().length === 0) {
+    <p class="ingredient-list__empty">No ingredients yet. Add at least {{ minIngredients }}.</p>
+  } @else {
+    <ul class="ingredient-list__items">
+      @for (ingredient of ingredients(); track $index) {
+        <li class="ingredient-list__item">
+          <span class="ingredient-list__amount">{{ formatAmount(ingredient) }}</span>
+          <span class="ingredient-list__name">{{ ingredient.name }}</span>
+          <button
+            class="ingredient-list__remove-button"
+            type="button"
+            [attr.aria-label]="'Remove ' + ingredient.name"
+            (click)="removeIngredient($index)"
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+            </svg>
+          </button>
+        </li>
+      }
+    </ul>
+  }
+</section>

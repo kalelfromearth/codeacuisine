@@ -1,0 +1,71 @@
+@use 'abstracts' as *;
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+.ingredient-list {
+  @include flex($direction: column, $align: stretch, $justify: flex-start, $gap: 20px);
+  padding: 28px 24px;
+  border-radius: 30px;
+  background-color: $color-card;
+  color: $color-text;
+  box-sizing: border-box;
+
+  &__title {
+    @include font(1.25rem, 500);
+  }
+
+  &__empty {
+    @include font(1.125rem, 400);
+  }
+
+  &__items {
+    @include flex($direction: column, $align: stretch, $justify: flex-start, $gap: 12px);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__item {
+    @include flex($justify: flex-start, $gap: 12px);
+    @include font(1.25rem, 400);
+
+    &::before {
+      content: '';
+      flex: none;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background-color: $color-text;
+    }
+  }
+
+  &__amount {
+    min-width: 64px;
+    font-weight: 500;
+  }
+
+  &__name {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  &__remove-button {
+    @include flex;
+    flex: none;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: none;
+    background: none;
+    color: $color-heading;
+    cursor: pointer;
+
+    &:hover {
+      opacity: 0.6;
+    }
+  }
+}

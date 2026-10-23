@@ -18,4 +18,13 @@ export class IngredientListService {
       return [...currentList, ingredient];
     });
   }
+
+  /** Removes the ingredient at the given position from the list. */
+  removeIngredient(position: number): void {
+    this.ingredients.update(function (currentList) {
+      return currentList.filter(function (_ingredient, currentPosition) {
+        return currentPosition !== position;
+      });
+    });
+  }
 }

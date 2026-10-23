@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Ubuntu:wght@500;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:Quicksand,sans-serif;color:rgb(16,49,11)}
+a{color:rgb(30,85,21)}a:hover{color:rgb(0,128,0)}
+input{font-family:inherit}
+@keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+</style>
+</helmet>
+<div style="min-height:100vh;background:rgb(231,236,231);display:flex;flex-direction:column;align-items:center;gap:20px;padding:20px 12px 48px;box-sizing:border-box">
+  <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:center;max-width:1100px;width:100%">
+    <div style="display:flex;gap:4px;padding:4px;background:rgb(250,240,230);border-radius:999px">
+      <sc-for list="{{ devices }}" as="d" hint-placeholder-count="2">
+        <div onClick="{{ d.pick }}" style="padding:8px 18px;border-radius:999px;font-weight:600;font-size:15px;cursor:pointer;background:{{ d.bg }};color:{{ d.fg }}">{{ d.label }}</div>
+      </sc-for>
+    </div>
+    <sc-if value="{{ showNav }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;width:100%">
+      <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="9">
+        <div onClick="{{ n.pick }}" style="white-space:nowrap;flex:none;padding:7px 14px;border-radius:999px;font-weight:500;font-size:14px;cursor:pointer;background:{{ n.bg }};color:{{ n.fg }};border:1px solid rgb(57,96,57)">{{ n.label }}</div>
+      </sc-for>
+    </div>
+    </sc-if>
+  </div>
+
+  <div style="width:min(100%,{{ frameW }});container-type:inline-size;position:relative;overflow:hidden;background:{{ frameBg }};min-height:{{ frameMinH }};display:flex;flex-direction:column;box-shadow:0 10px 40px rgba(16,49,11,0.18);border-radius:{{ frameRadius }}">
+
+    <div style="position:relative;z-index:3;display:flex;align-items:center;justify-content:space-between;padding:clamp(12px,2cqw,28px) clamp(16px,6cqw,96px);box-sizing:border-box">
+      <div onClick="{{ goHome }}" style="display:flex;align-items:center;gap:6px;cursor:pointer;color:{{ fg }}">
+        <div style="width:33.5px;height:32px;background:currentColor;-webkit-mask:url(assets/logo-green.svg) center/contain no-repeat;mask:url(assets/logo-green.svg) center/contain no-repeat"></div>
+        <div style="font-weight:600;font-size:15.5px;line-height:15px;letter-spacing:0.2px">Code à<br>Cuisine</div>
+      </div>
+      <sc-if value="{{ showMenuBtns }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;gap:32px">
+          <div onClick="{{ goCookbook }}" style="cursor:pointer;font-weight:500;font-size:20px;color:{{ fg }}">Cookbook</div>
+          <div onClick="{{ goIngredients }}" style="cursor:pointer;height:52px;padding:0 28px;display:flex;align-items:center;font-weight:500;font-size:20px;background:{{ btnBg }};color:{{ btnFg }}" style-hover="opacity:0.9">Generate a recipe</div>
+        </div>
+      </sc-if>
+    </div>
+
+    <sc-if value="{{ showBack }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ backGo }}" style="position:relative;z-index:3;display:flex;align-items:center;gap:10px;padding:0 clamp(16px,6cqw,96px);cursor:pointer;color:rgb(30,85,21);font-weight:500;font-size:14px;width:fit-content">
+        <div style="width:32px;height:20px;background:currentColor;-webkit-mask:url(assets/ic-arrow.svg) center/contain no-repeat;mask:url(assets/ic-arrow.svg) center/contain no-repeat;transform:scaleX(-1)"></div>{{ backLabel }}
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ s.home }}" hint-placeholder-val="{{ false }}">
+      <div style="position:relative;flex:1;min-height:{{ homeH }};color:rgb(250,240,230)">
+        <img src="assets/plate-2.png" alt="" style="position:absolute;width:{{ plateW }};left:{{ plateL }};top:{{ plateT }};max-width:none;pointer-events:none">
+        <div style="position:relative;display:flex;flex-direction:column;gap:40px;padding:{{ homeTop }} clamp(16px,6cqw,96px) 0;box-sizing:border-box">
+          <div style="display:flex;flex-direction:column;gap:8px;max-width:{{ homeTextW }}">
+            <div style="font-weight:600;font-size:clamp(26px,2.8cqw,40px);line-height:1;color:rgb(245,245,220)">AI-Powered recipe generator</div>
+            <div style="font-family:Ubuntu,sans-serif;font-weight:700;font-size:clamp(64px,7.2cqw,104px);line-height:1.12">Code à Cuisine</div>
+          </div>
+          <div onClick="{{ goIngredients }}" style="cursor:pointer;width:fit-content;height:52px;padding:0 32px;display:flex;align-items:center;background:rgb(250,240,230);color:rgb(0,128,0);font-weight:500;font-size:20px" style-hover="opacity:0.9">Get started</div>
+        </div>
+        <div style="position:absolute;left:clamp(16px,6cqw,96px);bottom:48px;display:flex;flex-direction:{{ homeCtaDir }};gap:16px;align-items:{{ homeCtaAlign }}">
+          <div style="font-family:Ubuntu,sans-serif;font-weight:500;font-size:24px;line-height:1.2;max-width:200px">Hungry for inspiration?</div>
+          <div onClick="{{ goCookbook }}" style="cursor:pointer;display:flex;align-items:center;gap:12px;font-weight:500;font-size:20px;height:52px" style-hover="opacity:0.8">Go to cookbook<div style="width:28px;height:18px;background:currentColor;-webkit-mask:url(assets/ic-arrow.svg) center/contain no-repeat;mask:url(assets/ic-arrow.svg) center/contain no-repeat"></div></div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ s.ingredients }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;align-items:{{ heroAlign }};gap:clamp(24px,3cqw,40px);padding:clamp(16px,4cqw,40px) clamp(16px,6cqw,96px) 48px;box-sizing:border-box">
+        <div style="display:flex;flex-direction:column;gap:24px;width:100%;max-width:900px;text-align:{{ ta }}">
+          <div style="font-weight:600;font-size:clamp(32px,3.8cqw,54px);line-height:1;color:rgb(30,85,21)">Generate recipe</div>
+          <div style="font-weight:{{ leadW }};font-size:clamp(18px,2cqw,28px);line-height:1.2;color:{{ leadC }}">Got random stuff in your kitchen?<br>Pop it in—we’ve got the perfect recipe waiting.</div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:24px;width:100%;max-width:1000px;align-items:flex-start">
+          <div style="flex:1 1 300px;min-width:0;background:rgb(196,208,196);border-radius:30px;padding:28px 24px 32px;box-sizing:border-box;display:flex;flex-direction:column;gap:16px">
+            <div style="font-size:20px;font-weight:500">Ingredient</div>
+            <input value="{{ q }}" onInput="{{ onQ }}" onKeyDown="{{ onQKey }}" placeholder="e.g. Pasta" style="height:44px;border:none;outline:none;border-radius:999px;background:rgb(250,240,230);padding:0 24px;font-size:20px;color:rgb(16,49,11);width:100%;box-sizing:border-box">
+            <sc-if value="{{ hasSug }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:14px;padding:4px 0 4px 24px">
+                <sc-for list="{{ sugs }}" as="g" hint-placeholder-count="3">
+                  <div onClick="{{ g.pick }}" style="font-size:20px;cursor:pointer" style-hover="color:rgb(0,128,0)">{{ g.t }}</div>
+                </sc-for>
+              </div>
+            </sc-if>
+            <div style="font-size:18px;margin-top:8px">Serving size</div>
+            <div style="display:flex;align-items:center;gap:16px;position:relative">
+              <input value="{{ amt }}" onInput="{{ onAmt }}" inputmode="numeric" style="width:62px;height:36px;border:none;outline:none;border-radius:999px;background:rgb(250,240,230);text-align:center;font-size:20px;color:rgb(16,49,11)">
+              <div style="position:relative">
+                <div onClick="{{ toggleUnit }}" style="height:36px;padding:0 12px 0 24px;border-radius:999px;background:rgb(250,240,230);display:flex;align-items:center;gap:6px;font-size:20px;cursor:pointer">{{ unitLabel }}<div style="width:24px;height:24px;background:currentColor;-webkit-mask:url(assets/ic-caret.svg) center/contain no-repeat;mask:url(assets/ic-caret.svg) center/contain no-repeat"></div></div>
+                <sc-if value="{{ unitOpen }}" hint-placeholder-val="{{ false }}">
+                  <div style="position:absolute;top:42px;left:0;z-index:5;min-width:100%;background:rgb(250,240,230);border-radius:20px;padding:8px 0;box-shadow:0 6px 20px rgba(0,0,0,0.2);animation:pop .15s">
+                    <sc-for list="{{ units }}" as="u" hint-placeholder-count="5">
+                      <div onClick="{{ u.pick }}" style="padding:8px 24px;font-size:18px;cursor:pointer;white-space:nowrap;background:{{ u.bg }}" style-hover="background:rgb(215,223,215)">{{ u.label }}</div>
+                    </sc-for>
+                  </div>
+                </sc-if>
+              </div>
+              <div onClick="{{ addIng }}" title="Add" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer" style-hover="opacity:0.7"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="rgb(16,49,11)" stroke-width="2.4"><path d="M13 2v22M2 13h22"></path></svg></div>
+            </div>
+          </div>
+          <div style="flex:1 1 300px;min-width:0;background:rgb(196,208,196);border-radius:30px;padding:28px 24px 28px;box-sizing:border-box;display:flex;flex-direction:column;gap:20px">
+            <div style="font-size:20px;font-weight:500">List of your Ingredients</div>
+            <sc-if value="{{ noIng }}" hint-placeholder-val="{{ false }}"><div style="font-size:18px;color:rgb(57,96,57)">No ingredients yet. Add at least three.</div></sc-if>
+            <sc-for list="{{ ingList }}" as="i" hint-placeholder-count="4">
+              <div style="display:flex;align-items:center;gap:12px;font-size:20px">
+                <div style="width:5px;height:5px;border-radius:50%;background:rgb(16,49,11);flex:none"></div>
+                <div style="min-width:64px;font-weight:500">{{ i.a }}</div>
+                <div style="flex:1;min-width:0">{{ i.n }}</div>
+                <div onClick="{{ i.del }}" title="Remove" style="width:24px;height:24px;flex:none;cursor:pointer;background:rgb(30,85,21);-webkit-mask:url(assets/ic-trash.svg) center/contain no-repeat;mask:url(assets/ic-trash.svg) center/contain no-repeat" style-hover="opacity:0.6"></div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div onClick="{{ goPrefs }}" style="cursor:pointer;height:52px;padding:0 32px;display:flex;align-items:center;background:rgb(57,96,57);color:rgb(250,240,230);font-weight:500;font-size:20px" style-hover="background:rgb(30,85,21)">Next step</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ s.preferences }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:clamp(24px,3cqw,40px);padding:clamp(16px,4cqw,48px) clamp(16px,6cqw,96px) 56px;box-sizing:border-box">
+        <div style="font-weight:600;font-size:clamp(28px,3cqw,40px);line-height:1;color:rgb(16,49,11);text-align:center">Choose your preferences</div>
+        <div style="display:flex;flex-wrap:wrap;gap:24px 64px;width:100%;max-width:900px;justify-content:{{ stepJust }}">
+          <sc-for list="{{ steppers }}" as="p" hint-placeholder-count="2">
+            <div style="display:flex;flex-direction:column;gap:16px">
+              <div style="font-size:20px;font-weight:500">{{ p.q }}</div>
+              <div style="display:flex;align-items:center;gap:16px;font-size:20px">
+                <div onClick="{{ p.dec }}" style="cursor:pointer;display:flex" style-hover="opacity:0.6"><svg width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="rgb(16,49,11)" stroke-width="2.4"><rect x="2" y="2" width="26" height="26" rx="3"></rect><path d="M8 15h14"></path></svg></div>
+                <div style="min-width:28px;text-align:center;background:rgb(215,223,215);padding:2px 6px">{{ p.v }}</div>
+                <div style="min-width:70px">{{ p.u }}</div>
+                <div onClick="{{ p.inc }}" style="cursor:pointer;display:flex" style-hover="opacity:0.6"><svg width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="rgb(16,49,11)" stroke-width="2.4"><rect x="2" y="2" width="26" height="26" rx="3"></rect><path d="M8 15h14M15 8v14"></path></svg></div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="width:100%;max-width:900px;background:rgb(219,224,219);border-radius:30px;padding:clamp(20px,3cqw,40px);box-sizing:border-box;display:flex;flex-direction:column;gap:32px">
+          <sc-for list="{{ groups }}" as="gr" hint-placeholder-count="3">
+            <div style="display:flex;flex-direction:column;gap:16px">
+              <div style="display:flex;align-items:center;gap:8px;font-size:24px;font-weight:500;color:rgb(57,96,57)"><div style="width:24px;height:24px;background:currentColor;-webkit-mask:url({{ gr.icon }}) center/contain no-repeat;mask:url({{ gr.icon }}) center/contain no-repeat"></div>{{ gr.title }}</div>
+              <div style="display:flex;flex-wrap:wrap;gap:12px 20px">
+                <sc-for list="{{ gr.chips }}" as="c" hint-placeholder-count="4">
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+                    <div onClick="{{ c.pick }}" style="cursor:pointer;height:44px;padding:0 24px;border-radius:999px;display:flex;align-items:center;font-size:20px;font-weight:500;background:{{ c.bg }};color:{{ c.fg }}">{{ c.label }}</div>
+                    <sc-if value="{{ c.sub }}" hint-placeholder-val="{{ false }}"><div style="font-size:14px;color:rgb(30,85,21)">{{ c.sub }}</div></sc-if>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <div onClick="{{ generate }}" style="cursor:pointer;height:62px;padding:0 40px;display:flex;align-items:center;background:rgb(250,240,230);color:rgb(30,85,21);font-weight:500;font-size:24px;box-shadow:0 0 0 1px rgb(215,223,215)" style-hover="background:rgb(246,227,207)">Generate a recipe</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ s.loading }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;min-height:{{ loadH }};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:32px;padding:40px 16px;box-sizing:border-box">
+        <div style="width:253px;height:309px;border-radius:20px;background:rgb(196,208,196);overflow:hidden;position:relative"><img src="assets/loader.png" alt="Loading" style="position:absolute;left:3px;top:14px;width:243px;height:280px;object-fit:contain"></div>
+        <div style="font-family:Ubuntu,sans-serif;font-weight:700;font-size:36px;color:rgb(250,240,230);width:230px">Generating {{ dots }}</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ s.results }}" hint-placeholder-val="{{ false }}">
+      <div style="background:rgb(57,96,57);color:rgb(250,240,230);padding-bottom:40px">
+        <div style="display:flex;flex-wrap:wrap;gap:24px 48px;padding:24px clamp(16px,6cqw,96px) 0;box-sizing:border-box;align-items:center">
+          <div style="flex:1 1 300px;display:flex;flex-direction:column;gap:16px;min-width:0">
+            <div style="font-weight:600;font-size:clamp(24px,3cqw,44px);line-height:1">Generated recipes</div>
+            <div style="font-weight:500;font-size:18px;line-height:1.2;max-width:520px">We took what you have and let our AI do the thinking. Here are 3 easy recipes you can make right now!</div>
+            <div style="display:flex;flex-wrap:wrap;gap:16px">
+              <sc-for list="{{ resultTags }}" as="t" hint-placeholder-count="2">
+                <div style="height:32px;padding:0 20px;border-radius:999px;display:flex;align-items:center;font-size:18px;background:{{ t.bg }};color:{{ t.fg }}">{{ t.label }}</div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="flex:1 1 300px;height:{{ visualH }};border-radius:20px;overflow:hidden;position:relative;min-width:0"><img src="assets/results-visual.png" alt="" style="position:absolute;left:0;top:0;width:100%;height:100%;object-fit:cover;object-position:center 30%"></div>
+        </div>
+      </div>
+      <div style="flex:1;background:rgb(255,255,255);display:flex;flex-direction:column;align-items:center;gap:32px;padding:32px clamp(16px,6cqw,96px) 56px;box-sizing:border-box">
+        <div style="width:100%;max-width:1100px;border-radius:20px;background:rgb(219,224,219);padding:16px;box-sizing:border-box;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px">
+          <sc-for list="{{ cards }}" as="r" hint-placeholder-count="3">
+            <div style="background:rgb(215,223,215);border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:16px;align-items:flex-start">
+              <div style="display:flex;align-items:center;gap:16px;font-size:24px;font-weight:600;color:rgb(30,85,21)"><div style="width:28px;height:28px;background:rgb(57,96,57);-webkit-mask:url(assets/ic-fork.svg) center/contain no-repeat;mask:url(assets/ic-fork.svg) center/contain no-repeat"></div>Recipe {{ r.n }}</div>
+              <div style="font-size:28px;font-weight:500;line-height:1.15;text-wrap:pretty">{{ r.title }}</div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:18px;color:rgb(57,96,57)"><div style="width:20px;height:20px;background:currentColor;-webkit-mask:url(assets/ic-clock.svg) center/contain no-repeat;mask:url(assets/ic-clock.svg) center/contain no-repeat"></div>Cooking time: {{ r.time }}min</div>
+              <div onClick="{{ r.open }}" style="cursor:pointer;margin-top:8px;height:48px;padding:0 28px;display:flex;align-items:center;background:rgb(250,240,230);color:rgb(0,128,0);font-weight:500;font-size:18px" style-hover="background:rgb(246,227,207)">View</div>
+            </div>
+          </sc-for>
+        </div>
+        <div onClick="{{ goIngredients }}" style="cursor:pointer;display:flex;align-items:center;gap:12px;font-size:20px;font-weight:500;color:rgb(30,85,21)" style-hover="opacity:0.7">Generate new recipe<div style="width:28px;height:18px;background:currentColor;-webkit-mask:url(assets/ic-arrow.svg) center/contain no-repeat;mask:url(assets/ic-arrow.svg) center/contain no-repeat"></div></div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ s.recipe }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:32px;padding:24px clamp(16px,6cqw,96px) 56px;box-sizing:border-box;width:100%;max-width:860px;align-self:center">
+        <div style="background:rgb(250,240,230);border-radius:30px;padding:24px;display:flex;flex-direction:column;gap:20px">
+          <div style="display:flex;align-items:center;gap:8px;font-size:20px;color:rgb(57,96,57)"><div style="width:24px;height:24px;background:currentColor;-webkit-mask:url(assets/ic-clock.svg) center/contain no-repeat;mask:url(assets/ic-clock.svg) center/contain no-repeat"></div>Coocking time: {{ r.time }}min</div>
+          <div style="font-size:clamp(28px,3cqw,36px);font-weight:600;line-height:1.1;color:rgb(30,85,21)">{{ r.title }}</div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap">
+            <div style="height:36px;padding:0 14px;border-radius:10px;display:flex;align-items:center;font-size:20px;background:rgb(215,223,215)">Chef 1</div>
+            <sc-if value="{{ twoCooks }}" hint-placeholder-val="{{ true }}"><div style="height:36px;padding:0 14px;border-radius:10px;display:flex;align-items:center;font-size:20px;background:rgb(255,217,179)">Chef 2</div></sc-if>
+          </div>
+          <div style="font-size:20px;font-weight:500;margin-top:12px">Nutritional information</div>
+          <div style="display:flex;flex-wrap:wrap;gap:12px 28px">
+            <sc-for list="{{ r.nutri }}" as="m" hint-placeholder-count="4">
+              <div style="display:flex;flex-direction:column;gap:14px;font-size:20px"><div style="font-weight:500">{{ m.k }}</div><div>{{ m.v }}</div></div>
+            </sc-for>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center">
+            <sc-for list="{{ r.tags }}" as="t" hint-placeholder-count="2">
+              <div style="height:36px;padding:0 20px;border-radius:999px;display:flex;align-items:center;font-size:20px;background:rgb(215,223,215)">{{ t }}</div>
+            </sc-for>
+            <div style="height:36px;padding:0 16px;border-radius:999px;display:flex;align-items:center;gap:6px;font-size:20px;background:rgb(215,223,215)"><svg width="20" height="18" viewBox="0 0 24 22" fill="none" stroke="rgb(16,49,11)" stroke-width="2"><path d="M12 20S2 13.6 2 7.4A5.2 5.2 0 0 1 12 5a5.2 5.2 0 0 1 10 2.4C22 13.6 12 20 12 20z"></path></svg>{{ r.likesNow }}</div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:20px">
+          <div style="background:rgb(250,240,230);border-radius:20px;height:72px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:500;color:rgb(30,85,21)">Ingredients</div>
+          <div onClick="{{ toggleIng }}" style="align-self:center;cursor:pointer;display:flex;align-items:center;font-size:18px;color:rgb(57,96,57)">{{ ingToggle }}<div style="width:24px;height:24px;background:currentColor;-webkit-mask:url(assets/ic-caret.svg) center/contain no-repeat;mask:url(assets/ic-caret.svg) center/contain no-repeat;transform:{{ caretRot }}"></div></div>
+          <sc-if value="{{ showIng }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;flex-direction:column;gap:20px;animation:pop .2s">
+              <div style="font-size:22px;font-weight:500;color:rgb(0,128,0)">Your ingredients</div>
+              <div style="display:flex;flex-direction:column;gap:6px;font-size:20px">
+                <sc-for list="{{ r.yours }}" as="y" hint-placeholder-count="4"><div style="display:flex;gap:16px"><div style="width:6px;height:6px;border-radius:50%;background:currentColor;margin-top:11px;flex:none"></div><div style="min-width:72px">{{ y.a }}</div><div>{{ y.n }}</div></div></sc-for>
+              </div>
+              <div style="font-size:22px;font-weight:500;color:rgb(0,128,0);margin-top:8px">Extra ingredients</div>
+              <div style="display:flex;flex-direction:column;gap:6px;font-size:20px">
+                <sc-for list="{{ r.extra }}" as="y" hint-placeholder-count="3"><div style="display:flex;gap:16px"><div style="width:6px;height:6px;border-radius:50%;background:currentColor;margin-top:11px;flex:none"></div><div style="min-width:72px">{{ y.a }}</div><div>{{ y.n }}</div></div></sc-for>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:28px">
+          <div style="background:rgb(250,240,230);border-radius:20px;height:72px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:500;color:rgb(30,85,21)">Directions</div>
+          <sc-for list="{{ steps }}" as="st" hint-placeholder-count="4">
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;align-items:center;gap:12px">
+                <div style="width:36px;height:36px;border-radius:50%;background:rgb(215,223,215);display:flex;align-items:center;justify-content:center;font-size:20px;flex:none">{{ st.n }}.</div>
+                <div style="flex:1;font-size:22px;font-weight:500">{{ st.title }}</div>
+                <sc-if value="{{ twoCooks }}" hint-placeholder-val="{{ true }}"><div style="height:34px;padding:0 12px;border-radius:10px;display:flex;align-items:center;font-size:20px;background:{{ st.chefBg }}">{{ st.chef }}</div></sc-if>
+              </div>
+              <div style="font-size:19px;line-height:1.35;text-wrap:pretty">{{ st.text }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:16px;justify-content:space-between;border-top:1px solid rgb(196,208,196);padding-top:24px">
+          <div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:22px;font-weight:500">Just finished this meal?</div><div style="font-size:18px;max-width:300px">Give it a heart, so that the others know this is delicious.</div></div>
+          <div onClick="{{ toggleLike }}" style="cursor:pointer;display:flex" style-hover="opacity:0.8"><svg width="52" height="48" viewBox="0 0 24 22" fill="{{ r.heartFill }}" stroke="rgb(0,128,0)" stroke-width="1.8"><path d="M12 20S2 13.6 2 7.4A5.2 5.2 0 0 1 12 5a5.2 5.2 0 0 1 10 2.4C22 13.6 12 20 12 20z"></path></svg></div>
+        </div>
+        <div style="background:rgba(57,96,57,0.08);border-radius:20px;padding:16px 16px 16px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px">
+          <div style="font-size:20px;max-width:240px">Find inspiration for your next culinary adventure!</div>
+          <div onClick="{{ goCookbook }}" style="cursor:pointer;height:52px;padding:0 24px;display:flex;align-items:center;background:rgb(57,96,57);color:rgb(250,240,230);font-weight:500;font-size:20px" style-hover="background:rgb(30,85,21)">Cookbook</div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ s.cookbook }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:clamp(32px,5cqw,64px);padding:24px clamp(16px,6cqw,96px) 56px;box-sizing:border-box">
+        <div style="background:rgba(57,96,57,0.05);border-radius:20px;padding:24px;display:flex;flex-wrap:wrap;gap:24px 40px;overflow:hidden">
+          <div style="flex:1 1 280px;display:flex;flex-direction:column;gap:16px;min-width:0">
+            <div style="font-weight:700;font-size:clamp(40px,5cqw,72px);line-height:1;color:rgb(30,85,21)">Cookbook</div>
+            <div style="font-size:clamp(18px,1.7cqw,24px);line-height:1.2;text-wrap:pretty">From quick bites to gourmet delights, explore them all in our ultimate cookbook and get inspired for your next culinary adventure.</div>
+          </div>
+          <div style="flex:2 1 320px;min-width:0;display:flex;flex-direction:column;gap:16px">
+            <div style="display:flex;align-items:center;gap:12px;font-size:24px;font-weight:500;color:rgb(0,128,0)">Most liked recipes<svg width="32" height="29" viewBox="0 0 24 22" fill="none" stroke="rgb(0,128,0)" stroke-width="1.8"><path d="M12 20S2 13.6 2 7.4A5.2 5.2 0 0 1 12 5a5.2 5.2 0 0 1 10 2.4C22 13.6 12 20 12 20z"></path></svg></div>
+            <div style="display:flex;gap:16px;overflow-x:auto;padding-bottom:8px">
+              <sc-for list="{{ liked }}" as="l" hint-placeholder-count="3">
+                <div onClick="{{ l.open }}" style="cursor:pointer;flex:none;width:260px;box-sizing:border-box;background:rgb(230,234,230);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:10px" style-hover="background:rgb(219,224,219)">
+                  <div style="display:flex;align-items:center;gap:8px;font-size:16px;color:rgb(57,96,57)"><div style="width:18px;height:18px;background:currentColor;-webkit-mask:url(assets/ic-clock.svg) center/contain no-repeat;mask:url(assets/ic-clock.svg) center/contain no-repeat"></div>Cooking time: {{ l.time }}min</div>
+                  <div style="font-size:22px;line-height:1.15;min-height:50px">{{ l.title }}</div>
+                  <div style="display:flex;gap:8px;align-items:center;font-size:14px"><div style="padding:3px 12px;border-radius:999px;background:rgb(196,208,196)">{{ l.t1 }}</div><div style="padding:3px 12px;border-radius:999px;background:rgb(196,208,196)">{{ l.t2 }}</div><div style="padding:3px 12px;border-radius:999px;background:rgb(57,96,57);color:rgb(250,240,230)">♡ {{ l.likes }}</div></div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax({{ gridMin }},1fr));gap:40px 32px">
+          <sc-for list="{{ cuisines }}" as="c" hint-placeholder-count="6">
+            <div onClick="{{ c.open }}" style="cursor:pointer;display:flex;flex-direction:column;gap:12px;min-width:0" style-hover="opacity:0.9">
+              <div style="display:flex;align-items:center;gap:12px;font-size:28px;font-weight:500;color:rgb(30,85,21)">{{ c.name }} cuisine<div style="width:28px;height:18px;background:currentColor;-webkit-mask:url(assets/ic-arrow.svg) center/contain no-repeat;mask:url(assets/ic-arrow.svg) center/contain no-repeat"></div></div>
+              <sc-if value="{{ c.hasImg }}" hint-placeholder-val="{{ true }}"><img src="{{ c.img }}" alt="{{ c.name }} cuisine" style="width:100%;aspect-ratio:1/1;object-fit:cover;display:block"></sc-if>
+              <sc-if value="{{ c.noImg }}" hint-placeholder-val="{{ false }}"><div style="width:100%;aspect-ratio:1/1;background:repeating-linear-gradient(135deg,rgb(215,223,215) 0 14px,rgb(225,231,225) 14px 28px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:rgb(57,96,57);font-size:18px;text-align:center"><div style="font-weight:600;font-size:22px">{{ c.name }} cuisine</div><div>1200 × 700 px</div></div></sc-if>
+            </div>
+          </sc-for>
+        </div>
+        <div onClick="{{ goIngredients }}" style="align-self:flex-end;cursor:pointer;display:flex;align-items:center;gap:12px;font-size:20px;font-weight:500;color:rgb(30,85,21)" style-hover="opacity:0.7">Generate new recipe<div style="width:28px;height:18px;background:currentColor;-webkit-mask:url(assets/ic-arrow.svg) center/contain no-repeat;mask:url(assets/ic-arrow.svg) center/contain no-repeat"></div></div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ s.cuisine }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:clamp(24px,4cqw,48px);padding:24px clamp(16px,6cqw,96px) 56px;box-sizing:border-box">
+        <div style="width:100%;max-width:900px;height:{{ cuisineHeroH }};border-radius:20px;overflow:hidden;position:relative;background:repeating-linear-gradient(135deg,rgb(215,223,215) 0 14px,rgb(225,231,225) 14px 28px)">
+          <sc-if value="{{ cHasImg }}" hint-placeholder-val="{{ true }}"><img src="{{ cImg }}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></sc-if>
+          <sc-if value="{{ cNoImg }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;right:16px;top:16px;font-size:14px;color:rgb(57,96,57)">{{ cName }} cuisine · 1200 × 700 px</div></sc-if>
+          <div style="position:absolute;left:0;right:0;bottom:0;padding:20px 24px;background:linear-gradient(transparent,rgba(16,49,11,0.75));color:rgb(250,240,230);font-weight:700;font-size:clamp(32px,4cqw,56px);line-height:1">{{ cName }} cuisine</div>
+        </div>
+        <div style="width:100%;max-width:900px;display:flex;flex-direction:column;gap:8px">
+          <sc-for list="{{ rows }}" as="w" hint-placeholder-count="5">
+            <div onClick="{{ w.open }}" style="cursor:pointer;display:flex;align-items:center;gap:16px;padding:16px 20px;border-radius:20px;background:rgba(57,96,57,0.06);font-size:22px" style-hover="background:rgb(219,224,219)">
+              <div style="width:40px;color:rgb(57,96,57);font-weight:500">{{ w.num }}.</div>
+              <div style="flex:1;min-width:0;text-wrap:pretty">{{ w.title }}</div>
+              <div style="display:flex;align-items:center;gap:6px;font-size:16px;color:rgb(57,96,57);white-space:nowrap">{{ w.time }}min</div>
+              <div style="font-size:16px;color:rgb(30,85,21);white-space:nowrap">♡ {{ w.likes }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:18px;font-weight:500">
+          <sc-for list="{{ pager }}" as="g" hint-placeholder-count="7">
+            <div onClick="{{ g.pick }}" style="min-width:26px;height:27px;padding:0 4px;box-sizing:border-box;border-radius:2px;display:flex;align-items:center;justify-content:center;cursor:{{ g.cursor }};background:{{ g.bg }};color:{{ g.fg }}">{{ g.label }}</div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ popup }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ closePopup }}" style="position:absolute;inset:0;z-index:10;background:rgba(7,9,35,0.55);display:flex;align-items:center;justify-content:center;padding:16px;animation:pop .2s">
+        <div onClick="{{ stop }}" style="width:340px;max-width:100%;box-sizing:border-box;background:rgb(57,96,57);border-radius:30px;padding:16px 24px 24px;display:flex;flex-direction:column;gap:8px;color:rgb(250,240,230)">
+          <div onClick="{{ closePopup }}" title="Close" style="align-self:flex-end;width:24px;height:24px;cursor:pointer;background:currentColor;-webkit-mask:url(assets/ic-close.svg) center/13px no-repeat;mask:url(assets/ic-close.svg) center/13px no-repeat"></div>
+          <div style="font-size:28px;font-weight:600;line-height:1">Ups!<br>Not quite enough...</div>
+          <div style="font-size:18px;line-height:26px;margin-top:16px">It looks like some ingredient quantities aren’t sufficient for your selected servings. Please add or adjust quantities and try again.</div>
+          <div onClick="{{ popupBack }}" style="cursor:pointer;margin-top:16px;display:flex;align-items:center;gap:12px;font-size:20px;font-weight:500;height:52px" style-hover="opacity:0.8">Go back to ingredients<div style="width:28px;height:18px;background:currentColor;-webkit-mask:url(assets/ic-arrow.svg) center/contain no-repeat;mask:url(assets/ic-arrow.svg) center/contain no-repeat"></div></div>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:1000},&quot;device&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;mobile&quot;,&quot;options&quot;:[&quot;mobile&quot;,&quot;desktop&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Prototype&quot;},&quot;loadingSeconds&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:2.5,&quot;min&quot;:1,&quot;max&quot;:6,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;s&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Prototype&quot;},&quot;showNav&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Prototype&quot;}}">
+class Component extends DCLogic {
+  state = { screen: 'home', device: null, popup: false, q: '', amt: '100', unit: 'gram', unitOpen: false, portions: 2, cooks: 1, time: 'Quick', cuisinesSel: ['Italian'], diets: ['Vegetarian'], likedMap: {}, rIdx: 0, showIng: true, page: 1, cName: 'Italian', tick: 0,
+    ing: [{ a: '100g', n: 'Pasta' }, { a: '100g', n: 'Baby spinach' }, { a: '150g', n: 'Cherry tomatoes' }, { a: '1 piece', n: 'Egg' }] };
+
+  recipes = [
+    { title: 'Pasta with spinach and cherry tommatoes'.replace('tommatoes', 'tomatoes'), time: 20, likes: 66, tags: ['Vegetarian', 'Quick'],
+      nutri: [['Energie', '630 kcal'], ['Protein', '18g'], ['Fat', '24g'], ['Carbs', '58g']],
+      yours: [['80g', 'Pasta noodles'], ['100g', 'Baby spinach'], ['150g', 'Cherry tomatoes'], ['1 piece', 'Egg']],
+      extra: [['40g', 'Parmesan cheese'], ['30ml', 'Olive oil'], ['Herbs', '(dry basil, oregano, garlic)']],
+      steps: [['Cook the pasta', 1, 'Cook your noodles in boiling, salted water, until the pasta is al dente. Drain the pasta and reserve some of the pasta water.'],
+        ['Make the sauce', 2, 'While the pasta is cooking, heat olive oil in a pan over medium heat. Add the garlic, and sauté until it starts to turn golden. Add the tomatoes, oregano, salt, and pepper, and cook for 3-4 minutes.'],
+        ['Finish the pasta', 1, 'Add the noodles to the sauce, then add pasta water until the sauce is the right consistency. Simmer for 1 minute, then add the spinach, basil, chili flakes, and parmesan.'],
+        ['Make the sauce', 2, 'Lower the heat to low, stir until mixed, and remove from the heat. Season to taste, top with parmesan cheese, and enjoy.']] },
+    { title: 'Creamy garlic shrimp pasta', time: 22, likes: 41, tags: ['Pescatarian', 'Quick'],
+      nutri: [['Energie', '710 kcal'], ['Protein', '34g'], ['Fat', '28g'], ['Carbs', '66g']],
+      yours: [['100g', 'Pasta noodles'], ['150g', 'Shrimp'], ['100g', 'Baby spinach']],
+      extra: [['30ml', 'Cream'], ['2 cloves', 'Garlic'], ['20g', 'Butter']],
+      steps: [['Cook the pasta', 1, 'Cook the noodles in salted water until al dente and drain.'], ['Sear the shrimp', 2, 'Melt the butter, add the garlic and shrimp, and cook for 2 minutes per side.'], ['Bring it together', 1, 'Add the cream and spinach, toss in the pasta and simmer until glossy.']] },
+    { title: 'Pasta alla Trapanese (Sicilian Tomato Pesto)', time: 20, likes: 38, tags: ['Vegetarian', 'Quick'],
+      nutri: [['Energie', '590 kcal'], ['Protein', '16g'], ['Fat', '26g'], ['Carbs', '63g']],
+      yours: [['100g', 'Pasta noodles'], ['150g', 'Cherry tomatoes']],
+      extra: [['30g', 'Almonds'], ['30ml', 'Olive oil'], ['Herbs', '(basil, garlic)']],
+      steps: [['Cook the pasta', 1, 'Cook the noodles in salted water until al dente.'], ['Blend the pesto', 2, 'Blend tomatoes, almonds, basil, garlic and olive oil into a coarse paste.'], ['Toss and serve', 1, 'Toss the pasta with the pesto and a splash of pasta water.']] }
+  ];
+  pool = ['Pasta', 'Pastrami', 'Passionfruit', 'Baby spinach', 'Cherry tomatoes', 'Egg', 'Parmesan cheese', 'Olive oil', 'Garlic', 'Rice', 'Potatoes', 'Onion', 'Chicken', 'Shrimp'];
+  unitList = ['gram', 'ml', 'piece', 'tbsp', 'tsp'];
+  cuisineList = [['Italian', 'assets/cuisine-5.jpg'], ['German', 'assets/cuisine-3.jpg'], ['Japanese', 'assets/cuisine-4.jpg'], ['Gourmet', 'assets/cuisine-2.jpg'], ['Indian', 'assets/cuisine-1.jpg'], ['Fusion', null]];
+  rowNames = ['Pasta with spinach and cherry tomatoes', 'Creamy garlic shrimp pasta', 'Pasta alla Trapanese (Sicilian Tomato Pesto)', 'Risotto ai funghi', 'Margherita flatbread', 'Minestrone with basil'];
+
+  componentDidMount() { this.iv = setInterval(() => { if (this.state.screen === 'loading') this.setState(s => ({ tick: s.tick + 1 })); }, 450); }
+  componentWillUnmount() { clearInterval(this.iv); clearTimeout(this.to); }
+
+  go = (screen, extra) => {
+    clearTimeout(this.to);
+    this.setState({ screen, popup: false, unitOpen: false, ...(extra || {}) });
+    if (screen === 'loading') { const secs = this.props.loadingSeconds ?? 2.5; this.to = setTimeout(() => this.go('results'), secs * 1000); }
+    try { window.scrollTo(0, 0); } catch (e) {}
+  };
+  toggleIn = (key, v, single) => this.setState(s => { const a = s[key]; return { [key]: single ? [v] : (a.includes(v) ? a.filter(x => x !== v) : [...a, v]) }; });
+  addIng = () => {
+    const n = this.state.q.trim(); if (!n) return;
+    const u = this.state.unit, a = this.state.amt || '1';
+    this.setState(s => ({ ing: [...s.ing, { a: u === 'gram' ? a + 'g' : u === 'piece' ? a + ' piece' : a + (u === 'ml' ? 'ml' : ' ' + u), n }], q: '' }));
+  };
+  generate = () => { if (this.state.ing.length < 3) this.setState({ popup: true, screen: 'ingredients' }); else this.go('loading'); };
+
+  renderVals() {
+    const st = this.state;
+    const device = st.device ?? this.props.device ?? 'mobile';
+    const m = device === 'mobile';
+    const scr = st.screen;
+    const s = {}; ['home', 'ingredients', 'preferences', 'loading', 'results', 'recipe', 'cookbook', 'cuisine'].forEach(k => s[k] = scr === k);
+    const dark = scr === 'home' || scr === 'loading' || scr === 'results';
+    const r0 = this.recipes[st.rIdx];
+    const liked = !!st.likedMap[st.rIdx];
+    const backMap = { preferences: ['Ingredients', 'ingredients'], recipe: ['Results', 'results'], cookbook: ['Back', 'home'], cuisine: ['Cookbook', 'cookbook'] };
+    const back = backMap[scr];
+    const cur = this.cuisineList.find(c => c[0] === st.cName) || this.cuisineList[0];
+    const q = st.q.trim().toLowerCase();
+    const sugs = q ? this.pool.filter(p => p.toLowerCase().startsWith(q) && p.toLowerCase() !== q).slice(0, 3) : [];
+    const chip = (arr, v, label, key, single, sub) => { const on = arr.includes(v); return { label, sub, bg: on ? 'rgb(30,85,21)' : 'rgb(250,240,230)', fg: on ? 'rgb(250,240,230)' : 'rgb(16,49,11)', pick: () => this.toggleIn(key, v, single) }; };
+    const stepper = (qn, key, val, unit, min, max) => ({ q: qn, v: val, u: val === 1 ? unit : unit + 's', dec: () => this.setState({ [key]: Math.max(min, val - 1) }), inc: () => this.setState({ [key]: Math.min(max, val + 1) }) });
+    const page = st.page;
+    const pages = [1, 2, 3, '…', 8];
+    const pager = [{ label: '<', pick: () => this.setState({ page: Math.max(1, page - 1) }), cursor: 'pointer', bg: 'transparent', fg: 'rgb(16,49,11)' },
+      ...pages.map(p => ({ label: p, pick: () => typeof p === 'number' && this.setState({ page: p }), cursor: typeof p === 'number' ? 'pointer' : 'default', bg: p === page ? 'rgb(57,96,57)' : 'transparent', fg: p === page ? 'rgb(250,240,230)' : 'rgb(16,49,11)' })),
+      { label: '>', pick: () => this.setState({ page: Math.min(8, page + 1) }), cursor: 'pointer', bg: 'transparent', fg: 'rgb(16,49,11)' }];
+    const navDefs = [['Home', 'home'], ['Ingredients', 'ingredients'], ['Preferences', 'preferences'], ['Loading', 'loading'], ['Results', 'results'], ['Recipe', 'recipe'], ['Cookbook', 'cookbook'], ['Cuisine list', 'cuisine'], ['Pop-up', 'popup']];
+    const navItems = navDefs.map(([label, k]) => { const on = k === 'popup' ? st.popup : (scr === k && !st.popup); return { label, bg: on ? 'rgb(57,96,57)' : 'transparent', fg: on ? 'rgb(250,240,230)' : 'rgb(30,85,21)', pick: () => k === 'popup' ? this.go('ingredients', { popup: true }) : this.go(k) }; });
+    const bgFor = { home: m ? 'rgb(7,9,35)' : 'rgb(57,96,57)', loading: 'rgb(57,96,57)', results: 'rgb(57,96,57)' };
+    const prefs = [...st.cuisinesSel.slice(0, 1), st.time].filter(Boolean);
+    return {
+      devices: [['mobile', 'Mobile'], ['desktop', 'Desktop']].map(([k, label]) => ({ label, bg: device === k ? 'rgb(57,96,57)' : 'transparent', fg: device === k ? 'rgb(250,240,230)' : 'rgb(30,85,21)', pick: () => this.setState({ device: k }) })),
+      showNav: this.props.showNav ?? true, navItems,
+      frameW: m ? '375px' : '1440px', frameBg: bgFor[scr] || 'rgb(255,255,255)', frameMinH: m ? '812px' : '820px', frameRadius: m ? '28px' : '0px',
+      s, fg: dark ? 'rgb(250,240,230)' : 'rgb(30,85,21)', btnBg: dark ? 'rgb(250,240,230)' : 'rgb(57,96,57)', btnFg: dark ? 'rgb(0,128,0)' : 'rgb(250,240,230)',
+      showMenuBtns: !m && scr !== 'loading' && scr !== 'ingredients',
+      showBack: !!back, backLabel: back ? back[0] : '', backGo: () => back && this.go(back[1]),
+      goHome: () => this.go('home'), goCookbook: () => this.go('cookbook'), goIngredients: () => this.go('ingredients'), goPrefs: () => this.go('preferences'),
+      generate: this.generate, closePopup: () => this.setState({ popup: false }), popupBack: () => this.setState({ popup: false, screen: 'ingredients' }), stop: e => e.stopPropagation(), popup: st.popup,
+      homeH: m ? '812px' : '780px', plateW: m ? '620px' : '1000px', plateL: m ? '125px' : 'calc(100% - 700px)', plateT: m ? '-12px' : '-90px', homeTop: m ? '40px' : '120px', homeTextW: m ? '240px' : '720px',
+      homeCtaDir: m ? 'column' : 'row', homeCtaAlign: m ? 'flex-start' : 'center',
+      heroAlign: m ? 'flex-start' : 'center', ta: m ? 'left' : 'center', leadW: m ? 600 : 500, leadC: m ? 'rgb(16,49,11)' : 'rgb(0,128,0)',
+      q: st.q, onQ: e => this.setState({ q: e.target.value }), onQKey: e => { if (e.key === 'Enter') this.addIng(); },
+      hasSug: sugs.length > 0, sugs: sugs.map(t => ({ t, pick: () => this.setState({ q: t }) })),
+      amt: st.amt, onAmt: e => this.setState({ amt: e.target.value.replace(/[^0-9.]/g, '') }),
+      unitLabel: st.unit, unitOpen: st.unitOpen, toggleUnit: () => this.setState({ unitOpen: !st.unitOpen }),
+      units: this.unitList.map(u => ({ label: u, bg: u === st.unit ? 'rgb(215,223,215)' : 'transparent', pick: () => this.setState({ unit: u, unitOpen: false }) })),
+      addIng: this.addIng, noIng: st.ing.length === 0,
+      ingList: st.ing.map((i, idx) => ({ ...i, del: () => this.setState(x => ({ ing: x.ing.filter((_, j) => j !== idx) })) })),
+      stepJust: m ? 'flex-start' : 'center',
+      steppers: [stepper('How many portions you need?', 'portions', st.portions, 'Portion', 1, 12), stepper('How many are cooking?', 'cooks', st.cooks, 'Person', 1, 2)],
+      groups: [
+        { title: 'Cooking time:', icon: 'assets/ic-clock.svg', chips: [chip([st.time], 'Quick', 'Quick', 'time', true, 'up to 20min'), chip([st.time], 'Medium', 'Medium', 'time', true, '25-40min'), chip([st.time], 'Complex', 'Complex', 'time', true, 'over 45min')] },
+        { title: 'Cuisine', icon: 'assets/ic-globe.svg', chips: ['German', 'Italian', 'Indian', 'Japanese', 'Gourmet', 'Fusion'].map(c => chip(st.cuisinesSel, c, c, 'cuisinesSel', true)) },
+        { title: 'Diet preferences', icon: 'assets/ic-fork.svg', chips: ['Vegetarian', 'Vegan', 'Keto', 'No preferences'].map(c => chip(st.diets, c, c, 'diets', true)) }],
+      loadH: m ? '700px' : '640px', dots: '.'.repeat((st.tick % 3) + 1),
+      resultTags: [...st.cuisinesSel.slice(0, 1).map(l => ({ label: l, bg: 'rgb(79,137,79)', fg: 'rgb(250,240,230)' })), { label: st.time, bg: 'rgb(250,240,230)', fg: 'rgb(16,49,11)' }],
+      visualH: m ? '131px' : '240px',
+      cards: this.recipes.map((r, i) => ({ n: i + 1, title: r.title, time: r.time, open: () => this.go('recipe', { rIdx: i, showIng: true }) })),
+      r: { ...r0, nutri: r0.nutri.map(([k, v]) => ({ k, v })), yours: r0.yours.map(([a, n]) => ({ a, n })), extra: r0.extra.map(([a, n]) => ({ a, n })), likesNow: r0.likes + (liked ? 1 : 0), heartFill: liked ? 'rgb(0,128,0)' : 'none' },
+      twoCooks: st.cooks === 2,
+      steps: r0.steps.map(([title, chef, text], i) => ({ n: i + 1, title, text, chef: 'Chef ' + chef, chefBg: chef === 1 ? 'rgb(215,223,215)' : 'rgb(255,217,179)' })),
+      toggleLike: () => this.setState(x => ({ likedMap: { ...x.likedMap, [x.rIdx]: !x.likedMap[x.rIdx] } })),
+      showIng: st.showIng, toggleIng: () => this.setState({ showIng: !st.showIng }), ingToggle: st.showIng ? 'Hide ingredients' : 'Show all', caretRot: st.showIng ? 'rotate(180deg)' : 'none',
+      liked: [...this.recipes.slice(0, 1).map((r, i) => ({ title: r.title, time: r.time, likes: r.likes, t1: 'Vegetarian', t2: 'Quick', open: () => this.go('recipe', { rIdx: 0, showIng: true }) })),
+        { title: 'Low Carb Vegan No-Bake Paleo Bars', time: 35, likes: 57, t1: 'Vegetarian', t2: 'Quick', open: () => this.go('recipe', { rIdx: 1, showIng: true }) },
+        { title: 'Schnitzel with potato salad', time: 45, likes: 52, t1: 'German', t2: 'Complex', open: () => this.go('recipe', { rIdx: 2, showIng: true }) }],
+      gridMin: m ? '240px' : '300px',
+      cuisines: this.cuisineList.map(([name, img]) => ({ name, img, hasImg: !!img, noImg: !img, open: () => this.go('cuisine', { cName: name, page: 1 }) })),
+      cName: st.cName, cImg: cur[1], cHasImg: !!cur[1], cNoImg: !cur[1], cuisineHeroH: m ? '160px' : '260px',
+      rows: [0, 1, 2, 3, 4].map(i => { const num = (page - 1) * 5 + i + 1; const nm = this.rowNames[(num - 1) % this.rowNames.length]; return { num, title: nm, time: 15 + ((num * 7) % 30), likes: Math.max(3, 70 - num * 3), open: () => this.go('recipe', { rIdx: (num - 1) % 3, showIng: true }) }; }),
+      pager
+    };
+  }
+}
+</script>
+</body>
+</html>

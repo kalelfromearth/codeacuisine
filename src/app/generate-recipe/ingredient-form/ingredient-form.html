@@ -1,0 +1,55 @@
+<form class="ingredient-form" [formGroup]="ingredientForm" (ngSubmit)="addIngredient()" novalidate>
+  <label class="ingredient-form__label" for="ingredient-name">Ingredient</label>
+  <input
+    class="ingredient-form__name-input"
+    id="ingredient-name"
+    type="text"
+    formControlName="name"
+    placeholder="e.g. Pasta"
+    autocomplete="off"
+    [attr.aria-invalid]="ingredientForm.controls.name.touched && ingredientForm.controls.name.invalid"
+    [attr.aria-describedby]="ingredientForm.controls.name.touched && ingredientForm.controls.name.invalid ? 'ingredient-name-error' : null"
+  />
+  @if (ingredientForm.controls.name.touched && ingredientForm.controls.name.invalid) {
+    <p class="ingredient-form__error" id="ingredient-name-error">Please enter an ingredient.</p>
+  }
+
+  <label class="ingredient-form__label" for="ingredient-amount">Serving size</label>
+  <div class="ingredient-form__serving">
+    <input
+      class="ingredient-form__amount-input"
+      id="ingredient-amount"
+      type="number"
+      min="1"
+      inputmode="numeric"
+      formControlName="amount"
+      [attr.aria-invalid]="ingredientForm.controls.amount.touched && ingredientForm.controls.amount.invalid"
+      [attr.aria-describedby]="ingredientForm.controls.amount.touched && ingredientForm.controls.amount.invalid ? 'ingredient-amount-error' : null"
+    />
+    <div class="ingredient-form__unit-field">
+      <select class="ingredient-form__unit-select" formControlName="unit" aria-label="Unit">
+        @for (unit of units; track unit) {
+          <option [value]="unit">{{ unit }}</option>
+        }
+      </select>
+      <span class="ingredient-form__unit-arrow" aria-hidden="true"></span>
+    </div>
+    <button
+      class="ingredient-form__add-button"
+      type="submit"
+      aria-label="Add ingredient"
+      [disabled]="isListFull()"
+    >
+      <svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true">
+        <path d="M13 2v22M2 13h22" />
+      </svg>
+    </button>
+  </div>
+  @if (ingredientForm.controls.amount.touched && ingredientForm.controls.amount.invalid) {
+    <p class="ingredient-form__error" id="ingredient-amount-error">Please enter an amount of at least 1.</p>
+  }
+
+  @if (isListFull()) {
+    <p class="ingredient-form__hint" role="status">You reached the maximum of {{ maxIngredients }} ingredients.</p>
+  }
+</form>

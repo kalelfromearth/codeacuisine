@@ -2,23 +2,29 @@
 
 :host {
   @include flex($direction: column, $align: stretch, $justify: flex-start);
-  height: 100dvh;
+  position: relative;
+  max-width: 1440px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  overflow-x: clip;
 }
 
 .landingpage {
-  position: relative;
+  @include flex($direction: column, $align: stretch, $justify: flex-start);
   flex: 1;
-  min-height: 0;
-  overflow: hidden;
   color: $color-cream;
 
   .wrapper {
     @include flex($direction: column, $align: flex-start);
-    height: 100%;
-    max-width: 560px;
+    flex: 1;
+    max-width: 240px;
     margin: 0;
     padding-bottom: 34px;
     box-sizing: border-box;
+
+    @include md {
+      max-width: 560px;
+    }
   }
 }
 
@@ -39,31 +45,25 @@
   }
 
   &__plates {
-    position: fixed;
+    position: absolute;
     top: 0;
-    right: -35px;
+    right: 0;
     z-index: 1;
-    @include flex($direction: column);
+    height: min(100%, 100dvh);
+    width: fit-content;
+    max-width: calc(100% - 220px);
+    overflow: hidden;
 
     @include md {
-      right: 0;
+      max-width: calc(100% - 576px);
     }
   }
 
   &__plates-image {
-    width: 115px;
-
-    @include md {
-      width: 240px;
-    }
-
-    @include lg {
-      width: 320px;
-    }
-
-    @include xl {
-      width: 400px;
-    }
+    display: block;
+    height: 100%;
+    width: auto;
+    max-width: none;
   }
 }
 

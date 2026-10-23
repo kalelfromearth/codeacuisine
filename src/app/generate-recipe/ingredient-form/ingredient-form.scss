@@ -13,8 +13,27 @@
   color: $color-text;
   box-sizing: border-box;
 
+  @include lg {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 16px 24px;
+  }
+
+  &__field {
+    @include flex($direction: column, $align: stretch, $justify: flex-start, $gap: 16px);
+
+    &--name {
+      @include lg {
+        flex: 1;
+        min-width: 0;
+      }
+    }
+  }
+
   &__label-row {
     @include flex($justify: flex-start, $gap: 8px);
+    min-height: 24px;
   }
 
   &__label {
@@ -87,6 +106,10 @@
 
   &__hint {
     @include font(1rem, 500);
+
+    @include lg {
+      flex: 0 0 100%;
+    }
   }
 }
 

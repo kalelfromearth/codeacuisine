@@ -12,15 +12,51 @@
 
   &__content {
     @include flex($direction: column, $align: flex-start, $justify: flex-start, $gap: 24px);
+
+    @include md {
+      align-items: center;
+    }
   }
 
   &__title {
     @include font(2rem, 600, $font-family-quicksand, $color-heading);
     line-height: 1;
+
+    @include md {
+      text-align: center;
+    }
   }
 
   &__intro {
     @include font(1.125rem, 600);
     line-height: 1.2;
+
+    @include md {
+      text-align: center;
+    }
+  }
+
+  &__cards {
+    @include flex($direction: column, $align: stretch, $justify: flex-start, $gap: 24px);
+    width: 100%;
+
+    @include md {
+      flex-direction: row;
+      align-items: flex-start;
+      max-width: 1000px;
+    }
+  }
+
+  &__card {
+    @include md {
+      flex: 5;
+      min-width: 0;
+    }
+  }
+
+  &__card--wide {
+    @include md {
+      flex: 6;
+    }
   }
 }

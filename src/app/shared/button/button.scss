@@ -8,6 +8,7 @@
   @include font(1rem, 600);
   cursor: pointer;
   box-sizing: border-box;
+  text-decoration: none;
 
   &--primary {
     background-color: $color-cream;

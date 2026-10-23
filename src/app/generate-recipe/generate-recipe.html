@@ -11,7 +11,21 @@
       <app-ingredient-list class="generate-recipe__card"></app-ingredient-list>
     </div>
     <div class="generate-recipe__actions">
-      <app-button variant="secondary">Next step</app-button>
+      <app-button variant="secondary" (click)="goToNextStep()">Next step</app-button>
     </div>
   </div>
 </main>
+
+<app-popup
+  heading="Ups! Not quite enough..."
+  [isOpen]="isNotEnoughPopupOpen()"
+  (closed)="closeNotEnoughPopup()"
+>
+  <p class="generate-recipe__popup-text">
+    Please add at least {{ minIngredients }} ingredients so our AI can create a great recipe.
+  </p>
+  <button class="generate-recipe__popup-link" type="button" (click)="closeNotEnoughPopup()">
+    Go back to ingredients
+    <span class="generate-recipe__popup-arrow" aria-hidden="true"></span>
+  </button>
+</app-popup>

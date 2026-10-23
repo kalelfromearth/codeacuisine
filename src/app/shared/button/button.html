@@ -1,8 +1,11 @@
-<button
-  class="btn"
-  [class.btn--primary]="variant() === 'primary'"
-  [class.btn--secondary]="variant() === 'secondary'"
-  [type]="type()"
->
-  <ng-content></ng-content>
-</button>
+<ng-template #label><ng-content></ng-content></ng-template>
+
+@if (link(); as targetLink) {
+  <a [class]="buttonClasses()" [routerLink]="targetLink">
+    <ng-container [ngTemplateOutlet]="label"></ng-container>
+  </a>
+} @else {
+  <button [class]="buttonClasses()" [type]="type()">
+    <ng-container [ngTemplateOutlet]="label"></ng-container>
+  </button>
+}

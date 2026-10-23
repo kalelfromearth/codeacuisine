@@ -57,6 +57,35 @@
     }
   }
 
+  &__popup-text {
+    @include font(1.125rem, 400);
+    margin-top: 8px;
+    line-height: 1.5;
+  }
+
+  &__popup-link {
+    @include flex($justify: flex-start, $gap: 12px);
+    @include font(1.25rem, 500);
+    min-height: 52px;
+    margin-top: 8px;
+    padding: 0;
+    border: none;
+    background: none;
+    color: inherit;
+    cursor: pointer;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+
+  &__popup-arrow {
+    width: 22px;
+    height: 15px;
+    background-color: currentColor;
+    mask: url('/images/icons/arrow-right.svg') center / contain no-repeat;
+  }
+
   &__card {
     @include md {
       flex: 5;

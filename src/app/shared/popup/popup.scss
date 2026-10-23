@@ -1,0 +1,80 @@
+@use 'abstracts' as *;
+
+$popup-duration: 0.3s;
+$popup-easing: cubic-bezier(0.22, 1, 0.36, 1);
+
+.popup {
+  width: 340px;
+  max-width: calc(100% - 32px);
+  margin: auto;
+  padding: 0;
+  border: none;
+  border-radius: 30px;
+  background-color: $color-primary;
+  color: $color-cream;
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity $popup-duration $popup-easing,
+    transform $popup-duration $popup-easing,
+    overlay $popup-duration allow-discrete,
+    display $popup-duration allow-discrete;
+
+  &[open] {
+    opacity: 1;
+    transform: none;
+  }
+
+  &::backdrop {
+    background-color: rgba(7, 9, 35, 0);
+    transition:
+      background-color $popup-duration $popup-easing,
+      overlay $popup-duration allow-discrete,
+      display $popup-duration allow-discrete;
+  }
+
+  &[open]::backdrop {
+    background-color: rgba(7, 9, 35, 0.55);
+  }
+
+  &__box {
+    @include flex($direction: column, $align: stretch, $justify: flex-start, $gap: 8px);
+    padding: 16px 24px 24px;
+    box-sizing: border-box;
+  }
+
+  &__close-button {
+    @include flex;
+    align-self: flex-end;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    background: none;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  &__heading {
+    @include font(1.75rem, 600);
+    line-height: 1.1;
+  }
+}
+
+@starting-style {
+  .popup[open] {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  .popup[open]::backdrop {
+    background-color: rgba(7, 9, 35, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .popup,
+  .popup::backdrop {
+    transition: none;
+  }
+}

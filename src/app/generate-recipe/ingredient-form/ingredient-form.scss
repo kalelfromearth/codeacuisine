@@ -79,7 +79,7 @@
     right: 16px;
     width: 10px;
     height: 5px;
-    background: url('/images/icons/arrow_drop_down.svg') center / contain no-repeat;
+    background: url('images/icons/arrow_drop_down.svg') center / contain no-repeat;
     transform: translateY(-50%);
     pointer-events: none;
   }
@@ -145,7 +145,7 @@
       flex: none;
       width: 10px;
       height: 5px;
-      background: url('/images/icons/arrow_drop_down.svg') center / contain no-repeat;
+      background: url('images/icons/arrow_drop_down.svg') center / contain no-repeat;
       transition: rotate $select-duration $select-easing;
     }
 

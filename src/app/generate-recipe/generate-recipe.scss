@@ -1,0 +1,26 @@
+@use 'abstracts' as *;
+
+:host {
+  display: block;
+  min-height: 100dvh;
+  background-color: $color-surface;
+}
+
+.generate-recipe {
+  padding: 16px 0 48px;
+  color: $color-text;
+
+  &__content {
+    @include flex($direction: column, $align: flex-start, $justify: flex-start, $gap: 24px);
+  }
+
+  &__title {
+    @include font(2rem, 600, $font-family-quicksand, $color-heading);
+    line-height: 1;
+  }
+
+  &__intro {
+    @include font(1.125rem, 600);
+    line-height: 1.2;
+  }
+}

@@ -2,7 +2,7 @@
 
 .btn {
   @include flex($gap: 10px, $display: inline-flex);
-  min-height: 56px;
+  min-height: 52px;
   padding: 4px 16px;
   border: none;
   @include font(1rem, 600);
@@ -12,5 +12,14 @@
   &--primary {
     background-color: $color-cream;
     color: $color-leaf;
+  }
+
+  &--secondary {
+    background-color: $color-primary;
+    color: $color-cream;
+
+    &:hover {
+      background-color: $color-heading;
+    }
   }
 }

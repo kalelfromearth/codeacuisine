@@ -47,6 +47,16 @@
     }
   }
 
+  &__actions {
+    @include flex($justify: flex-start);
+    width: 100%;
+
+    @include md {
+      justify-content: flex-end;
+      max-width: 1000px;
+    }
+  }
+
   &__card {
     @include md {
       flex: 5;

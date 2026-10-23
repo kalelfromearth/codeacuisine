@@ -184,7 +184,9 @@
 
     option {
       @include font(1.125rem, 400, $color: $color-text);
-      padding: 8px 24px;
+      margin: 0 8px;
+      padding: 8px 16px;
+      border-radius: 999px;
       cursor: pointer;
       opacity: 0;
       transform: translateY(-8px);
@@ -199,6 +201,11 @@
       &:hover,
       &:checked {
         background-color: $color-card;
+      }
+
+      &:focus-visible {
+        outline: 2px solid $color-heading;
+        outline-offset: -2px;
       }
     }
 

@@ -1,5 +1,12 @@
 <form class="ingredient-form" [formGroup]="ingredientForm" (ngSubmit)="addIngredient()" novalidate>
-  <label class="ingredient-form__label" for="ingredient-name">Ingredient</label>
+  <div class="ingredient-form__label-row">
+    <label class="ingredient-form__label" for="ingredient-name">Ingredient</label>
+    <app-info-tip label="More information about ingredients">
+      Add {{ minIngredients }} to {{ maxIngredients }} ingredients. Up to
+      {{ maxAmountByUnit.piece }} pieces, {{ maxAmountByUnit.gram }} g or
+      {{ maxAmountByUnit.ml }} ml each. Our AI adds the rest if necessary.
+    </app-info-tip>
+  </div>
   <input
     class="ingredient-form__name-input"
     id="ingredient-name"
@@ -21,13 +28,22 @@
       id="ingredient-amount"
       type="number"
       min="1"
+      [attr.max]="getCurrentMaxAmount()"
+      step="1"
       inputmode="numeric"
       formControlName="amount"
+      (keydown)="blockNonWholeNumberKeys($event)"
+      (input)="limitAmountToMaximum($event)"
       [attr.aria-invalid]="ingredientForm.controls.amount.touched && ingredientForm.controls.amount.invalid"
       [attr.aria-describedby]="ingredientForm.controls.amount.touched && ingredientForm.controls.amount.invalid ? 'ingredient-amount-error' : null"
     />
     <div class="ingredient-form__unit-field">
-      <select class="ingredient-form__unit-select" formControlName="unit" aria-label="Unit">
+      <select
+        class="ingredient-form__unit-select"
+        formControlName="unit"
+        aria-label="Unit"
+        (change)="applyUnitLimit($event)"
+      >
         @for (unit of units; track unit) {
           <option [value]="unit">{{ unit }}</option>
         }
@@ -46,7 +62,13 @@
     </button>
   </div>
   @if (ingredientForm.controls.amount.touched && ingredientForm.controls.amount.invalid) {
-    <p class="ingredient-form__error" id="ingredient-amount-error">Please enter an amount of at least 1.</p>
+    <p class="ingredient-form__error" id="ingredient-amount-error">{{ getAmountErrorMessage() }}</p>
+  }
+
+  @if (ingredientForm.controls.amount.value >= getCurrentMaxAmount()) {
+    <p class="ingredient-form__hint" role="status">
+      Maximum of {{ getCurrentMaxAmount() }} {{ getCurrentUnitLabel() }} reached.
+    </p>
   }
 
   @if (isListFull()) {

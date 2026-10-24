@@ -17,7 +17,6 @@ export class GenerateRecipe {
   private readonly ingredientList = inject(IngredientListService);
   private readonly router = inject(Router);
 
-  readonly minIngredients = MIN_INGREDIENTS;
   readonly isNotEnoughPopupOpen = signal(false);
 
   /** Opens the popup with too few ingredients, otherwise continues to the preferences page. */

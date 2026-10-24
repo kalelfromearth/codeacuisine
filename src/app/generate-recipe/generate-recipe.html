@@ -22,7 +22,8 @@
   (closed)="closeNotEnoughPopup()"
 >
   <p class="generate-recipe__popup-text">
-    Please add at least {{ minIngredients }} ingredients so our AI can create a great recipe.
+    It looks like some ingredient quantities aren’t sufficient for your selected servings. Please add or
+    adjust quantities and try again.
   </p>
   <button class="generate-recipe__popup-link" type="button" (click)="closeNotEnoughPopup()">
     Go back to ingredients

@@ -4,7 +4,7 @@
   <section class="recipes__intro">
     <div class="wrapper recipes__intro-content">
       <div class="recipes__intro-text">
-        <h1 class="recipes__title">Generated recipes</h1>
+        <h1 class="recipes__title">The recipe results</h1>
         <p class="recipes__lead">
           We took what you have and let our AI do the thinking. Here are 3 easy recipes you can make right now!
         </p>
@@ -13,18 +13,18 @@
           <li class="recipes__tag recipes__tag--time">{{ timeLabel() }}</li>
         </ul>
       </div>
-      <div class="recipes__visual" aria-hidden="true"></div>
+      <img class="recipes__visual" src="images/result/androidArm.webp" alt="" />
     </div>
   </section>
 
   <section class="recipes__results" aria-labelledby="recipes-results-title">
     <div class="wrapper recipes__results-content">
       <h2 class="recipes__visually-hidden" id="recipes-results-title">Your three recipes</h2>
-      <ul class="recipes__panel">
+      <ul class="recipes__list">
         @for (recipe of recipes(); track recipe.title; let position = $index) {
           <li class="recipes__card">
             <p class="recipes__card-label">
-              <span class="recipes__icon recipes__icon--fork" aria-hidden="true"></span>
+              <span class="recipes__icon recipes__icon--cloche" aria-hidden="true"></span>
               Recipe {{ position + 1 }}
             </p>
             <h3 class="recipes__card-title">{{ recipe.title }}</h3>
@@ -32,11 +32,11 @@
               <span class="recipes__icon recipes__icon--clock" aria-hidden="true"></span>
               Cooking time: {{ recipe.cookingMinutes }}min
             </p>
-            <app-button variant="light" [link]="'/recipes/' + (position + 1)">View</app-button>
+            <app-button class="recipes__card-button" variant="light" [link]="'/recipes/' + (position + 1)">View</app-button>
           </li>
         }
       </ul>
-      <a class="recipes__new" routerLink="/generate-recipe">
+      <a class="recipes__new" routerLink="/generate-recipe" (click)="startNewRecipe()">
         Generate new recipe
         <span class="recipes__icon recipes__icon--arrow" aria-hidden="true"></span>
       </a>

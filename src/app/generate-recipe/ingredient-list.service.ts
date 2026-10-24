@@ -28,6 +28,11 @@ export class IngredientListService {
     });
   }
 
+  /** Empties the whole list so a new recipe can start from scratch. */
+  clearIngredients(): void {
+    this.ingredients.set([]);
+  }
+
   /** Removes the ingredient at the given position from the list. */
   removeIngredient(position: number): void {
     this.ingredients.update(function (currentList) {

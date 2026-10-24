@@ -41,6 +41,9 @@ export interface RecipeNutrition {
   carbs: number;
 }
 
+/** A recipe as returned by the n8n workflow, before it has an id, likes and a creation date. */
+export type RecipeDraft = Omit<Recipe, 'id' | 'likes' | 'createdAt'>;
+
 /** A generated recipe as stored in the Firestore collection "recipes". */
 export interface Recipe {
   id: string;

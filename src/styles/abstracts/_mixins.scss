@@ -55,6 +55,13 @@
   background-color: $color-surface;
 }
 
+@mixin dark-page {
+  display: block;
+  min-height: 100dvh;
+  background-color: $color-primary;
+  color: $color-cream;
+}
+
 @mixin page-title {
   @include font(2rem, 600, $font-family-quicksand, $color-heading);
   line-height: 1;

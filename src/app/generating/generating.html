@@ -1,0 +1,22 @@
+<app-header background="dark"></app-header>
+
+<main class="generating">
+  <div class="wrapper generating__content">
+    @if (status() === 'error') {
+      <section class="generating__error" role="alert">
+        <h1 class="generating__title">Ups! Something went wrong</h1>
+        <p class="generating__text">{{ errorMessage() }}</p>
+        <div class="generating__actions">
+          <app-button variant="light" (click)="retry()">Try again</app-button>
+          <app-button variant="primary" link="/preferences">Back to preferences</app-button>
+        </div>
+      </section>
+    } @else {
+      <div class="generating__picture" aria-hidden="true"></div>
+      <h1 class="generating__title">
+        Generating<span class="generating__dots" aria-hidden="true">{{ dots() }}</span>
+      </h1>
+      <p class="generating__text" role="status">Our AI is creating your recipes. This can take up to a minute.</p>
+    }
+  </div>
+</main>

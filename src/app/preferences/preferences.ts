@@ -1,7 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { IngredientListService } from '../generate-recipe/ingredient-list.service';
+import { RecipeGeneratorService } from '../recipe/recipe-generator.service';
 import { RecipeRequestService } from '../recipe/recipe-request.service';
 import {
   CookCount,
@@ -36,6 +37,8 @@ type PreferencesFormControls = {
 export class Preferences {
   private readonly ingredientList = inject(IngredientListService);
   private readonly recipeRequestService = inject(RecipeRequestService);
+  private readonly recipeGenerator = inject(RecipeGeneratorService);
+  private readonly router = inject(Router);
 
   readonly minServings = MIN_SERVINGS;
   readonly maxServings = MAX_SERVINGS;
@@ -85,6 +88,8 @@ export class Preferences {
       return;
     }
     this.recipeRequestService.setRequest(this.buildRecipeRequest());
+    this.recipeGenerator.reset();
+    this.router.navigateByUrl('/generating');
   }
 
   private buildRecipeRequest(): RecipeRequest {

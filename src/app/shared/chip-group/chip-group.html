@@ -1,0 +1,25 @@
+<fieldset class="chip-group">
+  <legend class="chip-group__legend">
+    <span class="chip-group__icon" [style.mask-image]="'url(' + iconPath() + ')'" aria-hidden="true"></span>
+    {{ legend() }}
+  </legend>
+  <div class="chip-group__chips">
+    @for (option of options(); track option.value) {
+      <div class="chip-group__chip">
+        <input
+          class="chip-group__input"
+          type="radio"
+          [id]="getChipId(option.value)"
+          [name]="groupName"
+          [value]="option.value"
+          [formControl]="control()"
+          [attr.aria-describedby]="option.hint ? getHintId(option.value) : null"
+        />
+        <label class="chip-group__label" [for]="getChipId(option.value)">{{ option.label }}</label>
+        @if (option.hint) {
+          <span class="chip-group__hint" [id]="getHintId(option.value)">{{ option.hint }}</span>
+        }
+      </div>
+    }
+  </div>
+</fieldset>

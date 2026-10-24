@@ -1,0 +1,116 @@
+@use 'abstracts' as *;
+
+:host {
+  display: block;
+}
+
+.chip-group {
+  --chip-height: 36px;
+
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  color: $color-text;
+
+  @include md {
+    --chip-height: 44px;
+  }
+
+  &__legend {
+    @include flex($justify: flex-start, $gap: 8px);
+    @include font(1.25rem, 500, $color: $color-primary);
+    margin-bottom: 12px;
+    padding: 0;
+
+    @include md {
+      @include font(1.5rem, 500, $color: $color-primary);
+      margin-bottom: 16px;
+    }
+  }
+
+  &__icon {
+    width: 20px;
+    height: 20px;
+    background-color: currentColor;
+    mask-position: center;
+    mask-repeat: no-repeat;
+    mask-size: contain;
+
+    @include md {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  &__chips {
+    @include flex($align: flex-start, $justify: flex-start, $gap: 10px);
+    flex-wrap: wrap;
+
+    @include md {
+      gap: 12px 20px;
+    }
+  }
+
+  &__chip {
+    @include flex($direction: column, $gap: 8px);
+    position: relative;
+  }
+
+  &__input {
+    position: absolute;
+    inset: 0 0 auto;
+    width: 100%;
+    height: var(--chip-height);
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  &__label {
+    @include flex;
+    @include font(1rem, 500, $color: $color-text);
+    height: var(--chip-height);
+    padding: 0 8px;
+    border-radius: 999px;
+    background-color: $color-cream;
+    box-sizing: border-box;
+    cursor: pointer;
+    transition:
+      background-color 0.35s ease,
+      color 0.35s ease,
+      box-shadow 0.35s ease;
+
+    @include md {
+      @include font(1.25rem, 500, $color: $color-text);
+      padding: 0 24px;
+    }
+
+    @media (hover: hover) {
+      &:hover {
+        box-shadow: 0 2px 8px 2px rgba($color-text, 0.25);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+
+  &__input:checked + &__label {
+    background-color: $color-heading;
+    color: $color-cream;
+  }
+
+  &__input:focus-visible + &__label {
+    outline: 2px solid $color-heading;
+    outline-offset: 3px;
+  }
+
+  &__hint {
+    @include font(1rem, 400, $color: $color-heading);
+    width: 0;
+    min-width: 100%;
+    text-align: center;
+  }
+}

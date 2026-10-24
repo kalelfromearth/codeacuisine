@@ -39,11 +39,28 @@
   }
 
   &__form {
+    @include flex($direction: column, $align: stretch, $justify: flex-start, $gap: 32px);
     width: 100%;
 
     @include md {
       max-width: 900px;
     }
+  }
+
+  &__panel {
+    @include flex($direction: column, $align: stretch, $justify: flex-start, $gap: 32px);
+    padding: 16px;
+    border-radius: 30px;
+    background-color: $color-panel;
+    box-sizing: border-box;
+
+    @include md {
+      padding: 40px;
+    }
+  }
+
+  &__submit {
+    @include flex;
   }
 
   &__steppers {

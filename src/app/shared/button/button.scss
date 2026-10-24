@@ -23,4 +23,14 @@
       background-color: $color-heading;
     }
   }
+
+  &--light {
+    background-color: $color-cream;
+    color: $color-heading;
+    box-shadow: 0 0 0 1px $color-highlight;
+
+    &:hover {
+      background-color: $color-cream-hover;
+    }
+  }
 }

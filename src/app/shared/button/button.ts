@@ -9,7 +9,7 @@ import { RouterLink } from '@angular/router';
   styleUrl: './button.scss',
 })
 export class Button {
-  variant = input<'primary' | 'secondary'>('primary');
+  variant = input<'primary' | 'secondary' | 'light'>('primary');
   type = input<'button' | 'submit'>('button');
   link = input<string>();
 

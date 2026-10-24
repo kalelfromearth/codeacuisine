@@ -29,6 +29,31 @@
           bubbleText="WOW! Extreme cooking, yeah!"
         ></app-stepper>
       </div>
+
+      <div class="preferences__panel">
+        <app-chip-group
+          legend="Cooking time:"
+          iconPath="images/icons/schedule.svg"
+          [options]="timeOptions"
+          [control]="preferencesForm.controls.timeCategory"
+        ></app-chip-group>
+        <app-chip-group
+          legend="Cuisine"
+          iconPath="images/icons/world.svg"
+          [options]="cuisineOptions"
+          [control]="preferencesForm.controls.cuisine"
+        ></app-chip-group>
+        <app-chip-group
+          legend="Diet preferences"
+          iconPath="images/icons/fork_spoon.svg"
+          [options]="dietOptions"
+          [control]="preferencesForm.controls.diet"
+        ></app-chip-group>
+      </div>
+
+      <div class="preferences__submit">
+        <app-button variant="light" (click)="generateRecipe()">Generate a recipe</app-button>
+      </div>
     </form>
   </div>
 </main>

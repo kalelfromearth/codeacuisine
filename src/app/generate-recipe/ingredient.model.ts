@@ -8,10 +8,11 @@ export const UNIT_LABELS: Record<IngredientUnit, string> = {
   gram: 'g',
 };
 
+// Nobody has more than 5 kg or 5 l of a single ingredient at home. Keep in sync with the n8n validation.
 export const MAX_AMOUNT_BY_UNIT: Record<IngredientUnit, number> = {
   piece: 30,
-  ml: 10000,
-  gram: 10000,
+  ml: 5000,
+  gram: 5000,
 };
 
 export interface Ingredient {

@@ -48,11 +48,15 @@
   &__serving {
     @include flex($justify: flex-start, $gap: 12px);
     flex-wrap: wrap;
+
+    @include lg {
+      margin-top: 4px;
+    }
   }
 
   &__amount-input {
     @include pill-field(36px);
-    width: 62px;
+    width: 77px;
     padding: 0;
     text-align: center;
     appearance: textfield;

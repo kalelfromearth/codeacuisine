@@ -19,7 +19,7 @@
       [attr.aria-describedby]="ingredientForm.controls.name.touched && ingredientForm.controls.name.invalid ? 'ingredient-name-error' : null"
     />
     @if (ingredientForm.controls.name.touched && ingredientForm.controls.name.invalid) {
-      <p class="ingredient-form__error" id="ingredient-name-error">Please enter an ingredient.</p>
+      <p class="ingredient-form__error" id="ingredient-name-error">{{ getNameErrorMessage() }}</p>
     }
   </div>
 

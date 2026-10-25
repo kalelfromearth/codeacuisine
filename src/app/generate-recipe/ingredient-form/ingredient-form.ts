@@ -7,6 +7,7 @@ import {
   UNIT_LABELS,
 } from '../ingredient.model';
 import { amountWithinUnitLimit } from '../ingredient-amount.validator';
+import { plausibleIngredientName } from '../ingredient-name.validator';
 import {
   BLOCKED_AMOUNT_KEYS,
   buildAmountErrorMessage,
@@ -44,7 +45,7 @@ export class IngredientForm {
   readonly ingredientForm: FormGroup<IngredientFormControls> = new FormGroup<IngredientFormControls>({
     name: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.pattern(/\S/)],
+      validators: [Validators.required, Validators.pattern(/\S/), plausibleIngredientName],
     }),
     amount: new FormControl(100, {
       nonNullable: true,
@@ -97,6 +98,15 @@ export class IngredientForm {
   applyUnitLimit(selectedUnit: IngredientUnit): void {
     this.ingredientForm.controls.unit.setValue(selectedUnit);
     capAmountToUnitLimit(this.ingredientForm.controls.amount, selectedUnit);
+  }
+
+  /** Returns the error message for the name field, or an empty string if it is valid. */
+  getNameErrorMessage(): string {
+    const nameErrors = this.ingredientForm.controls.name.errors;
+    if (nameErrors?.['implausibleName']) {
+      return "That doesn't look like an ingredient. Please check the spelling.";
+    }
+    return nameErrors ? 'Please enter an ingredient.' : '';
   }
 
   /** Returns the error message for the amount field, or an empty string if it is valid. */

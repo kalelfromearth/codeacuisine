@@ -4,12 +4,20 @@
   <div class="wrapper generating__content">
     @if (status() === 'error') {
       <section class="generating__error" role="alert">
-        <h1 class="generating__title">Ups! Something went wrong</h1>
-        <p class="generating__text">{{ errorMessage() }}</p>
-        <div class="generating__actions">
-          <app-button variant="light" (click)="retry()">Try again</app-button>
-          <app-button variant="primary" link="/preferences">Back to preferences</app-button>
-        </div>
+        @if (hasIngredientProblem()) {
+          <h1 class="generating__title">Ups! Check your ingredients</h1>
+          <p class="generating__text">{{ errorMessage() }}</p>
+          <div class="generating__actions">
+            <app-button variant="light" link="/generate-recipe">Back to ingredients</app-button>
+          </div>
+        } @else {
+          <h1 class="generating__title">Ups! Something went wrong</h1>
+          <p class="generating__text">{{ errorMessage() }}</p>
+          <div class="generating__actions">
+            <app-button variant="light" (click)="retry()">Try again</app-button>
+            <app-button variant="primary" link="/preferences">Back to preferences</app-button>
+          </div>
+        }
       </section>
     } @else {
       <img class="generating__picture" src="images/gif/gif.gif" alt="" width="436" height="613" />

@@ -18,6 +18,7 @@ export class Generating {
 
   readonly status = this.generator.status;
   readonly errorMessage = this.generator.errorMessage;
+  readonly hasIngredientProblem = this.generator.hasIngredientProblem;
   readonly dots = computed(() => '.'.repeat(this.dotCount()));
 
   constructor() {

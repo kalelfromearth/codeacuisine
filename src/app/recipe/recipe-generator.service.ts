@@ -19,6 +19,7 @@ export class RecipeGeneratorService {
   readonly status = signal<GeneratorStatus>('idle');
   readonly recipes = signal<RecipeDraft[]>([]);
   readonly errorMessage = signal('');
+  readonly hasIngredientProblem = signal(false);
 
   /** Sends the stored request to the n8n workflow and stores the recipes or an error message. */
   async generate(): Promise<void> {
@@ -28,6 +29,7 @@ export class RecipeGeneratorService {
     }
     this.status.set('loading');
     this.errorMessage.set('');
+    this.hasIngredientProblem.set(false);
     this.recipes.set([]);
     try {
       await this.handleResponse(await this.postRequest(request));
@@ -41,6 +43,7 @@ export class RecipeGeneratorService {
     this.status.set('idle');
     this.recipes.set([]);
     this.errorMessage.set('');
+    this.hasIngredientProblem.set(false);
   }
 
   private postRequest(request: RecipeRequest): Promise<Response> {
@@ -59,6 +62,7 @@ export class RecipeGeneratorService {
       this.status.set('success');
       return;
     }
+    this.hasIngredientProblem.set(response.status === 422);
     this.fail(this.describeFailure(response.status, body?.message));
   }
 
@@ -73,6 +77,9 @@ export class RecipeGeneratorService {
   private describeFailure(status: number, serverMessage?: string): string {
     if (status === 429) {
       return serverMessage ?? 'The daily limit is reached. Please try again tomorrow.';
+    }
+    if (status === 422) {
+      return serverMessage ?? "Some entries don't look like real ingredients. Please check your list.";
     }
     if (status === 400) {
       return 'Some of your entries are not valid. Please go back and check them.';

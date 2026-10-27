@@ -27,9 +27,9 @@ export class Generating {
     this.animateDots();
   }
 
-  /** Starts the generation again after an error. */
+  /** Tries again after an error: saves the waiting recipes again or starts a new generation. */
   retry(): void {
-    this.generator.generate();
+    this.generator.retry();
   }
 
   private openResultsOnSuccess(): void {

@@ -1,7 +1,8 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { RecipeRequestService } from './recipe-request.service';
-import { RecipeDraft, RecipeRequest } from './recipe.model';
+import { RecipeStoreService } from './recipe-store.service';
+import { Recipe, RecipeDraft, RecipeRequest } from './recipe.model';
 
 export type GeneratorStatus = 'idle' | 'loading' | 'success' | 'error';
 
@@ -15,27 +16,36 @@ const REQUEST_TIMEOUT_MS = 120000;
 @Injectable({ providedIn: 'root' })
 export class RecipeGeneratorService {
   private readonly recipeRequestService = inject(RecipeRequestService);
+  private readonly recipeStore = inject(RecipeStoreService);
+  private unsavedDrafts: RecipeDraft[] = [];
 
   readonly status = signal<GeneratorStatus>('idle');
-  readonly recipes = signal<RecipeDraft[]>([]);
+  readonly recipes = signal<Recipe[]>([]);
   readonly errorMessage = signal('');
   readonly hasIngredientProblem = signal(false);
 
-  /** Sends the stored request to the n8n workflow and stores the recipes or an error message. */
+  /** Sends the stored request to the n8n workflow, saves the recipes and stores them or an error message. */
   async generate(): Promise<void> {
     const request = this.recipeRequestService.request();
     if (!request) {
       return;
     }
-    this.status.set('loading');
-    this.errorMessage.set('');
-    this.hasIngredientProblem.set(false);
-    this.recipes.set([]);
+    this.startLoading();
     try {
       await this.handleResponse(await this.postRequest(request));
     } catch (error) {
       this.fail(this.describeNetworkError(error));
     }
+  }
+
+  /** Tries again after an error: saves the waiting recipes if there are any, otherwise asks the AI again. */
+  async retry(): Promise<void> {
+    if (this.unsavedDrafts.length === 0) {
+      await this.generate();
+      return;
+    }
+    this.startLoading();
+    await this.saveDrafts(this.unsavedDrafts);
   }
 
   /** Forgets the last result so a new generation can start from scratch. */
@@ -44,6 +54,14 @@ export class RecipeGeneratorService {
     this.recipes.set([]);
     this.errorMessage.set('');
     this.hasIngredientProblem.set(false);
+    this.unsavedDrafts = [];
+  }
+
+  private startLoading(): void {
+    this.status.set('loading');
+    this.errorMessage.set('');
+    this.hasIngredientProblem.set(false);
+    this.recipes.set([]);
   }
 
   private postRequest(request: RecipeRequest): Promise<Response> {
@@ -58,12 +76,22 @@ export class RecipeGeneratorService {
   private async handleResponse(response: Response): Promise<void> {
     const body = await this.readJson(response);
     if (response.ok && Array.isArray(body?.recipes) && body.recipes.length > 0) {
-      this.recipes.set(body.recipes);
-      this.status.set('success');
+      await this.saveDrafts(body.recipes);
       return;
     }
     this.hasIngredientProblem.set(response.status === 422);
     this.fail(this.describeFailure(response.status, body?.message));
+  }
+
+  private async saveDrafts(drafts: RecipeDraft[]): Promise<void> {
+    try {
+      this.recipes.set(await this.recipeStore.saveRecipes(drafts));
+      this.unsavedDrafts = [];
+      this.status.set('success');
+    } catch {
+      this.unsavedDrafts = drafts;
+      this.fail('We could not save your recipes. Please try again.');
+    }
   }
 
   private async readJson(response: Response): Promise<GeneratorResponse | null> {

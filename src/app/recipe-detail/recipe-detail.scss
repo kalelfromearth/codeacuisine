@@ -1,0 +1,423 @@
+@use 'abstracts' as *;
+
+:host {
+  @include light-page;
+}
+
+.recipe-detail {
+  padding: 8px 0 56px;
+  color: $color-text;
+
+  &__content {
+    @include flex($direction: column, $align: stretch, $justify: flex-start, $gap: 24px);
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  &__back {
+    @include flex($justify: flex-start, $gap: 8px);
+    @include font(1rem, 500, $color: $color-heading);
+    align-self: flex-start;
+    min-width: 44px;
+    min-height: 44px;
+    text-decoration: none;
+  }
+
+  &__back-text {
+    display: none;
+
+    @include md {
+      display: inline;
+    }
+  }
+
+  &__recipe {
+    @include flex($direction: column, $align: stretch, $justify: flex-start, $gap: 24px);
+  }
+
+  &__summary {
+    @include flex($direction: column, $align: flex-start, $justify: flex-start, $gap: 16px);
+    padding: 20px 16px;
+    border-radius: 30px;
+    background-color: $color-cream;
+
+    @include md {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      grid-template-areas:
+        'time tags'
+        'title nutrition'
+        'cooks nutrition';
+      align-items: start;
+      gap: 16px 24px;
+      padding: 24px;
+    }
+  }
+
+  &__time {
+    @include flex($justify: flex-start, $gap: 8px);
+    @include font(1.125rem, 400, $color: $color-primary);
+
+    @include md {
+      grid-area: time;
+      font-size: 1.25rem;
+    }
+  }
+
+  &__title {
+    @include font(1.75rem, 600, $color: $color-heading);
+    line-height: 1.1;
+    text-wrap: balance;
+
+    @include md {
+      grid-area: title;
+      font-size: 2.25rem;
+    }
+  }
+
+  &__cooks {
+    @include flex($justify: flex-start, $gap: 12px);
+    flex-wrap: wrap;
+
+    @include md {
+      grid-area: cooks;
+    }
+  }
+
+  &__cooks-label {
+    @include font(1rem, 400);
+  }
+
+  &__chefs {
+    @include flex($justify: flex-start, $gap: 12px);
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__chef {
+    @include flex($gap: 8px);
+    @include font(1.125rem, 400, $color: $color-text);
+    height: 34px;
+    padding: 0 12px;
+    border-radius: 10px;
+    white-space: nowrap;
+
+    &::before {
+      content: '';
+      flex: none;
+      width: 30px;
+      height: 18px;
+      background: url('images/icons/chef-hat.png') center / contain no-repeat;
+    }
+
+    &--1 {
+      background-color: $color-chef-1;
+    }
+
+    &--2 {
+      background-color: $color-chef-2;
+    }
+
+    &--3 {
+      background-color: $color-chef-3;
+    }
+
+    &--4 {
+      background-color: $color-chef-4;
+    }
+  }
+
+  &__nutrition {
+    @include flex($direction: column, $align: flex-start, $justify: flex-start, $gap: 12px);
+
+    @include md {
+      grid-area: nutrition;
+    }
+  }
+
+  &__nutrition-title {
+    @include font(1.25rem, 500);
+  }
+
+  &__nutrition-list {
+    @include flex($justify: flex-start, $gap: 12px 16px);
+    flex-wrap: wrap;
+    margin: 0;
+
+    @include md {
+      column-gap: 28px;
+    }
+  }
+
+  &__nutrition-item {
+    @include flex($direction: column, $align: flex-start, $justify: flex-start, $gap: 8px);
+    @include font(1.125rem, 400);
+
+    dt {
+      font-weight: 700;
+    }
+
+    dd {
+      margin: 0;
+    }
+  }
+
+  &__tags {
+    @include flex($justify: flex-start, $gap: 12px);
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    @include md {
+      grid-area: tags;
+      justify-self: end;
+    }
+  }
+
+  &__tag {
+    @include flex;
+    @include font(1.125rem, 400);
+    height: 36px;
+    padding: 0 20px;
+    border-radius: 999px;
+    background-color: $color-highlight;
+  }
+
+  &__section {
+    @include flex($direction: column, $align: stretch, $justify: flex-start, $gap: 16px);
+  }
+
+  &__band {
+    @include flex;
+    @include font(1.5rem, 500, $color: $color-heading);
+    min-height: 56px;
+    border-radius: 20px;
+    background-color: $color-cream;
+
+    @include md {
+      min-height: 72px;
+      font-size: 1.75rem;
+    }
+  }
+
+  &__toggle {
+    @include flex($gap: 4px);
+    @include font(1.125rem, 400, $color: $color-primary);
+    align-self: center;
+    min-height: 44px;
+    padding: 0 8px;
+    border: none;
+    background: none;
+    cursor: pointer;
+
+    @include md {
+      display: none;
+    }
+  }
+
+  &__collapsible {
+    &--closed {
+      display: none;
+
+      @include md {
+        display: block;
+      }
+    }
+  }
+
+  &__ingredients {
+    @include flex($direction: column, $align: flex-start, $justify: flex-start, $gap: 20px);
+
+    @include md {
+      flex-direction: row;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 56px;
+    }
+  }
+
+  &__ingredient-group {
+    @include flex($direction: column, $align: flex-start, $justify: flex-start, $gap: 12px);
+  }
+
+  &__group-title {
+    @include font(1.375rem, 500, $color: $color-leaf);
+  }
+
+  &__ingredient-list {
+    @include flex($direction: column, $align: flex-start, $justify: flex-start, $gap: 6px);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__ingredient {
+    @include flex($justify: flex-start, $gap: 12px);
+    @include font(1.25rem, 400);
+    align-items: baseline;
+
+    &::before {
+      content: '';
+      flex: none;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: currentColor;
+      transform: translateY(-4px);
+    }
+  }
+
+  &__amount {
+    min-width: 72px;
+  }
+
+  &__steps {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    @include md {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 28px 40px;
+    }
+  }
+
+  &__step {
+    @include flex($direction: column, $align: stretch, $justify: flex-start, $gap: 12px);
+  }
+
+  &__step-head {
+    @include flex($justify: flex-start, $gap: 12px);
+  }
+
+  &__step-number {
+    @include flex;
+    @include font(1.125rem, 400);
+    flex: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: $color-highlight;
+  }
+
+  &__step-title {
+    @include font(1.375rem, 500);
+    flex: 1;
+    min-width: 0;
+    text-wrap: balance;
+  }
+
+  &__step-text {
+    @include font(1.125rem, 400);
+    line-height: 1.4;
+    text-wrap: pretty;
+  }
+
+  &__like {
+    @include flex($justify: space-between, $gap: 16px);
+    padding-top: 24px;
+    border-top: 1px solid $color-card;
+  }
+
+  &__like-text {
+    @include flex($direction: column, $align: flex-start, $justify: flex-start, $gap: 6px);
+    @include font(1.125rem, 400);
+    max-width: 320px;
+  }
+
+  &__like-title {
+    @include font(1.375rem, 500);
+  }
+
+  &__heart {
+    @include flex;
+    @include font(1rem);
+    flex: none;
+    width: 52px;
+    height: 52px;
+    padding: 0;
+    border: none;
+    background: none;
+    color: $color-leaf;
+    cursor: pointer;
+
+    svg {
+      width: 100%;
+      height: 100%;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      transition: fill 0.25s ease;
+    }
+
+    &--active svg {
+      fill: currentColor;
+    }
+
+    @media (hover: hover) {
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      svg {
+        transition: none;
+      }
+    }
+  }
+
+  &__new {
+    @include arrow-link($color-heading);
+    align-self: flex-end;
+  }
+
+  &__icon {
+    flex: none;
+    background-color: currentColor;
+    mask-position: center;
+    mask-repeat: no-repeat;
+    mask-size: contain;
+
+    &--back {
+      width: 28px;
+      height: 18px;
+      mask-image: url('images/icons/arrow-left.svg');
+    }
+
+    &--clock {
+      width: 24px;
+      height: 24px;
+      mask-image: url('images/icons/schedule.svg');
+    }
+
+    &--caret {
+      width: 24px;
+      height: 24px;
+      mask-image: url('images/icons/arrow_drop_down.svg');
+      transition: transform 0.25s ease;
+    }
+
+    &--open {
+      transform: rotate(180deg);
+    }
+
+    &--arrow {
+      width: 28px;
+      height: 18px;
+      mask-image: url('images/icons/arrow-right.svg');
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      &--caret {
+        transition: none;
+      }
+    }
+  }
+}

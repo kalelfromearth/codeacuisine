@@ -1,0 +1,170 @@
+<app-header background="light"></app-header>
+
+<main class="recipe-detail">
+  <div class="wrapper">
+    @if (recipe(); as recipe) {
+      <div class="recipe-detail__content">
+        <a class="recipe-detail__back" routerLink="/recipes" aria-label="Back to recipe results">
+          <span class="recipe-detail__icon recipe-detail__icon--back" aria-hidden="true"></span>
+          <span class="recipe-detail__back-text">Recipe results</span>
+        </a>
+
+        <article class="recipe-detail__recipe">
+          <section class="recipe-detail__summary" aria-labelledby="recipe-title">
+            <p class="recipe-detail__time">
+              <span class="recipe-detail__icon recipe-detail__icon--clock" aria-hidden="true"></span>
+              Cooking time: {{ recipe.cookingMinutes }}min
+            </p>
+            <h1 class="recipe-detail__title" id="recipe-title">{{ recipe.title }}</h1>
+            <div class="recipe-detail__cooks">
+              <p class="recipe-detail__cooks-label">Cooking person: {{ recipe.cooks }}</p>
+              <ul class="recipe-detail__chefs" aria-label="Cooks">
+                @for (chef of chefNumbers(); track chef) {
+                  <li class="recipe-detail__chef recipe-detail__chef--{{ chef }}">Chef {{ chef }}</li>
+                }
+              </ul>
+            </div>
+            <div class="recipe-detail__nutrition">
+              <h2 class="recipe-detail__nutrition-title">Nutritional information</h2>
+              <dl class="recipe-detail__nutrition-list">
+                <div class="recipe-detail__nutrition-item">
+                  <dt>Energy</dt>
+                  <dd>{{ recipe.nutrition.calories }} kcal</dd>
+                </div>
+                <div class="recipe-detail__nutrition-item">
+                  <dt>Protein</dt>
+                  <dd>{{ recipe.nutrition.protein }}g</dd>
+                </div>
+                <div class="recipe-detail__nutrition-item">
+                  <dt>Fat</dt>
+                  <dd>{{ recipe.nutrition.fat }}g</dd>
+                </div>
+                <div class="recipe-detail__nutrition-item">
+                  <dt>Carbs</dt>
+                  <dd>{{ recipe.nutrition.carbs }}g</dd>
+                </div>
+              </dl>
+            </div>
+            <ul class="recipe-detail__tags" aria-label="Recipe tags">
+              @for (tag of tags(); track tag) {
+                <li class="recipe-detail__tag">{{ tag }}</li>
+              }
+            </ul>
+          </section>
+
+          <section class="recipe-detail__section" aria-labelledby="ingredients-title">
+            <h2 class="recipe-detail__band" id="ingredients-title">Ingredients</h2>
+            <button
+              class="recipe-detail__toggle"
+              type="button"
+              aria-controls="ingredients-content"
+              [attr.aria-expanded]="showIngredients()"
+              (click)="toggleIngredients()"
+            >
+              {{ showIngredients() ? 'Hide ingredients' : 'Show ingredients' }}
+              <span
+                class="recipe-detail__icon recipe-detail__icon--caret"
+                [class.recipe-detail__icon--open]="showIngredients()"
+                aria-hidden="true"
+              ></span>
+            </button>
+            <div
+              class="recipe-detail__collapsible"
+              id="ingredients-content"
+              [class.recipe-detail__collapsible--closed]="!showIngredients()"
+            >
+              <div class="recipe-detail__ingredients">
+                <div class="recipe-detail__ingredient-group">
+                  <h3 class="recipe-detail__group-title">Your ingredients</h3>
+                  <ul class="recipe-detail__ingredient-list">
+                    @for (ingredient of ownIngredients(); track ingredient.name) {
+                      <li class="recipe-detail__ingredient">
+                        <span class="recipe-detail__amount">{{ describeAmount(ingredient) }}</span>
+                        {{ ingredient.name }}
+                      </li>
+                    }
+                  </ul>
+                </div>
+                @if (extraIngredients().length > 0) {
+                  <div class="recipe-detail__ingredient-group">
+                    <h3 class="recipe-detail__group-title">Extra ingredients</h3>
+                    <ul class="recipe-detail__ingredient-list">
+                      @for (ingredient of extraIngredients(); track ingredient.name) {
+                        <li class="recipe-detail__ingredient">
+                          <span class="recipe-detail__amount">{{ describeAmount(ingredient) }}</span>
+                          {{ ingredient.name }}
+                        </li>
+                      }
+                    </ul>
+                  </div>
+                }
+              </div>
+            </div>
+          </section>
+
+          <section class="recipe-detail__section" aria-labelledby="directions-title">
+            <h2 class="recipe-detail__band" id="directions-title">Directions</h2>
+            <button
+              class="recipe-detail__toggle"
+              type="button"
+              aria-controls="directions-content"
+              [attr.aria-expanded]="showDirections()"
+              (click)="toggleDirections()"
+            >
+              {{ showDirections() ? 'Hide directions' : 'Show directions' }}
+              <span
+                class="recipe-detail__icon recipe-detail__icon--caret"
+                [class.recipe-detail__icon--open]="showDirections()"
+                aria-hidden="true"
+              ></span>
+            </button>
+            <div
+              class="recipe-detail__collapsible"
+              id="directions-content"
+              [class.recipe-detail__collapsible--closed]="!showDirections()"
+            >
+              <ol class="recipe-detail__steps">
+                @for (step of recipe.steps; track $index) {
+                  <li class="recipe-detail__step">
+                    <div class="recipe-detail__step-head">
+                      <span class="recipe-detail__step-number" aria-hidden="true">{{ $index + 1 }}.</span>
+                      <h3 class="recipe-detail__step-title">{{ step.title }}</h3>
+                      @if (recipe.cooks > 1) {
+                        <span class="recipe-detail__chef recipe-detail__chef--{{ step.chef }}">Chef {{ step.chef }}</span>
+                      }
+                    </div>
+                    <p class="recipe-detail__step-text">{{ step.text }}</p>
+                  </li>
+                }
+              </ol>
+            </div>
+          </section>
+
+          <section class="recipe-detail__like" aria-labelledby="like-title">
+            <div class="recipe-detail__like-text">
+              <h2 class="recipe-detail__like-title" id="like-title">Just finished this meal?</h2>
+              <p>Give it a heart, so that the others know this is delicious.</p>
+            </div>
+            <button
+              class="recipe-detail__heart"
+              type="button"
+              aria-label="Give this recipe a heart"
+              [attr.aria-pressed]="isLiked()"
+              [class.recipe-detail__heart--active]="isLiked()"
+              (click)="toggleLike()"
+            >
+              <svg viewBox="0 0 24 22" aria-hidden="true">
+                <path d="M12 20S2 13.6 2 7.4A5.2 5.2 0 0 1 12 5a5.2 5.2 0 0 1 10 2.4C22 13.6 12 20 12 20z" />
+              </svg>
+            </button>
+          </section>
+        </article>
+
+        <a class="recipe-detail__new" routerLink="/generate-recipe" (click)="startNewRecipe()">
+          Generate new recipe
+          <span class="recipe-detail__icon recipe-detail__icon--arrow" aria-hidden="true"></span>
+        </a>
+      </div>
+    }
+  </div>
+</main>

@@ -14,6 +14,11 @@ export type RecipeCuisine = (typeof RECIPE_CUISINES)[number];
 export type RecipeDiet = (typeof RECIPE_DIETS)[number];
 export type CookCount = 1 | 2 | 3 | 4;
 
+/** Returns a value like "quick" as a label like "Quick". */
+export function formatRecipeLabel(value: string): string {
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
 /** Payload sent from Angular to the n8n workflow to generate recipes. */
 export interface RecipeRequest {
   ingredients: Ingredient[];

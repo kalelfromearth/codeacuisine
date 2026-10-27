@@ -88,12 +88,7 @@
   }
 
   &__visually-hidden {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
+    @include visually-hidden;
   }
 
   &__list {
@@ -135,10 +130,8 @@
   }
 
   &__new {
-    @include flex($gap: 12px);
-    @include font(1.25rem, 500, $color: $color-cream);
+    @include arrow-link($color-cream);
     align-self: flex-end;
-    text-decoration: none;
   }
 
   &__icon {

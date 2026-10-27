@@ -62,6 +62,22 @@
   color: $color-cream;
 }
 
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@mixin arrow-link($color) {
+  @include flex($gap: 12px);
+  @include font(1.25rem, 500, $color: $color);
+  min-height: 44px;
+  text-decoration: none;
+}
+
 @mixin page-title {
   @include font(2rem, 600, $font-family-quicksand, $color-heading);
   line-height: 1;

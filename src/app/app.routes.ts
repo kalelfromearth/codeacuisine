@@ -5,12 +5,14 @@ import { enoughIngredientsGuard } from './generate-recipe/enough-ingredients.gua
 import { Preferences } from './preferences/preferences';
 import { Generating } from './generating/generating';
 import { Recipes } from './recipes/recipes';
-import { recipesAvailableGuard, requestAvailableGuard } from './recipe/recipe.guards';
+import { RecipeDetail } from './recipe-detail/recipe-detail';
+import { recipeNumberGuard, recipesAvailableGuard, requestAvailableGuard } from './recipe/recipe.guards';
 
 export const routes: Routes = [
     { path : '' , component: Landingpage},
     { path : 'generate-recipe' , component: GenerateRecipe},
     { path : 'preferences' , component: Preferences, canActivate: [enoughIngredientsGuard]},
     { path : 'generating' , component: Generating, canActivate: [requestAvailableGuard]},
-    { path : 'recipes' , component: Recipes, canActivate: [recipesAvailableGuard]}
+    { path : 'recipes' , component: Recipes, canActivate: [recipesAvailableGuard]},
+    { path : 'recipes/:n' , component: RecipeDetail, canActivate: [recipeNumberGuard]}
 ];

@@ -70,6 +70,7 @@ export class IngredientList {
   startEditing(position: number): void {
     const ingredient = this.ingredients()[position];
     this.editForm.reset({ amount: ingredient.amount, unit: ingredient.unit });
+    this.editForm.controls.amount.updateValueAndValidity();
     this.closingPosition.set(null);
     this.editingPosition.set(position);
     this.focusAfterRender('.ingredient-list__edit-amount');

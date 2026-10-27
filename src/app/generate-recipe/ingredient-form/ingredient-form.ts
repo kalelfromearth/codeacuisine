@@ -119,5 +119,7 @@ export class IngredientForm {
 
   private resetForm(): void {
     this.ingredientForm.reset({ name: '', amount: 100, unit: 'gram' });
+    // The amount was reset before the unit, so its check used the old unit and has to run again.
+    this.ingredientForm.controls.amount.updateValueAndValidity();
   }
 }

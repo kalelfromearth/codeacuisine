@@ -53,21 +53,16 @@
           </section>
 
           <section class="recipe-detail__section" aria-labelledby="ingredients-title">
-            <h2 class="recipe-detail__band" id="ingredients-title">Ingredients</h2>
-            <button
-              class="recipe-detail__toggle"
-              type="button"
-              aria-controls="ingredients-content"
-              [attr.aria-expanded]="showIngredients()"
-              (click)="toggleIngredients()"
-            >
-              {{ showIngredients() ? 'Hide ingredients' : 'Show ingredients' }}
-              <span
-                class="recipe-detail__icon recipe-detail__icon--caret"
-                [class.recipe-detail__icon--open]="showIngredients()"
-                aria-hidden="true"
-              ></span>
-            </button>
+            <h2 class="recipe-detail__band recipe-detail__band--ingredients" id="ingredients-title">
+              <span class="recipe-detail__band-text">Ingredients</span>
+              <img
+                class="recipe-detail__band-art"
+                src="images/titleBox/ingredients.svg"
+                alt=""
+                width="1152"
+                height="148"
+              />
+            </h2>
             <div
               class="recipe-detail__collapsible"
               id="ingredients-content"
@@ -100,24 +95,34 @@
                 }
               </div>
             </div>
-          </section>
-
-          <section class="recipe-detail__section" aria-labelledby="directions-title">
-            <h2 class="recipe-detail__band" id="directions-title">Directions</h2>
             <button
               class="recipe-detail__toggle"
               type="button"
-              aria-controls="directions-content"
-              [attr.aria-expanded]="showDirections()"
-              (click)="toggleDirections()"
+              aria-controls="ingredients-content"
+              [attr.aria-expanded]="showIngredients()"
+              (click)="toggleIngredients()"
             >
-              {{ showDirections() ? 'Hide directions' : 'Show directions' }}
+              {{ showIngredients() ? 'Hide ingredients' : 'Show ingredients' }}
               <span
                 class="recipe-detail__icon recipe-detail__icon--caret"
-                [class.recipe-detail__icon--open]="showDirections()"
+                [class.recipe-detail__icon--open]="showIngredients()"
                 aria-hidden="true"
               ></span>
             </button>
+          </section>
+
+          <section class="recipe-detail__section" aria-labelledby="directions-title">
+            <h2 class="recipe-detail__band recipe-detail__band--directions" id="directions-title">
+              <span class="recipe-detail__band-spoon" aria-hidden="true"></span>
+              <span class="recipe-detail__band-text">Directions</span>
+              <img
+                class="recipe-detail__band-art"
+                src="images/titleBox/directions.svg"
+                alt=""
+                width="1152"
+                height="134"
+              />
+            </h2>
             <div
               class="recipe-detail__collapsible"
               id="directions-content"
@@ -138,6 +143,20 @@
                 }
               </ol>
             </div>
+            <button
+              class="recipe-detail__toggle"
+              type="button"
+              aria-controls="directions-content"
+              [attr.aria-expanded]="showDirections()"
+              (click)="toggleDirections()"
+            >
+              {{ showDirections() ? 'Hide directions' : 'Show directions' }}
+              <span
+                class="recipe-detail__icon recipe-detail__icon--caret"
+                [class.recipe-detail__icon--open]="showDirections()"
+                aria-hidden="true"
+              ></span>
+            </button>
           </section>
 
           <section class="recipe-detail__like" aria-labelledby="like-title">

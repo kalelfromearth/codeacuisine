@@ -1,5 +1,44 @@
 @use 'abstracts' as *;
 
+// Draws the illustrations of a title banner on both ends of the small banner. The numbers come from
+// the desktop banner image shrunk to half its size: image height, offset of the band from the image top,
+// offset of the band from the image left edge, the visible width of the left and the right end and
+// which part of the image the right end shows and how far that part sits from the right edge.
+@mixin band-caps(
+  $file,
+  $image-height,
+  $band-top,
+  $left-offset,
+  $left-width,
+  $right-width,
+  $right-position,
+  $right-offset: 0
+) {
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: -$band-top;
+    height: $image-height;
+    background-image: url($file);
+    background-repeat: no-repeat;
+    background-size: auto $image-height;
+    pointer-events: none;
+  }
+
+  &::before {
+    left: -$left-offset;
+    width: $left-width;
+    background-position: left top;
+  }
+
+  &::after {
+    right: $right-offset;
+    width: $right-width;
+    background-position: $right-position;
+  }
+}
+
 :host {
   @include light-page;
 }
@@ -10,7 +49,7 @@
 
   &__content {
     @include flex($direction: column, $align: stretch, $justify: flex-start, $gap: 24px);
-    max-width: 860px;
+    max-width: 1150px;
     margin: 0 auto;
   }
 
@@ -192,14 +231,75 @@
 
   &__band {
     @include flex;
-    @include font(1.5rem, 500, $color: $color-heading);
-    min-height: 56px;
-    border-radius: 20px;
+    @include font(1.25rem, 500, $color: $color-heading);
+    position: relative;
+    height: 40px;
+    border-radius: 10px;
     background-color: $color-cream;
+    box-sizing: border-box;
+
+    @media (min-width: 400px) {
+      font-size: 1.5rem;
+    }
+
+    &--ingredients {
+      padding: 0 70px;
+      @include band-caps('images/titleBox/ingredients-art.png', 74px, 17.5px, 4.5px, 74px, 70px, -463px top);
+    }
+
+    &--directions {
+      height: 39.7px;
+      padding: 0 75px 0 55px;
+      @include band-caps('images/titleBox/directions-art.png', 67px, 19.9px, 8.3px, 63px, 48px, -463px top, 21.5px);
+    }
+
+    // After the modifiers on purpose: from tablet on, the banner image replaces the small banner.
+    @include md {
+      display: block;
+      height: auto;
+      margin-bottom: 8px;
+      padding: 0;
+      border-radius: 0;
+      background: none;
+
+      &::before,
+      &::after {
+        display: none;
+      }
+    }
+  }
+
+  &__band-spoon {
+    position: absolute;
+    top: -26.9px;
+    right: 2px;
+    z-index: 1;
+    width: 57px;
+    height: 67px;
+    background: url('images/titleBox/directions-art.png') -512px top / auto 67px no-repeat;
+    pointer-events: none;
 
     @include md {
-      min-height: 72px;
-      font-size: 1.75rem;
+      display: none;
+    }
+  }
+
+  &__band-text {
+    position: relative;
+    z-index: 1;
+
+    @include md {
+      @include visually-hidden;
+    }
+  }
+
+  &__band-art {
+    display: none;
+
+    @include md {
+      display: block;
+      width: 100%;
+      height: auto;
     }
   }
 
@@ -307,10 +407,14 @@
   }
 
   &__step-title {
-    @include font(1.375rem, 500);
+    @include font(1.25rem, 500);
     flex: 1;
     min-width: 0;
     text-wrap: balance;
+
+    @include md {
+      font-size: 1.375rem;
+    }
   }
 
   &__step-text {

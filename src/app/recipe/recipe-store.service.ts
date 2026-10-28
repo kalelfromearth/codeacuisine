@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { Timestamp, addDoc, collection, doc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { FirebaseService } from '../shared/firebase/firebase.service';
 import { Recipe, RecipeDraft, RecipeIngredient, RecipeStep } from './recipe.model';
 
@@ -45,6 +45,10 @@ function pickDocumentFields(draft: RecipeDraft): RecipeDraft {
   };
 }
 
+function readCreatedAt(value: unknown): string {
+  return value instanceof Timestamp ? value.toDate().toISOString() : new Date().toISOString();
+}
+
 @Injectable({ providedIn: 'root' })
 export class RecipeStoreService {
   private readonly firestore = inject(FirebaseService).firestore;
@@ -63,5 +67,16 @@ export class RecipeStoreService {
       createdAt: serverTimestamp(),
     });
     return { ...fields, id: reference.id, likes: 0, createdAt: new Date().toISOString() };
+  }
+
+  /** Loads one recipe by its id, or returns null when no recipe with this id exists. */
+  async loadRecipe(id: string): Promise<Recipe | null> {
+    const snapshot = await getDoc(doc(this.firestore, RECIPES_COLLECTION, id));
+    if (!snapshot.exists()) {
+      return null;
+    }
+    const data = snapshot.data();
+    const fields = pickDocumentFields(data as RecipeDraft);
+    return { ...fields, id: snapshot.id, likes: data['likes'], createdAt: readCreatedAt(data['createdAt']) };
   }
 }

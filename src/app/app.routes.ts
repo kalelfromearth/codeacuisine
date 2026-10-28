@@ -6,7 +6,7 @@ import { Preferences } from './preferences/preferences';
 import { Generating } from './generating/generating';
 import { Recipes } from './recipes/recipes';
 import { RecipeDetail } from './recipe-detail/recipe-detail';
-import { recipeNumberGuard, recipesAvailableGuard, requestAvailableGuard } from './recipe/recipe.guards';
+import { recipesAvailableGuard, requestAvailableGuard } from './recipe/recipe.guards';
 
 export const routes: Routes = [
     { path : '' , component: Landingpage},
@@ -14,5 +14,5 @@ export const routes: Routes = [
     { path : 'preferences' , component: Preferences, canActivate: [enoughIngredientsGuard]},
     { path : 'generating' , component: Generating, canActivate: [requestAvailableGuard]},
     { path : 'recipes' , component: Recipes, canActivate: [recipesAvailableGuard]},
-    { path : 'recipes/:n' , component: RecipeDetail, canActivate: [recipeNumberGuard]}
+    { path : 'recipes/:id' , component: RecipeDetail}
 ];

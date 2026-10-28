@@ -4,10 +4,12 @@
   <div class="wrapper">
     @if (recipe(); as recipe) {
       <div class="recipe-detail__content">
-        <a class="recipe-detail__back" routerLink="/recipes" aria-label="Back to recipe results">
-          <span class="recipe-detail__icon recipe-detail__icon--back" aria-hidden="true"></span>
-          <span class="recipe-detail__back-text">Recipe results</span>
-        </a>
+        @if (hasResults()) {
+          <a class="recipe-detail__back" routerLink="/recipes" aria-label="Back to recipe results">
+            <span class="recipe-detail__icon recipe-detail__icon--back" aria-hidden="true"></span>
+            <span class="recipe-detail__back-text">Recipe results</span>
+          </a>
+        }
 
         <article class="recipe-detail__recipe">
           <section class="recipe-detail__summary" aria-labelledby="recipe-title">
@@ -184,6 +186,17 @@
           <span class="recipe-detail__icon recipe-detail__icon--arrow" aria-hidden="true"></span>
         </a>
       </div>
+    } @else if (status() === 'loading') {
+      <p class="recipe-detail__message" role="status">Loading your recipe...</p>
+    } @else {
+      <section class="recipe-detail__message" aria-labelledby="recipe-failure-title">
+        <h1 class="recipe-detail__message-title" id="recipe-failure-title">Ups! This recipe is not available</h1>
+        <p>{{ failureText() }}</p>
+        <a class="recipe-detail__new" routerLink="/generate-recipe" (click)="startNewRecipe()">
+          Generate new recipe
+          <span class="recipe-detail__icon recipe-detail__icon--arrow" aria-hidden="true"></span>
+        </a>
+      </section>
     }
   </div>
 </main>

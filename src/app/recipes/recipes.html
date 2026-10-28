@@ -21,7 +21,7 @@
     <div class="wrapper recipes__results-content">
       <h2 class="recipes__visually-hidden" id="recipes-results-title">Your three recipes</h2>
       <ul class="recipes__list">
-        @for (recipe of recipes(); track recipe.title; let position = $index) {
+        @for (recipe of recipes(); track recipe.id; let position = $index) {
           <li class="recipes__card">
             <p class="recipes__card-label">
               <span class="recipes__icon recipes__icon--cloche" aria-hidden="true"></span>
@@ -32,7 +32,7 @@
               <span class="recipes__icon recipes__icon--clock" aria-hidden="true"></span>
               Cooking time: {{ recipe.cookingMinutes }}min
             </p>
-            <app-button class="recipes__card-button" variant="light" [link]="'/recipes/' + (position + 1)">View</app-button>
+            <app-button class="recipes__card-button" variant="light" [link]="'/recipes/' + recipe.id">View</app-button>
           </li>
         }
       </ul>

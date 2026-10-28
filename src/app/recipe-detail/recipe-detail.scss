@@ -499,6 +499,18 @@
     align-self: flex-end;
   }
 
+  &__message {
+    @include flex($direction: column, $align: flex-start, $justify: flex-start, $gap: 16px);
+    @include font(1rem, 400, $color: $color-text);
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 48px 0;
+  }
+
+  &__message-title {
+    @include font(1.5rem, 700, $color: $color-heading);
+  }
+
   &__icon {
     flex: none;
     background-color: currentColor;

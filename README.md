@@ -2,7 +2,7 @@
 
 AI-powered recipe generator — enter the ingredients you have at home and get personalized recipe suggestions.
 
-Built with Angular 21, Google Gemini 2.5 Flash (via n8n), and Firebase.
+Built with Angular 21, Swisscom myAI (GLM, via n8n), and Firebase.
 
 ---
 
@@ -48,6 +48,6 @@ Open your browser at `http://localhost:4200`.
 |------------|-----------------------------------|
 | Frontend   | Angular 21, Signals, Reactive Forms |
 | Styling    | SCSS + BEM                        |
-| AI Model   | Google Gemini 2.5 Flash (via n8n) |
+| AI Model   | Swisscom myAI, glm-5.3-flash (via n8n) |
 | Automation | n8n                               |
 | Database   | Firebase / Firestore              |

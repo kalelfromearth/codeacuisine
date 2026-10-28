@@ -71,6 +71,15 @@ export class RecipeGeneratorService {
     }
   }
 
+  /** Keeps the likes of a recipe in the shown results up to date. */
+  setLikes(id: string, likes: number): void {
+    this.recipes.update(function (recipes) {
+      return recipes.map(function (recipe) {
+        return recipe.id === id ? { ...recipe, likes } : recipe;
+      });
+    });
+  }
+
   /** Forgets the last result so a new generation can start from scratch. */
   reset(): void {
     forgetResultIds();

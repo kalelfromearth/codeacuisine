@@ -456,6 +456,19 @@
     @include font(1.375rem, 500);
   }
 
+  &__like-action {
+    @include flex($direction: column, $gap: 4px);
+    flex: none;
+  }
+
+  &__like-count {
+    @include font(1.125rem, 500, $color: $color-heading);
+  }
+
+  &__visually-hidden {
+    @include visually-hidden;
+  }
+
   &__heart {
     @include flex;
     @include font(1rem);

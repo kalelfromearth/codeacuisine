@@ -166,18 +166,24 @@
               <h2 class="recipe-detail__like-title" id="like-title">Just finished this meal?</h2>
               <p>Give it a heart, so that the others know this is delicious.</p>
             </div>
-            <button
-              class="recipe-detail__heart"
-              type="button"
-              aria-label="Give this recipe a heart"
-              [attr.aria-pressed]="isLiked()"
-              [class.recipe-detail__heart--active]="isLiked()"
-              (click)="toggleLike()"
-            >
-              <svg viewBox="0 0 24 22" aria-hidden="true">
-                <path d="M12 20S2 13.6 2 7.4A5.2 5.2 0 0 1 12 5a5.2 5.2 0 0 1 10 2.4C22 13.6 12 20 12 20z" />
-              </svg>
-            </button>
+            <div class="recipe-detail__like-action">
+              <button
+                class="recipe-detail__heart"
+                type="button"
+                aria-label="Give this recipe a heart"
+                [attr.aria-pressed]="isLiked()"
+                [class.recipe-detail__heart--active]="isLiked()"
+                (click)="toggleLike()"
+              >
+                <svg viewBox="0 0 24 22" aria-hidden="true">
+                  <path d="M12 20S2 13.6 2 7.4A5.2 5.2 0 0 1 12 5a5.2 5.2 0 0 1 10 2.4C22 13.6 12 20 12 20z" />
+                </svg>
+              </button>
+              <p class="recipe-detail__like-count" aria-live="polite">
+                {{ likeCount() }}
+                <span class="recipe-detail__visually-hidden">{{ likeCount() === 1 ? 'heart' : 'hearts' }}</span>
+              </p>
+            </div>
           </section>
         </article>
 

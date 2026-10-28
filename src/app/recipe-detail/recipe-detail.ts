@@ -3,11 +3,13 @@ import { RouterLink } from '@angular/router';
 import { IngredientListService } from '../generate-recipe/ingredient-list.service';
 import { describeIngredientAmount } from '../generate-recipe/ingredient.model';
 import { RecipeGeneratorService } from '../recipe/recipe-generator.service';
+import { forgetLike, isRecipeLiked, rememberLike } from '../recipe/liked-recipes';
 import { RecipeStoreService } from '../recipe/recipe-store.service';
 import { Recipe, RecipeIngredient, formatRecipeLabel } from '../recipe/recipe.model';
 import { Header } from '../shared/header/header';
 
 type RecipeLoadStatus = 'loading' | 'ready' | 'missing' | 'error';
+type LikeChange = 1 | -1;
 
 function isOwnIngredient(ingredient: RecipeIngredient): boolean {
   return !ingredient.isExtra;
@@ -43,6 +45,8 @@ export class RecipeDetail {
   readonly showIngredients = signal(true);
   readonly showDirections = signal(true);
   readonly isLiked = signal(false);
+  readonly likeCount = signal(0);
+  private readonly isSavingLike = signal(false);
 
   constructor() {
     effect(this.showRecipe.bind(this));
@@ -63,9 +67,24 @@ export class RecipeDetail {
     this.showDirections.update(this.invert);
   }
 
-  /** Gives the recipe a heart or takes it back. */
-  toggleLike(): void {
-    this.isLiked.update(this.invert);
+  /** Gives the recipe a heart or takes it back and saves the new number of likes. */
+  async toggleLike(): Promise<void> {
+    const recipe = this.recipe();
+    if (!recipe || this.isSavingLike()) {
+      return;
+    }
+    const wasLiked = this.isLiked();
+    const previousCount = this.likeCount();
+    const change: LikeChange = wasLiked ? -1 : 1;
+    this.showLike(recipe.id, !wasLiked, Math.max(0, previousCount + change));
+    this.isSavingLike.set(true);
+    try {
+      await this.recipeStore.changeLikes(recipe.id, change);
+    } catch {
+      this.showLike(recipe.id, wasLiked, previousCount);
+    } finally {
+      this.isSavingLike.set(false);
+    }
   }
 
   /** Forgets the old ingredients so the next recipe starts with an empty list. */
@@ -108,6 +127,19 @@ export class RecipeDetail {
   private applyRecipe(recipe: Recipe | null): void {
     this.recipe.set(recipe);
     this.status.set(recipe ? 'ready' : 'missing');
+    this.likeCount.set(recipe?.likes ?? 0);
+    this.isLiked.set(recipe ? isRecipeLiked(recipe.id) : false);
+  }
+
+  private showLike(id: string, liked: boolean, count: number): void {
+    this.isLiked.set(liked);
+    this.likeCount.set(count);
+    if (liked) {
+      rememberLike(id);
+    } else {
+      forgetLike(id);
+    }
+    this.generator.setLikes(id, count);
   }
 
   private buildFailureText(): string {

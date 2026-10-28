@@ -1,5 +1,14 @@
 import { Injectable, inject } from '@angular/core';
-import { Timestamp, addDoc, collection, doc, getDoc, serverTimestamp } from 'firebase/firestore';
+import {
+  Timestamp,
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  increment,
+  serverTimestamp,
+  updateDoc,
+} from 'firebase/firestore';
 import { FirebaseService } from '../shared/firebase/firebase.service';
 import { Recipe, RecipeDraft, RecipeIngredient, RecipeStep } from './recipe.model';
 
@@ -67,6 +76,11 @@ export class RecipeStoreService {
       createdAt: serverTimestamp(),
     });
     return { ...fields, id: reference.id, likes: 0, createdAt: new Date().toISOString() };
+  }
+
+  /** Raises the likes of a recipe by one or lowers them by one. */
+  changeLikes(id: string, change: 1 | -1): Promise<void> {
+    return updateDoc(doc(this.firestore, RECIPES_COLLECTION, id), { likes: increment(change) });
   }
 
   /** Loads one recipe by its id, or returns null when no recipe with this id exists. */

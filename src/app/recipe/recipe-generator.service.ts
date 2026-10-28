@@ -3,6 +3,7 @@ import { environment } from '../../environments/environment';
 import { RecipeRequestService } from './recipe-request.service';
 import { RecipeStoreService } from './recipe-store.service';
 import { Recipe, RecipeDraft, RecipeRequest } from './recipe.model';
+import { forgetResultIds, readResultIds, rememberResultIds } from './result-memory';
 
 export type GeneratorStatus = 'idle' | 'loading' | 'success' | 'error';
 
@@ -12,6 +13,14 @@ interface GeneratorResponse {
 }
 
 const REQUEST_TIMEOUT_MS = 120000;
+
+function getRecipeId(recipe: Recipe): string {
+  return recipe.id;
+}
+
+function isRecipe(recipe: Recipe | null): recipe is Recipe {
+  return recipe !== null;
+}
 
 @Injectable({ providedIn: 'root' })
 export class RecipeGeneratorService {
@@ -48,13 +57,41 @@ export class RecipeGeneratorService {
     await this.saveDrafts(this.unsavedDrafts);
   }
 
+  /** Shows the last results again after a reload, using the ids remembered in this tab. Returns true on success. */
+  async restoreResults(): Promise<boolean> {
+    const ids = readResultIds();
+    if (ids.length === 0) {
+      return false;
+    }
+    try {
+      const loaded = await Promise.all(ids.map(this.loadRecipeById.bind(this)));
+      return this.showRestoredRecipes(loaded.filter(isRecipe));
+    } catch {
+      return false;
+    }
+  }
+
   /** Forgets the last result so a new generation can start from scratch. */
   reset(): void {
+    forgetResultIds();
     this.status.set('idle');
     this.recipes.set([]);
     this.errorMessage.set('');
     this.hasIngredientProblem.set(false);
     this.unsavedDrafts = [];
+  }
+
+  private loadRecipeById(id: string): Promise<Recipe | null> {
+    return this.recipeStore.loadRecipe(id);
+  }
+
+  private showRestoredRecipes(recipes: Recipe[]): boolean {
+    if (recipes.length === 0) {
+      return false;
+    }
+    this.recipes.set(recipes);
+    this.status.set('success');
+    return true;
   }
 
   private startLoading(): void {
@@ -85,7 +122,9 @@ export class RecipeGeneratorService {
 
   private async saveDrafts(drafts: RecipeDraft[]): Promise<void> {
     try {
-      this.recipes.set(await this.recipeStore.saveRecipes(drafts));
+      const savedRecipes = await this.recipeStore.saveRecipes(drafts);
+      rememberResultIds(savedRecipes.map(getRecipeId));
+      this.recipes.set(savedRecipes);
       this.unsavedDrafts = [];
       this.status.set('success');
     } catch {

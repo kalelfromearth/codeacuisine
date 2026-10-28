@@ -11,10 +11,12 @@ export function requestAvailableGuard(): boolean | UrlTree {
   return inject(Router).createUrlTree(['/generate-recipe']);
 }
 
-/** Allows the result pages only when recipes exist, otherwise goes back to the start. */
-export function recipesAvailableGuard(): boolean | UrlTree {
-  if (inject(RecipeGeneratorService).recipes().length > 0) {
+/** Allows the result page when recipes exist or can be restored after a reload, otherwise goes back to the start. */
+export async function recipesAvailableGuard(): Promise<boolean | UrlTree> {
+  const generator = inject(RecipeGeneratorService);
+  const router = inject(Router);
+  if (generator.recipes().length > 0 || (await generator.restoreResults())) {
     return true;
   }
-  return inject(Router).createUrlTree(['/generate-recipe']);
+  return router.createUrlTree(['/generate-recipe']);
 }

@@ -35,6 +35,7 @@ Der Workflow prüft die Anfrage erneut. Der Browser allein genügt nicht, weil j
 | 200 | alles gut | `{ status: "ok", recipes: [3 Rezepte] }` |
 | 400 | Anfrage ungültig (Knoten "Validate request") | `{ status: "error", errors: [...] }`, z. B. falsche Einheit, Menge außerhalb der Grenzen, unbekannte Küche |
 | 422 | Eine KI-Prüfung hält Zutaten für keine Lebensmittel | `{ status: "error", message: "These don't look like ingredients: …" }` |
+| 429 | Der KI-Anbieter meldet ein Limit (Rate Limit) | `{ status: "error", message: "The AI service is busy at the moment. Please try again in a few minutes." }` |
 | 502 | Die KI liefert keine drei brauchbaren Rezepte | `{ status: "error", message: "The AI did not create three usable recipes. Please try again." }` |
 
 Weitere Schutzmaßnahmen im Workflow:
@@ -42,10 +43,11 @@ Weitere Schutzmaßnahmen im Workflow:
 - **Zutatenprüfung:** Ein eigener KI-Aufruf (Temperatur 0) markiert nur eindeutig unsinnige Namen. Im Zweifel gilt ein Name als gültig. Die Antwort wird auf die Zutaten der Anfrage begrenzt.
 - **Antwort der KI wird nie ungeprüft weitergegeben.** Der Knoten "Read AI answer" entfernt HTML und Steuerzeichen, kürzt Texte, rundet Zahlen, erzwingt erlaubte Einheiten und begrenzt Mengen auf das, was die Nutzerin hat. Ein Rezept ohne Titel, ohne Schritte oder mit unsinnigen Nährwerten wird verworfen.
 - **Prompt-Injection:** Zutatennamen werden der KI als reine Daten übergeben, mit der Anweisung, nichts davon als Befehl zu behandeln.
-- **Zeitlimit:** Der KI-Aufruf bricht nach 150 Sekunden ab. Fällt ein einzelner Aufruf aus, läuft der Workflow weiter (`continueRegularOutput`) und meldet am Ende einen 502 statt abzustürzen.
+- **Zeitlimit und Wiederholung:** Der KI-Aufruf bricht nach 150 Sekunden ab und wird bei einem Fehler **einmal wiederholt** (2 Versuche, 2 Sekunden Pause). Schlägt auch das fehl, läuft der Workflow weiter (`continueRegularOutput`) und meldet am Ende einen 502 oder 429 statt abzustürzen.
+- **Fehler-Workflow mit E-Mail:** Stürzt ein Knoten unerwartet ab, startet der Workflow `Code a Cuisine - Error Handler` (`n8n/code-a-cuisine-error-handler.json`). Er besteht aus einem Error Trigger und einer E-Mail mit Workflow-Name, fehlgeschlagenem Knoten, Fehlermeldung, Zeit und Link zur Ausführung. Im Hauptworkflow ist er unter den Einstellungen als "Error Workflow" eingetragen.
 - **Parallelität:** Der Anbieter erlaubt höchstens zwei gleichzeitige Aufrufe, deshalb verarbeitet der Knoten "Call AI" je zwei im Block.
 
-Nicht umgesetzt: ein Fehler-Trigger mit E-Mail-Benachrichtigung und die Tageslimits pro IP. Die Client-IP wird bereits erfasst, die Begrenzung selbst kommt nach der Abnahme.
+Nicht umgesetzt: die Tageslimits pro IP. Die Client-IP wird bereits erfasst, die Begrenzung selbst kommt nach der Abnahme.
 
 ## 3. Angular: Anfrage und Speichern
 
@@ -54,7 +56,7 @@ Nicht umgesetzt: ein Fehler-Trigger mit E-Mail-Benachrichtigung und die Tageslim
 | Fall | Meldung |
 | --- | --- |
 | 422 | "Ups! Check your ingredients" mit Link "Back to ingredients" |
-| 429 | "The daily limit is reached. Please try again tomorrow." (vorbereitet, der Workflow sendet es noch nicht) |
+| 429 | Meldung des Workflows, zum Beispiel "The AI service is busy at the moment. Please try again in a few minutes." (ohne Meldung: "The daily limit is reached. Please try again tomorrow.") |
 | 400 | "Some of your entries are not valid. Please go back and check them." |
 | anderer Fehler | "Something went wrong while creating your recipes. Please try again." |
 | Zeitüberschreitung nach 120 s | "This is taking too long. Please try again." |

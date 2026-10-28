@@ -16,4 +16,11 @@ Kurz und knapp, neueste Einträge unten. Format: `Datum – was`.
 - Budget für Komponenten-Styles auf 14 kB Warnung / 18 kB Fehler angehoben (`angular.json`); Produktions-Build ohne Warnung.
 - `STATUS.md` und `TODO.md` liegen jetzt in `docs/`, bleiben per `.gitignore` aus dem Repo (wie `CLAUDE.md`).
 - Ordner `.claude/agents/` mit leerer Vorlage `vorlage.md` angelegt (Felder name, description, model, tools).
-- Offen: README, `figma/` aus dem Repo, Cookbook-Seite, Test-Rezepte in Firestore löschen.
+- Agent `regel-waechter` (sonnet, nur lesend) in `.claude/agents/` angelegt; prüft den Code gegen die Regeln aus `CLAUDE.md`. Erster Lauf: 75 Dateien, 1 echter Verstoß (`toggleLike()` 18 Zeilen), 7 Fehlmeldungen zu `routerLink` mit `/` (Regel im Agenten präzisiert).
+- Entscheidung: `toggleLike()` (18 Zeilen) bleibt wie es ist.
+- n8n-Fehlerbehandlung geprüft: es fehlen Fehler-Workflow mit E-Mail, Wiederholversuch beim KI-Aufruf und die 429-Weitergabe. In n8n gibt es schon die Verbindung "SMTP account".
+- n8n: "Call AI" wiederholt einmal bei Fehler (2 Versuche, 2 s); 429 des Anbieters wird als 429 weitergegeben; neuer Workflow `Code a Cuisine - Error Handler` (Error Trigger plus E-Mail über "SMTP account") ist im Hauptworkflow als Error Workflow eingetragen. Test: 200 mit 3 Rezepten, 400 bei falscher Einheit.
+- Exporte aktualisiert: `n8n/code-a-cuisine-workflow.json`, neu `n8n/code-a-cuisine-error-handler.json` (Adressen als Platzhalter); `docs/errorhandling.md` angepasst.
+- `.gitignore`: `/figma/` und `/*.dc.html` (Figma-Exporte bleiben lokal). Die 2 bereits getrackten Dateien müssen noch per `git rm --cached` aus dem Repo.
+- Agent `sicherheits-pruefer` (claude-sonnet-5-5, nur lesend) in `.claude/agents/` angelegt.
+- Offen: `git rm --cached` für die Figma-Dateien, Test-E-Mail des Fehler-Workflows in n8n von Hand auslösen, README (nennt noch Gemini statt Swisscom/GLM), Cookbook-Seite, Test-Rezepte in Firestore löschen, ungenutzte Assets entscheiden.

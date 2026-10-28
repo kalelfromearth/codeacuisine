@@ -1,0 +1,38 @@
+{
+  "name": "Code a Cuisine - Error Handler",
+  "nodes": [
+    {
+      "id": "7a1c2e30-4b5d-4f60-9a71-8b2c3d4e5f01",
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [0, 0],
+      "parameters": {}
+    },
+    {
+      "id": "8b2d3f41-5c6e-4a71-8b82-9c3d4e5f6a02",
+      "name": "Send error email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [260, 0],
+      "parameters": {
+        "resource": "email",
+        "operation": "send",
+        "fromEmail": "sender@example.com",
+        "toEmail": "recipient@example.com",
+        "subject": "=Code a Cuisine: error in {{ $json.workflow.name }}",
+        "emailFormat": "text",
+        "text": "=Workflow: {{ $json.workflow.name }}\nFailed node: {{ $json.execution.lastNodeExecuted }}\nError: {{ $json.execution.error.message }}\nTime: {{ $now.toFormat('yyyy-MM-dd HH:mm:ss') }}\nExecution: {{ $json.execution.url }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Error Trigger": {
+      "main": [[{ "node": "Send error email", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

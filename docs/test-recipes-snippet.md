@@ -1,25 +1,4 @@
-# Testrezepte ohne KI laden (Konsolen-Schnipsel)
 
-Damit du die Detailseite (`/recipes/1` bis `/recipes/3`) ansehen kannst, ohne jedes Mal Zutaten einzutippen und auf die KI zu warten.
-
-Der Schnipsel ersetzt `fetch` auf der Seite durch eine feste Antwort mit drei Testrezepten (2 Köche, 1 Koch, 4 Köche), trägt drei Zutaten ein, klickt sich durch Preferences und die Ladeseite und bleibt am Ende auf der Ergebnisseite mit den 3 Rezepten.
-
-## So benutzt du ihn
-
-1. Dev-Server starten (`npm start`) und `http://localhost:4200/generate-recipe` **frisch** öffnen.
-2. Konsole öffnen: F12, Reiter **Console**.
-3. Beim ersten Mal blockiert Chrome das Einfügen: `allow pasting` tippen und Enter drücken.
-4. Den Block unten kopieren, einfügen, Enter.
-
-## Wichtig
-
-- Gilt nur für **einen** Seitenaufruf. Nach F5 sind die Testrezepte weg, dann den Schnipsel erneut einfügen.
-- Der Schnipsel klickt über Klassennamen (`.ingredient-form__add-button`, `.preferences__submit`, `.recipes__card`). Wenn sich diese Namen ändern, muss er angepasst werden.
-- Es wird **nichts** an n8n gesendet. Die Rezepte werden aber echt in Firestore gespeichert (3 neue Dokumente pro Durchlauf). Nur der n8n-Aufruf (`/webhook/`) wird ersetzt, alle anderen Anfragen laufen normal.
-
-## Der Schnipsel
-
-```js
 (async () => {
   const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
   const find = (selector) => document.querySelector(selector);
@@ -79,7 +58,7 @@ Der Schnipsel ersetzt `fetch` auf der Seite durch eine feste Antwort mit drei Te
   await wait(900);
   find('.preferences__submit app-button .btn').click();
 })();
-```
+
 
 ## Andere Rezepte ansehen
 

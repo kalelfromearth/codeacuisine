@@ -512,6 +512,15 @@
     align-self: flex-end;
   }
 
+  &__film {
+    @include flex($justify: flex-start, $align: flex-start, $gap: 12px);
+    @include font(1rem, 400);
+    padding: 12px 16px;
+    border-radius: 12px;
+    background-color: $color-highlight;
+    text-wrap: pretty;
+  }
+
   &__message {
     @include flex($direction: column, $align: flex-start, $justify: flex-start, $gap: 16px);
     @include font(1rem, 400, $color: $color-text);
@@ -541,6 +550,12 @@
       width: 24px;
       height: 24px;
       mask-image: url('images/icons/schedule.svg');
+    }
+
+    &--clapper {
+      width: 24px;
+      height: 24px;
+      mask-image: url('images/icons/clapperboard.svg');
     }
 
     &--caret {

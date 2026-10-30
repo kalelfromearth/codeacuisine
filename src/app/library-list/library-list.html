@@ -1,0 +1,115 @@
+<app-header background="light"></app-header>
+
+<main class="library-list">
+  <div class="wrapper library-list__content">
+    <div class="library-list__top">
+      <a class="library-list__back" routerLink="/library" aria-label="Back to the cookbook">
+        <span class="library-list__icon library-list__icon--back" aria-hidden="true"></span>
+        <span class="library-list__back-text">Cookbook</span>
+      </a>
+      <a class="library-list__generate" routerLink="/generate-recipe" (click)="startNewRecipe()">Generate a recipe</a>
+    </div>
+
+    @if (status() === 'missing') {
+      <section class="library-list__message-box">
+        <h1 class="library-list__message-title">Ups! We do not know this cuisine</h1>
+        <p>Please pick one of the cuisines in the cookbook.</p>
+        <a class="library-list__generate" routerLink="/library">Back to the cookbook</a>
+      </section>
+    } @else {
+      <header class="library-list__hero" [class.library-list__hero--film]="isFilm()">
+        <h1 class="library-list__title">{{ title() }}</h1>
+      </header>
+
+      @if (!isFilm()) {
+        <div class="library-list__sort">
+          <label class="library-list__sort-label" for="library-sort">Sort by</label>
+          <select class="library-list__select" id="library-sort" [value]="sort()" (change)="onSortChange($event)">
+            @for (option of sortOptions; track option.value) {
+              <option [value]="option.value" [selected]="option.value === sort()">{{ option.label }}</option>
+            }
+          </select>
+        </div>
+      }
+
+      @if (status() === 'loading') {
+        <p class="library-list__message" role="status">Loading the recipes...</p>
+      } @else if (status() === 'error') {
+        <p class="library-list__message">We could not load the recipes. Please check your connection and try again later.</p>
+      } @else if (page(); as currentPage) {
+        @if (currentPage.recipes.length === 0) {
+          <p class="library-list__message">There are no {{ title() }} recipes yet. Create the first one!</p>
+        } @else {
+          <ul class="library-list__rows">
+            @for (recipe of currentPage.recipes; track recipe.id; let position = $index) {
+              <li>
+                <a class="library-list__row" [routerLink]="'/recipes/' + recipe.id">
+                  <span class="library-list__rank" aria-hidden="true">{{ firstRank() + position + 1 }}.</span>
+                  <span class="library-list__main">
+                    <span class="library-list__time">
+                      <span class="library-list__icon library-list__icon--clock" aria-hidden="true"></span>
+                      Cooking time: {{ recipe.cookingMinutes }}min
+                    </span>
+                    <span class="library-list__recipe-title">{{ recipe.title }}</span>
+                    @if (getFilm(recipe); as film) {
+                      <span class="library-list__film">
+                        <span class="library-list__icon library-list__icon--clapper" aria-hidden="true"></span>
+                        From the film {{ film.title }} ({{ film.year }})
+                      </span>
+                    }
+                  </span>
+                  <span class="library-list__chips">
+                    @for (tag of getTags(recipe); track tag) {
+                      <span class="library-list__chip">{{ tag }}</span>
+                    }
+                    @if (!isFilm()) {
+                      <span class="library-list__chip library-list__chip--likes">
+                        <span aria-hidden="true">♡</span> {{ recipe.likes }}
+                        <span class="library-list__visually-hidden">{{ recipe.likes === 1 ? 'heart' : 'hearts' }}</span>
+                      </span>
+                    }
+                  </span>
+                </a>
+              </li>
+            }
+          </ul>
+
+          @if (pageNumbers().length > 1 || hasNextPage()) {
+            <nav class="library-list__pager" aria-label="Pages">
+              <button
+                class="library-list__page"
+                type="button"
+                aria-label="Previous page"
+                [disabled]="!hasPreviousPage()"
+                (click)="goToPage(pageNumber() - 1)"
+              >
+                &lsaquo;
+              </button>
+              @for (number of pageNumbers(); track number) {
+                <button
+                  class="library-list__page"
+                  type="button"
+                  [class.library-list__page--active]="number === pageNumber()"
+                  [attr.aria-current]="number === pageNumber() ? 'page' : null"
+                  [attr.aria-label]="'Page ' + number"
+                  (click)="goToPage(number)"
+                >
+                  {{ number }}
+                </button>
+              }
+              <button
+                class="library-list__page"
+                type="button"
+                aria-label="Next page"
+                [disabled]="!hasNextPage()"
+                (click)="goToPage(pageNumber() + 1)"
+              >
+                &rsaquo;
+              </button>
+            </nav>
+          }
+        }
+      }
+    }
+  </div>
+</main>

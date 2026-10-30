@@ -4,7 +4,12 @@
   <div class="wrapper">
     @if (recipe(); as recipe) {
       <div class="recipe-detail__content">
-        @if (hasResults()) {
+        @if (film()) {
+          <a class="recipe-detail__back" routerLink="/library/film" aria-label="Back to the film cuisine">
+            <span class="recipe-detail__icon recipe-detail__icon--back" aria-hidden="true"></span>
+            <span class="recipe-detail__back-text">Film cuisine</span>
+          </a>
+        } @else if (hasResults()) {
           <a class="recipe-detail__back" routerLink="/recipes" aria-label="Back to recipe results">
             <span class="recipe-detail__icon recipe-detail__icon--back" aria-hidden="true"></span>
             <span class="recipe-detail__back-text">Recipe results</span>
@@ -18,6 +23,14 @@
               Cooking time: {{ recipe.cookingMinutes }}min
             </p>
             <h1 class="recipe-detail__title" id="recipe-title">{{ recipe.title }}</h1>
+            @if (film(); as filmInfo) {
+              <p class="recipe-detail__film">
+                <span class="recipe-detail__icon recipe-detail__icon--clapper" aria-hidden="true"></span>
+                <span>
+                  Inspired by the film <strong>{{ filmInfo.title }}</strong> ({{ filmInfo.year }}). {{ filmInfo.scene }}
+                </span>
+              </p>
+            }
             <div class="recipe-detail__cooks">
               <p class="recipe-detail__cooks-label">Cooking person: {{ recipe.cooks }}</p>
               <ul class="recipe-detail__chefs" aria-label="Cooks">
@@ -161,6 +174,7 @@
             </button>
           </section>
 
+          @if (!film()) {
           <section class="recipe-detail__like" aria-labelledby="like-title">
             <div class="recipe-detail__like-text">
               <h2 class="recipe-detail__like-title" id="like-title">Just finished this meal?</h2>
@@ -185,6 +199,7 @@
               </p>
             </div>
           </section>
+          }
         </article>
 
         <a class="recipe-detail__new" routerLink="/generate-recipe" (click)="startNewRecipe()">

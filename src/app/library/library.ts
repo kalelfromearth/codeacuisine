@@ -3,7 +3,8 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IngredientListService } from '../generate-recipe/ingredient-list.service';
 import { RecipeStoreService } from '../recipe/recipe-store.service';
-import { RECIPE_CUISINES, Recipe, RecipeCuisine, buildRecipeTags, formatRecipeLabel } from '../recipe/recipe.model';
+import { FILM_CUISINE } from '../recipe/film-recipes';
+import { RECIPE_CUISINES, Recipe, buildRecipeTags, formatRecipeLabel } from '../recipe/recipe.model';
 import { Header } from '../shared/header/header';
 
 type LibraryStatus = 'loading' | 'ready' | 'error';
@@ -19,7 +20,8 @@ export class Library {
   private readonly recipeStore = inject(RecipeStoreService);
   private readonly ingredientList = inject(IngredientListService);
 
-  readonly cuisines = RECIPE_CUISINES;
+  readonly filmCuisine = FILM_CUISINE;
+  readonly cuisines: readonly string[] = [...RECIPE_CUISINES, FILM_CUISINE];
   readonly mostLiked = signal<Recipe[]>([]);
   readonly newest = signal<Recipe[]>([]);
   readonly status = signal<LibraryStatus>('loading');
@@ -31,7 +33,7 @@ export class Library {
   }
 
   /** Returns the name of a cuisine as shown on its tile, for example "Italian cuisine". */
-  describeCuisine(cuisine: RecipeCuisine): string {
+  describeCuisine(cuisine: string): string {
     return `${formatRecipeLabel(cuisine)} cuisine`;
   }
 

@@ -94,7 +94,16 @@
                 {{ describeCuisine(cuisine) }}
                 <span class="library__icon library__icon--arrow" aria-hidden="true"></span>
               </span>
-              <span class="library__cuisine-picture" aria-hidden="true">{{ describeCuisine(cuisine) }}</span>
+              <span
+                class="library__cuisine-picture"
+                [class.library__cuisine-picture--film]="cuisine === filmCuisine"
+                aria-hidden="true"
+              >
+                @if (cuisine === filmCuisine) {
+                  <span class="library__icon library__icon--clapper"></span>
+                }
+                {{ describeCuisine(cuisine) }}
+              </span>
             </a>
           </li>
         }

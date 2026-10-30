@@ -1,0 +1,248 @@
+@use 'abstracts' as *;
+
+:host {
+  @include light-page;
+}
+
+.library-list {
+  padding: 8px 0 56px;
+  color: $color-text;
+
+  &__content {
+    @include flex($direction: column, $align: stretch, $justify: flex-start, $gap: 24px);
+    max-width: 900px;
+    margin: 0 auto;
+
+    @include md {
+      gap: 32px;
+    }
+  }
+
+  &__top {
+    @include flex($justify: space-between, $gap: 16px);
+    flex-wrap: wrap;
+  }
+
+  &__back {
+    @include flex($justify: flex-start, $gap: 8px);
+    @include font(1rem, 500, $color: $color-heading);
+    min-width: 44px;
+    min-height: 44px;
+    text-decoration: none;
+  }
+
+  &__back-text {
+    display: none;
+
+    @include md {
+      display: inline;
+    }
+  }
+
+  &__generate {
+    @include flex;
+    @include font(1rem, 500, $color: $color-cream);
+    min-height: 44px;
+    padding: 0 24px;
+    border-radius: 8px;
+    background-color: $color-primary;
+    text-decoration: none;
+
+    @media (hover: hover) {
+      &:hover {
+        background-color: $color-heading;
+      }
+    }
+
+    &:focus-visible {
+      outline: 3px solid $color-heading;
+      outline-offset: 2px;
+    }
+  }
+
+  // Placeholder until the cuisine photo is added.
+  &__hero {
+    @include flex($align: flex-end, $justify: flex-start);
+    min-height: 160px;
+    border-radius: 20px;
+    background: repeating-linear-gradient(135deg, $color-highlight 0 14px, #E1E7E1 14px 28px);
+    overflow: hidden;
+
+    @include md {
+      min-height: 240px;
+    }
+  }
+
+  &__hero--film {
+    background: repeating-linear-gradient(90deg, $color-text 0 28px, $color-heading 28px 32px);
+  }
+
+  &__film {
+    @include flex($justify: flex-start, $gap: 8px);
+    @include font(1rem, 500, $color: $color-heading);
+    text-wrap: pretty;
+  }
+
+  &__title {
+    @include font(2rem, 700, $color: $color-cream);
+    box-sizing: border-box;
+    width: 100%;
+    padding: 20px 24px;
+    background: linear-gradient(transparent, rgba($color-text, 0.75));
+    line-height: 1;
+
+    @include md {
+      font-size: 3.5rem;
+    }
+  }
+
+  &__sort {
+    @include flex($justify: flex-end, $gap: 12px);
+  }
+
+  &__sort-label {
+    @include font(1rem, 500, $color: $color-heading);
+  }
+
+  &__select {
+    @include pill-field(44px);
+    @include font(1rem, 500, $color: $color-text);
+    padding: 0 16px;
+    cursor: pointer;
+  }
+
+  &__rows {
+    @include flex($direction: column, $align: stretch, $justify: flex-start, $gap: 8px);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  &__row {
+    @include flex($justify: flex-start, $gap: 8px 16px);
+    flex-wrap: wrap;
+    padding: 16px 20px;
+    border-radius: 20px;
+    background-color: rgba($color-primary, 0.06);
+    color: inherit;
+    text-decoration: none;
+
+    @media (hover: hover) {
+      &:hover {
+        background-color: $color-panel;
+      }
+    }
+
+    &:focus-visible {
+      outline: 3px solid $color-heading;
+      outline-offset: 2px;
+    }
+  }
+
+  &__rank {
+    @include font(1.375rem, 500, $color: $color-primary);
+    min-width: 40px;
+  }
+
+  &__main {
+    @include flex($direction: column, $align: flex-start, $justify: flex-start, $gap: 2px);
+    flex: 1 1 120px;
+    min-width: 0;
+  }
+
+  &__time {
+    @include flex($justify: flex-start, $gap: 6px);
+    @include font(1rem, 400, $color: $color-primary);
+  }
+
+  &__recipe-title {
+    @include font(1.375rem, 400);
+    text-wrap: pretty;
+  }
+
+  &__chips {
+    @include flex($justify: flex-start, $gap: 8px);
+    flex-wrap: wrap;
+  }
+
+  &__chip {
+    @include font(1rem, 400);
+    padding: 3px 12px;
+    border-radius: 999px;
+    background-color: $color-card;
+
+    &--likes {
+      background-color: $color-primary;
+      color: $color-cream;
+    }
+  }
+
+  &__pager {
+    @include flex($gap: 8px);
+    flex-wrap: wrap;
+  }
+
+  &__page {
+    @include font(1.125rem, 500, $color: $color-text);
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0 4px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    cursor: pointer;
+
+    @media (hover: hover) {
+      &:hover:not(:disabled) {
+        background-color: $color-panel;
+      }
+    }
+
+    &:focus-visible {
+      outline: 3px solid $color-heading;
+      outline-offset: 2px;
+    }
+
+    &:disabled {
+      cursor: default;
+      opacity: 0.4;
+    }
+
+    &--active {
+      background-color: $color-primary;
+      color: $color-cream;
+    }
+  }
+
+  &__message,
+  &__message-box {
+    @include font(1rem, 400);
+  }
+
+  &__message-box {
+    @include flex($direction: column, $align: flex-start, $justify: flex-start, $gap: 16px);
+    padding: 48px 0;
+  }
+
+  &__message-title {
+    @include font(1.5rem, 700, $color: $color-heading);
+  }
+
+  &__visually-hidden {
+    @include visually-hidden;
+  }
+
+  &__icon {
+    &--back {
+      @include mask-icon('images/icons/arrow-left.svg', 28px, 18px);
+    }
+
+    &--clock {
+      @include mask-icon('images/icons/schedule.svg', 18px, 18px);
+    }
+
+    &--clapper {
+      @include mask-icon('images/icons/clapperboard.svg', 22px, 22px);
+    }
+  }
+}

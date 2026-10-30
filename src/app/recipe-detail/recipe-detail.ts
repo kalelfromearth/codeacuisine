@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { IngredientListService } from '../generate-recipe/ingredient-list.service';
 import { describeIngredientAmount } from '../generate-recipe/ingredient.model';
 import { RecipeGeneratorService } from '../recipe/recipe-generator.service';
+import { findFilmRecipe, isFilmRecipe } from '../recipe/film-recipes';
 import { forgetLike, isRecipeLiked, rememberLike } from '../recipe/liked-recipes';
 import { RecipeStoreService } from '../recipe/recipe-store.service';
 import { Recipe, RecipeIngredient, buildRecipeTags } from '../recipe/recipe.model';
@@ -36,6 +37,7 @@ export class RecipeDetail {
   readonly recipe = signal<Recipe | null>(null);
   readonly status = signal<RecipeLoadStatus>('loading');
   readonly hasResults = computed(() => this.generator.recipes().length > 0);
+  readonly film = computed(() => this.findFilm());
   readonly failureText = computed(() => this.buildFailureText());
   readonly ownIngredients = computed(() => this.recipe()?.ingredients.filter(isOwnIngredient) ?? []);
   readonly extraIngredients = computed(() => this.recipe()?.ingredients.filter(isExtraIngredient) ?? []);
@@ -101,10 +103,17 @@ export class RecipeDetail {
     untracked(this.openRecipe.bind(this, id));
   }
 
+  private findFilm() {
+    const recipe = this.recipe();
+    return recipe && isFilmRecipe(recipe) ? recipe.film : null;
+  }
+
   private openRecipe(id: string): void {
-    const knownRecipe = this.generator.recipes().find(function (recipe) {
-      return recipe.id === id;
-    });
+    const knownRecipe =
+      findFilmRecipe(id) ??
+      this.generator.recipes().find(function (recipe) {
+        return recipe.id === id;
+      });
     if (knownRecipe) {
       this.applyRecipe(knownRecipe);
       return;

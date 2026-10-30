@@ -129,9 +129,33 @@
     margin-top: auto;
   }
 
+  &__footer {
+    @include flex($direction: column, $align: flex-start, $justify: flex-start, $gap: 16px);
+    align-self: stretch;
+
+    @include md {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 32px;
+    }
+  }
+
+  &__footer-text {
+    @include font(1.125rem, 400, $color: $color-cream);
+    max-width: 420px;
+  }
+
+  &__footer-links {
+    @include flex($direction: column, $align: flex-start, $justify: flex-start, $gap: 4px);
+
+    @include md {
+      align-items: flex-end;
+    }
+  }
+
   &__new {
     @include arrow-link($color-cream);
-    align-self: flex-end;
   }
 
   &__icon {

@@ -36,10 +36,19 @@
           </li>
         }
       </ul>
-      <a class="recipes__new" routerLink="/generate-recipe" (click)="startNewRecipe()">
-        Generate new recipe
-        <span class="recipes__icon recipes__icon--arrow" aria-hidden="true"></span>
-      </a>
+      <div class="recipes__footer">
+        <p class="recipes__footer-text">Still hungry for ideas? Browse our cookbook and see what others love to cook.</p>
+        <div class="recipes__footer-links">
+          <a class="recipes__new" routerLink="/library">
+            Explore the cookbook
+            <span class="recipes__icon recipes__icon--arrow" aria-hidden="true"></span>
+          </a>
+          <a class="recipes__new" routerLink="/generate-recipe" (click)="startNewRecipe()">
+            Generate new recipe
+            <span class="recipes__icon recipes__icon--arrow" aria-hidden="true"></span>
+          </a>
+        </div>
+      </div>
     </div>
   </section>
 </main>

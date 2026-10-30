@@ -5,7 +5,7 @@ import { describeIngredientAmount } from '../generate-recipe/ingredient.model';
 import { RecipeGeneratorService } from '../recipe/recipe-generator.service';
 import { forgetLike, isRecipeLiked, rememberLike } from '../recipe/liked-recipes';
 import { RecipeStoreService } from '../recipe/recipe-store.service';
-import { Recipe, RecipeIngredient, formatRecipeLabel } from '../recipe/recipe.model';
+import { Recipe, RecipeIngredient, buildRecipeTags } from '../recipe/recipe.model';
 import { Header } from '../shared/header/header';
 
 type RecipeLoadStatus = 'loading' | 'ready' | 'missing' | 'error';
@@ -160,7 +160,6 @@ export class RecipeDetail {
     if (!recipe) {
       return [];
     }
-    const dietTag = recipe.diet === 'none' ? [] : [formatRecipeLabel(recipe.diet)];
-    return [...dietTag, formatRecipeLabel(recipe.timeCategory)];
+    return buildRecipeTags(recipe);
   }
 }

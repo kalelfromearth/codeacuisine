@@ -19,6 +19,12 @@ export function formatRecipeLabel(value: string): string {
   return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
+/** Returns the tags shown for a recipe: its diet (unless there is none) and its time category. */
+export function buildRecipeTags(recipe: { diet: RecipeDiet; timeCategory: RecipeTimeCategory }): string[] {
+  const dietTag = recipe.diet === 'none' ? [] : [formatRecipeLabel(recipe.diet)];
+  return [...dietTag, formatRecipeLabel(recipe.timeCategory)];
+}
+
 /** Payload sent from Angular to the n8n workflow to generate recipes. */
 export interface RecipeRequest {
   ingredients: Ingredient[];

@@ -1,0 +1,109 @@
+<app-header background="light"></app-header>
+
+<ng-template #recipeList let-recipes>
+  <ul class="library__list">
+    @for (recipe of recipes; track recipe.id) {
+      <li class="library__item">
+        <a class="library__card" [routerLink]="'/recipes/' + recipe.id">
+          <span class="library__card-time">
+            <span class="library__icon library__icon--clock" aria-hidden="true"></span>
+            Cooking time: {{ recipe.cookingMinutes }}min
+          </span>
+          <span class="library__card-title">{{ recipe.title }}</span>
+          <span class="library__card-tags">
+            @for (tag of getTags(recipe); track tag) {
+              <span class="library__chip">{{ tag }}</span>
+            }
+            <span class="library__chip library__chip--likes">
+              <span aria-hidden="true">♡</span> {{ recipe.likes }}
+              <span class="library__visually-hidden">{{ recipe.likes === 1 ? 'heart' : 'hearts' }}</span>
+            </span>
+          </span>
+        </a>
+      </li>
+    }
+  </ul>
+</ng-template>
+
+<main class="library">
+  <div class="wrapper library__content">
+    <a class="library__back" routerLink="/" aria-label="Back to the start page">
+      <span class="library__icon library__icon--back" aria-hidden="true"></span>
+      <span class="library__back-text">Back</span>
+    </a>
+
+    <section class="library__intro" aria-labelledby="library-title">
+      <div class="library__intro-text">
+        <h1 class="library__title" id="library-title">Cookbook</h1>
+        <p class="library__lead">
+          From quick bites to gourmet delights, explore them all in our ultimate cookbook and get inspired for your
+          next culinary adventure.
+        </p>
+      </div>
+
+      <div class="library__shelves">
+        @if (status() === 'loading') {
+          <p class="library__message" role="status">Loading the recipes...</p>
+        } @else if (status() === 'error') {
+          <p class="library__message">We could not load the recipes. Please check your connection and try again later.</p>
+        } @else if (mostLiked().length === 0) {
+          <p class="library__message">There are no recipes yet. Create the first one!</p>
+        } @else {
+          <section class="library__shelf" aria-label="Recipe highlights">
+            <div class="library__tabs" role="group" aria-label="Choose which recipes to show">
+              <button
+                class="library__tab"
+                type="button"
+                [class.library__tab--active]="activeShelf() === 'liked'"
+                [attr.aria-pressed]="activeShelf() === 'liked'"
+                (click)="showShelf('liked')"
+              >
+                Most liked recipes
+                <svg class="library__shelf-icon" viewBox="0 0 24 22" aria-hidden="true">
+                  <path d="M12 20S2 13.6 2 7.4A5.2 5.2 0 0 1 12 5a5.2 5.2 0 0 1 10 2.4C22 13.6 12 20 12 20z" />
+                </svg>
+              </button>
+              <button
+                class="library__tab"
+                type="button"
+                [class.library__tab--active]="activeShelf() === 'newest'"
+                [attr.aria-pressed]="activeShelf() === 'newest'"
+                (click)="showShelf('newest')"
+              >
+                Newest recipes
+                <svg class="library__shelf-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 16.8l-6 3.6 1.5-6.8L2.3 9l6.9-.7z" />
+                </svg>
+              </button>
+            </div>
+            <div aria-live="polite">
+              <ng-container *ngTemplateOutlet="recipeList; context: { $implicit: shownRecipes() }"></ng-container>
+            </div>
+          </section>
+        }
+      </div>
+    </section>
+
+    <section aria-labelledby="cuisines-title">
+      <h2 class="library__visually-hidden" id="cuisines-title">Recipes by cuisine</h2>
+      <ul class="library__cuisines">
+        @for (cuisine of cuisines; track cuisine) {
+          <li>
+            <a class="library__cuisine" [routerLink]="'/library/' + cuisine">
+              <span class="library__cuisine-name">
+                {{ describeCuisine(cuisine) }}
+                <span class="library__icon library__icon--arrow" aria-hidden="true"></span>
+              </span>
+              <span class="library__cuisine-picture" aria-hidden="true">{{ describeCuisine(cuisine) }}</span>
+            </a>
+          </li>
+        }
+      </ul>
+    </section>
+
+    <a class="library__new" routerLink="/generate-recipe" (click)="startNewRecipe()">
+      Generate new recipe
+      <span class="library__icon library__icon--arrow" aria-hidden="true"></span>
+    </a>
+  </div>
+</main>

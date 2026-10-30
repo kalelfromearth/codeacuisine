@@ -71,6 +71,15 @@
   white-space: nowrap;
 }
 
+// Draws an icon from an svg file in the current text color.
+@mixin mask-icon($file, $width, $height) {
+  flex: none;
+  width: $width;
+  height: $height;
+  background-color: currentColor;
+  mask: url($file) center / contain no-repeat;
+}
+
 @mixin arrow-link($color) {
   @include flex($gap: 12px);
   @include font(1.25rem, 500, $color: $color);

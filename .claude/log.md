@@ -33,4 +33,5 @@ Kurz und knapp, neueste Einträge unten. Format: `Datum – was`.
 - 2026-10-30: Echte Firestore-Regeln geprüft: Listenlängen sind schon drin. Offen nur der Wechsel von `allow read` auf `get` offen und `list` mit `limit <= 12`.
 - 2026-10-30: Neue Regeln (`get` offen, `list` nur mit `limit <= 12`) veröffentlicht und von außen getestet: Limit 12 gleich 200, Limit 13 und ohne Limit gleich 403. Sammlung `recipes` war leer (Test-Rezepte gelöscht).
 - 2026-10-30: Live-Test beider Seiten (Unterordner und Subdomain) von Andreas durchgeführt: Generieren, Speichern, Ergebnisse, Detailseite, F5 und Likes laufen; das Herz wird im `localStorage` der richtigen ID zugeordnet.
+- 2026-10-30: Anleitung zum Einschränken des Firebase-API-Schlüssels gegeben (Websites plus nur Cloud Firestore API); Andreas macht es selbst. Danach Budget-Alarm (Spark oder Blaze klären).
 - Offen: neue Test-Rezepte aus dem Live-Test in Firestore löschen, README komplett neu (Start, Import des Workflows), Cookbook-Seite, Test-Rezepte in Firestore löschen, ungenutzte Assets entscheiden.

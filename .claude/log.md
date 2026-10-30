@@ -28,4 +28,9 @@ Kurz und knapp, neueste Einträge unten. Format: `Datum – was`.
 - Angular 21.2.13 auf 21.2.25 (cli/build 21.2.29) gehoben: `package.json` Mindestversionen, Lock neu mit `--legacy-peer-deps` aufgelöst (normales `npm install` läuft ohne Konflikt). `npm audit` prod: 10 auf 4 Meldungen, alle Angular-Meldungen weg, übrig nur Firebase/grpc. Produktions-Build ohne Warnung (874 kB), Browser-Test ok (Generieren, Ergebnisse, Detail, Likes, F5).
 - Entscheidungen: kein n8n-Limit jetzt (nach der Abnahme). Später: Firestore-Regeln `get` offen, `list` nur mit `limit <= 12`, Listenlängen; Bibliothek zeigt die neuesten 12, lädt beim Scrollen die nächsten 12 (plus Knopf "Mehr laden"); wenige Abrufe, schnelles Laden, Sicherheit haben Vorrang.
 - Modellangabe auf Swisscom myAI (`glm-5.3-flash`) korrigiert in `README.md` und `CLAUDE.md` (die ist lokal, nicht im Repo).
-- Offen: Test-E-Mail des Fehler-Workflows in n8n von Hand auslösen, README komplett neu (Start, Import des Workflows), Cookbook-Seite, Test-Rezepte in Firestore löschen, ungenutzte Assets entscheiden.
+- 2026-10-30: Test-Mail des Fehler-Workflows (Execute workflow in n8n) kam an. E-Mail-Teil bestätigt.
+- 2026-10-30: Neuer Build (Likes, Detailseite per ID, Angular 21.2.25) auf Unterordner und Subdomain hochgeladen.
+- 2026-10-30: Echte Firestore-Regeln geprüft: Listenlängen sind schon drin. Offen nur der Wechsel von `allow read` auf `get` offen und `list` mit `limit <= 12`.
+- 2026-10-30: Neue Regeln (`get` offen, `list` nur mit `limit <= 12`) veröffentlicht und von außen getestet: Limit 12 gleich 200, Limit 13 und ohne Limit gleich 403. Sammlung `recipes` war leer (Test-Rezepte gelöscht).
+- 2026-10-30: Live-Test beider Seiten (Unterordner und Subdomain) von Andreas durchgeführt: Generieren, Speichern, Ergebnisse, Detailseite, F5 und Likes laufen; das Herz wird im `localStorage` der richtigen ID zugeordnet.
+- Offen: neue Test-Rezepte aus dem Live-Test in Firestore löschen, README komplett neu (Start, Import des Workflows), Cookbook-Seite, Test-Rezepte in Firestore löschen, ungenutzte Assets entscheiden.

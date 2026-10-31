@@ -42,10 +42,13 @@
     ],
   });
   const realFetch = window.fetch.bind(window);
-  window.fetch = (url, options) =>
-    String(url).includes('/webhook/')
-      ? Promise.resolve(new Response(body, { status: 200, headers: { 'Content-Type': 'application/json' } }))
-      : realFetch(url, options);
+  window.fetch = (url, options) => {
+    if (!String(url).includes('/webhook/')) {
+      return realFetch(url, options);
+    }
+    window.fetch = realFetch; // The fake answer is used only once, later requests go to n8n again.
+    return Promise.resolve(new Response(body, { status: 200, headers: { 'Content-Type': 'application/json' } }));
+  };
 
   for (const name of ['Pasta', 'Egg', 'Tomato']) {
     const input = find('#ingredient-name');
@@ -59,7 +62,3 @@
   find('.preferences__submit app-button .btn').click();
 })();
 
-
-## Andere Rezepte ansehen
-
-Nach dem Schnipsel stehst du auf der Ergebnisseite. Von dort öffnest du mit **View** Rezept 1 (2 Köche), Rezept 2 (1 Koch) oder Rezept 3 (4 Köche). Die Adresse in der Adressleiste direkt zu ändern geht **nicht**, weil die Seite dann neu lädt und die Testrezepte weg sind.

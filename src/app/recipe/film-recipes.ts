@@ -7,7 +7,7 @@ export interface FilmInfo {
   scene: string;
 }
 
-/** A fixed recipe of the film cuisine. It is not stored in Firestore and cannot get hearts. */
+/** A fixed recipe of the film cuisine. The recipe itself is in the code, only its hearts are stored in Firestore. */
 export interface FilmRecipe extends Recipe {
   film: FilmInfo;
 }

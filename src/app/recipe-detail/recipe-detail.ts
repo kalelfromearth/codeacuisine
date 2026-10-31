@@ -158,6 +158,20 @@ export class RecipeDetail {
     this.pageTitle.setTitle(buildPageTitle(recipe ? recipe.title : 'Recipe not available'));
     this.likeCount.set(recipe?.likes ?? 0);
     this.isLiked.set(recipe ? isRecipeLiked(recipe.id) : false);
+    if (recipe && isFilmRecipe(recipe)) {
+      this.loadFilmLikes(recipe.id);
+    }
+  }
+
+  private async loadFilmLikes(id: string): Promise<void> {
+    try {
+      const count = await this.recipeStore.loadFilmLikeCount(id);
+      if (this.id() === id && !this.isSavingLike()) {
+        this.likeCount.set(count);
+      }
+    } catch {
+      // Without the number the recipe shows 0 hearts.
+    }
   }
 
   private showLike(id: string, liked: boolean, count: number): void {

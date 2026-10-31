@@ -21,6 +21,9 @@ Reactive Forms mit Validatoren. Die Fehlermeldung steht direkt am Feld.
 | Menge zu groß | Stück 30, ml 5000, g 5000 | "The maximum is …" |
 | Zu wenige Zutaten | mindestens 3 | Hinweis "Add at least 3", der Guard `enoughIngredientsGuard` lässt die Preferences-Seite nicht zu |
 | Zu viele Zutaten | höchstens 10 | "Add"-Knopf ist gesperrt, Hinweis erscheint |
+| Zutat passt nicht zur Diät | Bei Vegetarian (Fleisch, Fisch) und Vegan (zusätzlich Milch, Eier, Honig) prüft `findUnsuitableIngredients` die Namen gegen Wortlisten, erst beim Klick auf "Generate a recipe" | Popup "Ups! Check your diet" mit den betroffenen Zutaten. "Continue without these" schickt die Anfrage ohne sie weiter, nur wenn mindestens 3 Zutaten bleiben |
+
+Der Diät-Check ist ein Hinweis und keine Sperre, er arbeitet nur im Browser. Die Wortlisten (`diet-words.ts`) werden erst beim ersten Check nachgeladen. Namen werden vereinfacht (Kleinbuchstaben, Umlaute als ae/oe/ue, ohne Akzente) und dann als ganzes Wort, Wortanfang oder Wortende verglichen. Ausnahmen wie "Kokosmilch" oder "Erdnussbutter" und Wörter wie "vegan" oder "pflanzlich" machen eine Zutat passend. `diet-check.spec.ts` prüft unter anderem 246 Alltags-Zutaten auf Fehlalarme.
 
 Die Mengengrenzen stehen in `MAX_AMOUNT_BY_UNIT` (`ingredient.model.ts`) und müssen mit dem n8n-Workflow übereinstimmen. Beim Zurücksetzen des Formulars wird die Menge neu geprüft, sonst blieb eine alte Grenze der vorherigen Einheit stehen.
 

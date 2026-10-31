@@ -16,6 +16,17 @@ import { buildPageTitle } from '../shared/page-title';
 
 type ListStatus = 'loading' | 'ready' | 'error' | 'missing';
 
+// The header images of the cuisine lists. A cuisine without an entry gets a plain cream band with the title instead.
+const CUISINE_HEADERS: Record<string, string> = {
+  german: 'images/cookbook/header-german.svg',
+  italian: 'images/cookbook/header-italian.webp',
+  indian: 'images/cookbook/header-indian.svg',
+  japanese: 'images/cookbook/header-japanese.svg',
+  gourmet: 'images/cookbook/header-gourmet.svg',
+  fusion: 'images/cookbook/header-fusion.svg',
+  film: 'images/cookbook/header-film.svg',
+};
+
 function toPageNumber(_unused: unknown, index: number): number {
   return index + 1;
 }
@@ -49,6 +60,7 @@ export class LibraryList {
   readonly pageStarts = signal<(RecipePageCursor | null)[]>([null]);
 
   readonly isFilm = computed(() => this.cuisine() === FILM_CUISINE);
+  readonly headerImage = computed(() => CUISINE_HEADERS[this.cuisine()] ?? null);
   readonly knownCuisine = computed(() => findCuisine(this.cuisine()));
   readonly title = computed(() => this.buildTitle());
   readonly pageNumbers = computed(() => Array.from({ length: this.pageStarts().length }, toPageNumber));
@@ -104,6 +116,21 @@ export class LibraryList {
   private showFilmRecipes(): void {
     this.page.set({ recipes: [...FILM_RECIPES], cursor: null, hasMore: false });
     this.status.set('ready');
+    untracked(this.showFilmLikes.bind(this));
+  }
+
+  private async showFilmLikes(): Promise<void> {
+    try {
+      const likes = await this.recipeStore.loadFilmLikes();
+      if (this.isFilm()) {
+        const recipes = FILM_RECIPES.map(function (recipe) {
+          return { ...recipe, likes: likes[recipe.id] ?? 0 };
+        });
+        this.page.set({ recipes, cursor: null, hasMore: false });
+      }
+    } catch {
+      // Without the hearts the film recipes are still shown, with 0 hearts.
+    }
   }
 
   private loadCurrentPage(): void {

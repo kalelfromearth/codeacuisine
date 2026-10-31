@@ -17,8 +17,14 @@
         <a class="library-list__generate" routerLink="/library">Back to the cookbook</a>
       </section>
     } @else {
-      <header class="library-list__hero" [class.library-list__hero--film]="isFilm()">
-        <h1 class="library-list__title">{{ title() }}</h1>
+      <header class="library-list__hero" [class.library-list__hero--art]="headerImage()">
+        @if (headerImage(); as artSource) {
+          <span class="library-list__hero-art" aria-hidden="true">
+            <img class="library-list__hero-image library-list__hero-image--left" [src]="artSource" alt="" width="1146" height="144" />
+            <img class="library-list__hero-image library-list__hero-image--right" [src]="artSource" alt="" width="1146" height="144" />
+          </span>
+        }
+        <h1 class="library-list__title" [class.library-list__title--on-art]="headerImage()">{{ title() }}</h1>
       </header>
 
       @if (!isFilm()) {
@@ -66,12 +72,10 @@
                     @for (tag of getTags(recipe); track tag) {
                       <span class="library-list__chip">{{ tag }}</span>
                     }
-                    @if (!isFilm()) {
-                      <span class="library-list__chip library-list__chip--likes">
-                        <span aria-hidden="true">♡</span> {{ recipe.likes }}
-                        <span class="library-list__visually-hidden">{{ recipe.likes === 1 ? 'heart' : 'hearts' }}</span>
-                      </span>
-                    }
+                    <span class="library-list__chip library-list__chip--likes">
+                      <span aria-hidden="true">♡</span> {{ recipe.likes }}
+                      <span class="library-list__visually-hidden">{{ recipe.likes === 1 ? 'heart' : 'hearts' }}</span>
+                    </span>
                   </span>
                 </a>
               </li>

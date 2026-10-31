@@ -179,7 +179,6 @@
             </button>
           </section>
 
-          @if (!film()) {
           <section class="recipe-detail__like" aria-labelledby="like-title">
             <div class="recipe-detail__like-text">
               <h2 class="recipe-detail__like-title" id="like-title">Just finished this meal?</h2>
@@ -204,13 +203,18 @@
               </p>
             </div>
           </section>
-          }
         </article>
 
-        <a class="recipe-detail__new" routerLink="/generate-recipe" (click)="startNewRecipe()">
-          Generate new recipe
-          <span class="recipe-detail__icon recipe-detail__icon--arrow" aria-hidden="true"></span>
-        </a>
+        <div class="recipe-detail__footer-links">
+          <a class="recipe-detail__new" routerLink="/library" [state]="{ backTo: '/recipes/' + recipe.id }">
+            Explore the cookbook
+            <span class="recipe-detail__icon recipe-detail__icon--arrow" aria-hidden="true"></span>
+          </a>
+          <a class="recipe-detail__new" routerLink="/generate-recipe" (click)="startNewRecipe()">
+            Generate new recipe
+            <span class="recipe-detail__icon recipe-detail__icon--arrow" aria-hidden="true"></span>
+          </a>
+        </div>
       </div>
     } @else if (status() === 'loading') {
       <p class="recipe-detail__message" role="status">Loading your recipe...</p>

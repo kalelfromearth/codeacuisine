@@ -92,10 +92,24 @@
             <a class="library__cuisine" [routerLink]="'/library/' + cuisine">
               <span class="library__cuisine-name">
                 {{ describeCuisine(cuisine) }}
+                <img
+                  class="library__cuisine-symbol"
+                  [src]="'images/cookbook/icons/' + cuisine + '.svg'"
+                  alt=""
+                  width="28"
+                  height="28"
+                />
                 <span class="library__icon library__icon--arrow" aria-hidden="true"></span>
               </span>
               @if (getPhoto(cuisine); as photo) {
-                <img class="library__cuisine-photo" [src]="photo" alt="" width="800" height="800" loading="lazy" />
+                <img
+                  class="library__cuisine-photo"
+                  [src]="photo.src"
+                  alt=""
+                  [attr.width]="photo.width"
+                  [attr.height]="photo.height"
+                  loading="lazy"
+                />
               } @else {
                 <span
                   class="library__cuisine-picture"

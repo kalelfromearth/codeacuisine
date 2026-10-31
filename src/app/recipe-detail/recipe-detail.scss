@@ -507,9 +507,19 @@
     }
   }
 
+  &__footer-links {
+    @include flex($direction: column, $align: flex-end, $justify: flex-start, $gap: 4px);
+    align-self: flex-end;
+  }
+
   &__new {
     @include arrow-link($color-heading);
     align-self: flex-end;
+
+    &:focus-visible {
+      outline: 3px solid $color-heading;
+      outline-offset: 2px;
+    }
   }
 
   &__film {

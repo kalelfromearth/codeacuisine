@@ -19,6 +19,7 @@ I built it as the final project of my training as a frontend developer at the De
 
 - **Three really different recipes per request.** Three AI calls run in parallel, each with its own angle (a classic pan dish, a different dish type, a creative idea), so the suggestions do not repeat each other.
 - **Ingredients are checked before any recipe is written.** A fourth, deterministic AI call flags input that is not food (keyboard mashing, objects), and the user gets a clear message instead of a made-up recipe.
+- **A diet check in the browser.** With Vegetarian or Vegan selected, ingredients like tuna or milk are caught from word lists (German and English, loaded only when needed) and the user can continue without them.
 - **Cooking together.** For two to four cooks, every step is assigned to a chef, and the work is shared fairly.
 - **A public cookbook.** Most liked and newest recipes, one list per cuisine with sorting and paging, and hearts that are counted in Firestore.
 - **Validated three times.** In the form, again in the n8n workflow and a third time in the Firestore security rules. Nothing unchecked reaches the database.
@@ -78,7 +79,7 @@ flowchart LR
 ## Security
 
 - The AI key and the n8n credentials never reach the browser. The Firebase web config is public by design and protected by the security rules.
-- **Firestore rules:** reading single recipes is public, lists are limited to 12 documents per query, new recipes must match the exact schema with `likes == 0` and the server timestamp, updates may only change `likes` by one, deleting is not allowed, every other path is closed.
+- **Firestore rules:** reading single recipes is public, lists are limited to 12 documents per query, new recipes must match the exact schema with `likes == 0` and the server timestamp, updates may only change `likes` by one, deleting is not allowed, every other path is closed. The hearts of the seven fixed film recipes live in their own collection `filmLikes`, which accepts only those seven ids.
 - **n8n:** request validation, output cleaning, a timeout and one retry for the AI call, rate limit errors passed on as 429, and an error workflow that sends an email when something crashes unexpectedly.
 - **Server (`.htaccess`):** HTTPS redirect, security headers (`X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy`, HSTS) and compression.
 - `src/environments/environment.ts` is ignored by git. The repository contains only an example with placeholders, and the exported n8n workflows contain no credentials.
@@ -139,7 +140,7 @@ The app opens at `http://localhost:4200`.
 
 ## Testing
 
-Unit tests with Vitest cover the ingredient name check, the amount rules, the recipe tags, the data of the film recipes and the saving logic of the generator, including the case where only some recipes could be saved. GitHub Actions builds the app and runs the tests on every push to `main`.
+Unit tests with Vitest cover the ingredient name check, the diet check (including everyday plant foods that must never be flagged), the amount rules, the recipe tags, the data of the film recipes and the saving logic of the generator, including the case where only some recipes could be saved. GitHub Actions builds the app and runs the tests on every push to `main`.
 
 The user flows were tested by hand in the browser at 320, 375, 768 and 1440 px.
 
@@ -155,7 +156,7 @@ src/
 │   ├── landingpage/       start page
 │   ├── not-found/         page for unknown addresses
 │   ├── generate-recipe/   ingredient form and list, validators
-│   ├── preferences/       servings, cooks, time, cuisine, diet
+│   ├── preferences/       servings, cooks, time, cuisine, diet, diet check
 │   ├── generating/        loading and error states
 │   ├── recipes/           the three results
 │   ├── recipe-detail/     recipe page with directions and hearts
@@ -178,7 +179,7 @@ More details on every error case: [`docs/errorhandling.md`](docs/errorhandling.m
 ## Roadmap
 
 - Daily quota per IP address and for the whole system in n8n (3 per IP, 12 per day)
-- Photos for the cuisines in the cookbook
+- A second diet check in the n8n workflow, so that the rule also holds for direct calls
 - Firebase App Check against direct database calls
 
 ## About me

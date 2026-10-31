@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1146 144" width="1146" height="144"><style>
+.s{stroke:#F1E6C0;stroke-width:6;paint-order:stroke;stroke-linejoin:round;stroke-linecap:round}
+.g{fill:#1E5515}.m{fill:#396039}.l{fill:#6A9A58}.c{fill:#FAF0E6}.o{fill:#C8692F}.t{fill:#D99A4E}
+.k{fill:none;stroke:#FAF0E6;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+.n{fill:none}
+</style>
+<rect x="0.5" y="32.5" width="1145" height="79" rx="20" fill="#F9EFE4" stroke="#EADFD0"/>
+<g transform="translate(28 14) scale(1.15)"><path class="g s" d="M8 62 C4 35 22 18 50 18 C78 18 96 35 92 62 C92 74 84 80 50 80 C16 80 8 74 8 62Z"/>
+    <path class="k" d="M30 36 l12 22 M48 30 l12 26 M66 36 l10 20"/></g>
+<g transform="translate(150 14) scale(1.15)"><g transform="rotate(-25 50 50)"><rect class="o s" x="6" y="36" width="88" height="28" rx="14"/>
+    <path class="k" d="M30 43 v14 M50 43 v14 M70 43 v14" style="stroke-width:3"/></g></g>
+<g transform="translate(860 14) scale(1.15)"><path class="n" d="M68 36 h10 a10 10 0 0 1 10 10 v14 a10 10 0 0 1 -10 10 h-10" stroke="#F1E6C0" stroke-width="16" stroke-linecap="round"/>
+    <path class="n" d="M68 36 h10 a10 10 0 0 1 10 10 v14 a10 10 0 0 1 -10 10 h-10" stroke="#1E5515" stroke-width="9" stroke-linecap="round"/>
+    <rect class="o s" x="16" y="24" width="54" height="64" rx="7"/>
+    <path class="k" d="M30 40 v36 M44 40 v36 M58 40 v36" style="stroke-width:3;opacity:.7"/>
+    <circle class="c s" cx="26" cy="20" r="11"/><circle class="c s" cx="43" cy="15" r="12"/><circle class="c s" cx="60" cy="21" r="10"/></g>
+<g transform="translate(1005 14) scale(1.15)"><path class="n" d="M50 80 C24 68 8 50 14 30 C20 10 44 12 50 32 C56 12 80 10 86 30 C92 50 76 68 50 80Z" stroke="#F1E6C0" stroke-width="18" stroke-linecap="round"/><path class="n" d="M50 80 C24 68 8 50 14 30 C20 10 44 12 50 32 C56 12 80 10 86 30 C92 50 76 68 50 80Z" stroke="#B8691F" stroke-width="11" stroke-linecap="round"/>
+    <path class="n" d="M26 70 C40 56 56 46 76 22" stroke="#F1E6C0" stroke-width="18" stroke-linecap="round"/><path class="n" d="M26 70 C40 56 56 46 76 22" stroke="#B8691F" stroke-width="11" stroke-linecap="round"/><path class="n" d="M74 70 C60 56 44 46 24 22" stroke="#F1E6C0" stroke-width="18" stroke-linecap="round"/><path class="n" d="M74 70 C60 56 44 46 24 22" stroke="#B8691F" stroke-width="11" stroke-linecap="round"/>
+    <circle class="c" cx="30" cy="22" r="2.5"/><circle class="c" cx="68" cy="24" r="2.5"/><circle class="c" cx="50" cy="66" r="2.5"/></g>
+</svg>

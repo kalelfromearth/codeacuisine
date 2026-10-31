@@ -14,14 +14,17 @@ import {
   orderBy,
   query,
   serverTimestamp,
+  setDoc,
   startAfter,
   updateDoc,
   where,
 } from 'firebase/firestore';
 import { FirebaseService } from '../shared/firebase/firebase.service';
+import { findFilmRecipe } from './film-recipes';
 import { Recipe, RecipeCuisine, RecipeDraft, RecipeIngredient, RecipeStep } from './recipe.model';
 
 const RECIPES_COLLECTION = 'recipes';
+const FILM_LIKES_COLLECTION = 'filmLikes';
 
 /** Recipes per page. The Firestore rules allow lists of at most this size, keep both in sync. */
 export const RECIPES_PAGE_SIZE = 12;
@@ -148,9 +151,28 @@ export class RecipeStoreService {
     return { ...fields, id: reference.id, likes: 0, createdAt: new Date().toISOString() };
   }
 
-  /** Raises the likes of a recipe by one or lowers them by one. */
+  /** Raises the likes of a recipe by one or lowers them by one. A film recipe keeps its hearts in its own collection. */
   changeLikes(id: string, change: 1 | -1): Promise<void> {
+    if (findFilmRecipe(id)) {
+      return setDoc(doc(this.firestore, FILM_LIKES_COLLECTION, id), { likes: increment(change) }, { merge: true });
+    }
     return updateDoc(doc(this.firestore, RECIPES_COLLECTION, id), { likes: increment(change) });
+  }
+
+  /** Loads the hearts of all film recipes by their ids. A film recipe nobody liked yet is missing in the result. */
+  async loadFilmLikes(): Promise<Record<string, number>> {
+    const snapshot = await getDocs(query(collection(this.firestore, FILM_LIKES_COLLECTION), limit(RECIPES_PAGE_SIZE)));
+    const likes: Record<string, number> = {};
+    snapshot.docs.forEach(function (document) {
+      likes[document.id] = Math.max(0, Number(document.data()['likes']) || 0);
+    });
+    return likes;
+  }
+
+  /** Loads the hearts of one film recipe, 0 when nobody liked it yet. */
+  async loadFilmLikeCount(id: string): Promise<number> {
+    const snapshot = await getDoc(doc(this.firestore, FILM_LIKES_COLLECTION, id));
+    return snapshot.exists() ? Math.max(0, Number(snapshot.data()['likes']) || 0) : 0;
   }
 
   /** Loads one recipe by its id, or returns null when no recipe with this id exists. */

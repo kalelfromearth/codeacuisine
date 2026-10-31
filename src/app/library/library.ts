@@ -16,19 +16,37 @@ interface BackLink {
 }
 
 const RESULTS_PATH = '/recipes';
+const RECIPE_PATH = /^\/recipes\/[A-Za-z0-9-]+$/;
 
-// The results page passes its address along when it opens the cookbook. Any other address leads to the start page.
+// The results page and a recipe page pass their address along when they open the cookbook. Any other address leads to the start page.
 function readBackLink(): BackLink {
   const state = history.state as { backTo?: unknown } | null;
-  return state?.backTo === RESULTS_PATH
-    ? { path: RESULTS_PATH, label: 'the recipe results' }
-    : { path: '/', label: 'the start page' };
+  const origin = typeof state?.backTo === 'string' ? state.backTo : '';
+  if (origin === RESULTS_PATH) {
+    return { path: RESULTS_PATH, label: 'the recipe results' };
+  }
+  return RECIPE_PATH.test(origin) ? { path: origin, label: 'the recipe' } : { path: '/', label: 'the start page' };
+}
+
+interface CuisinePhoto {
+  src: string;
+  width: number;
+  height: number;
+}
+
+function squarePhoto(cuisine: string): CuisinePhoto {
+  return { src: `images/cookbook/${cuisine}.webp`, width: 800, height: 800 };
 }
 
 // The photos of the cuisine tiles. A cuisine without an entry shows a coloured placeholder instead.
-const CUISINE_PHOTOS: Record<string, string> = {
-  german: 'images/cookbook/german.webp',
-  italian: 'images/cookbook/italian.webp',
+const CUISINE_PHOTOS: Record<string, CuisinePhoto> = {
+  german: squarePhoto('german'),
+  italian: squarePhoto('italian'),
+  indian: squarePhoto('indian'),
+  japanese: squarePhoto('japanese'),
+  gourmet: squarePhoto('gourmet'),
+  fusion: squarePhoto('fusion'),
+  film: squarePhoto('film'),
 };
 
 @Component({
@@ -55,7 +73,7 @@ export class Library {
   }
 
   /** Returns the photo of a cuisine for its tile, or null while there is no photo yet. */
-  getPhoto(cuisine: string): string | null {
+  getPhoto(cuisine: string): CuisinePhoto | null {
     return CUISINE_PHOTOS[cuisine] ?? null;
   }
 

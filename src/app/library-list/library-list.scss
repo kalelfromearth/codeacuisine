@@ -60,21 +60,65 @@
     }
   }
 
-  // Placeholder until the cuisine photo is added.
+  // The header is a cream band with the title. A cuisine with a header image gets the illustrations on both ends.
   &__hero {
-    @include flex($align: flex-end, $justify: flex-start);
-    min-height: 160px;
+    @include flex;
+    box-sizing: border-box;
+    min-height: 72px;
+    padding: 12px 16px;
     border-radius: 20px;
-    background: repeating-linear-gradient(135deg, $color-highlight 0 14px, #E1E7E1 14px 28px);
-    overflow: hidden;
+    background-color: $color-cream;
 
     @include md {
-      min-height: 240px;
+      min-height: 96px;
+    }
+
+    // The picture is already a band with illustrations, so the box itself stays empty.
+    &--art {
+      @include flex($direction: column, $gap: 8px);
+      padding: 0;
+      border-radius: 0;
+      background: none;
+
+      @include md {
+        display: block;
+        position: relative;
+        min-height: 0;
+        aspect-ratio: 1146 / 144;
+      }
     }
   }
 
-  &__hero--film {
-    background: repeating-linear-gradient(90deg, $color-text 0 28px, $color-heading 28px 32px);
+  // The picture is drawn in two halves, so that both illustrated ends stay visible on narrow screens.
+  &__hero-art {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 64px;
+
+    @include md {
+      position: absolute;
+      inset: 0;
+      height: auto;
+    }
+  }
+
+  &__hero-image {
+    position: absolute;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    object-fit: cover;
+
+    &--left {
+      left: 0;
+      object-position: left center;
+    }
+
+    &--right {
+      right: 0;
+      object-position: right center;
+    }
   }
 
   &__film {
@@ -84,15 +128,21 @@
   }
 
   &__title {
-    @include font(2rem, 700, $color: $color-cream);
-    box-sizing: border-box;
-    width: 100%;
-    padding: 20px 24px;
-    background: linear-gradient(transparent, rgba($color-text, 0.75));
-    line-height: 1;
+    @include font(1.75rem, 700, $color: $color-heading);
+    line-height: 1.1;
+    text-align: center;
 
     @include md {
-      font-size: 3.5rem;
+      font-size: 2.25rem;
+    }
+
+    // On a wide screen the title sits in the middle of the band of the header image.
+    &--on-art {
+      @include md {
+        @include flex;
+        position: absolute;
+        inset: 0;
+      }
     }
   }
 
@@ -118,18 +168,49 @@
     list-style: none;
   }
 
+  // On a phone every second row is tinted, on a wide screen all rows are plain and only the hover is tinted.
+  &__rows > li {
+    --row-background: transparent;
+
+    &:nth-child(even) {
+      --row-background: #{$color-cream};
+
+      @include md {
+        --row-background: transparent;
+      }
+    }
+  }
+
+  // The rank, the time, the title and the chips are placed in a grid, the wrapper around time and title is dissolved.
   &__row {
-    @include flex($justify: flex-start, $gap: 8px 16px);
-    flex-wrap: wrap;
-    padding: 16px 20px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      'rank time'
+      'title title'
+      'film film'
+      'chips chips';
+    align-items: center;
+    gap: 8px 12px;
+    padding: 16px;
     border-radius: 20px;
-    background-color: rgba($color-primary, 0.06);
+    background-color: var(--row-background);
     color: inherit;
     text-decoration: none;
 
+    @include md {
+      grid-template-columns: 44px 1fr auto;
+      grid-template-areas:
+        '. time chips'
+        'rank title chips'
+        '. film chips';
+      gap: 2px 16px;
+      padding: 12px 20px;
+    }
+
     @media (hover: hover) {
       &:hover {
-        background-color: $color-panel;
+        background-color: $color-cream;
       }
     }
 
@@ -140,29 +221,50 @@
   }
 
   &__rank {
-    @include font(1.375rem, 500, $color: $color-primary);
-    min-width: 40px;
+    @include flex;
+    @include font(1rem, 500, $color: $color-primary);
+    grid-area: rank;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: $color-cream-hover;
   }
 
   &__main {
-    @include flex($direction: column, $align: flex-start, $justify: flex-start, $gap: 2px);
-    flex: 1 1 120px;
-    min-width: 0;
+    display: contents;
   }
 
   &__time {
     @include flex($justify: flex-start, $gap: 6px);
     @include font(1rem, 400, $color: $color-primary);
+    grid-area: time;
   }
 
   &__recipe-title {
-    @include font(1.375rem, 400);
+    @include font(1.25rem, 500, $color: $color-heading);
+    grid-area: title;
     text-wrap: pretty;
+
+    @include md {
+      font-size: 1.75rem;
+      font-weight: 400;
+    }
+  }
+
+  &__film {
+    grid-area: film;
   }
 
   &__chips {
     @include flex($justify: flex-start, $gap: 8px);
+    grid-area: chips;
     flex-wrap: wrap;
+    margin-top: 4px;
+
+    @include md {
+      justify-content: flex-end;
+      margin-top: 0;
+    }
   }
 
   &__chip {

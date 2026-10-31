@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1146 144" width="1146" height="144"><style>
+.s{stroke:#F1E6C0;stroke-width:6;paint-order:stroke;stroke-linejoin:round;stroke-linecap:round}
+.g{fill:#1E5515}.m{fill:#396039}.l{fill:#6A9A58}.c{fill:#FAF0E6}.o{fill:#C8692F}.t{fill:#D99A4E}
+.k{fill:none;stroke:#FAF0E6;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+.n{fill:none}
+</style>
+<rect x="0.5" y="32.5" width="1145" height="79" rx="20" fill="#F9EFE4" stroke="#EADFD0"/>
+<g transform="translate(28 14) scale(1.15)"><path class="o s" d="M16 52 C20 24 80 24 84 52Z"/>
+    <circle class="c" cx="38" cy="40" r="3"/><circle class="c" cx="54" cy="36" r="3"/><circle class="c" cx="66" cy="44" r="3"/>
+    <path class="g s" d="M8 50 H92 C92 78 72 92 50 92 C28 92 8 78 8 50Z"/>
+    <path class="k" d="M24 64 C30 74 40 80 50 80" style="stroke-width:3"/></g>
+<g transform="translate(150 14) scale(1.15)"><path class="o s" d="M64 20 C80 18 90 28 84 44 C76 68 50 84 12 86 C34 70 52 52 58 30 C59 25 61 22 64 20Z"/>
+    <path class="g s" d="M62 22 C58 12 62 6 70 4 C70 10 72 14 76 18Z"/>
+    <path class="k" d="M62 40 C58 54 44 68 28 78" style="stroke-width:3;opacity:.6"/></g>
+<g transform="translate(860 14) scale(1.15)"><path class="t s" d="M50 10 L92 80 Q94 88 86 88 H14 Q6 88 8 80Z"/>
+    <path class="k" d="M50 26 L72 74 M50 26 L28 74 M30 80 H70" style="stroke-width:3;stroke:#8B5A22"/></g>
+<g transform="translate(1005 14) scale(1.15)"><path class="n" d="M50 96 C48 70 50 40 54 8" stroke="#F1E6C0" stroke-width="10" stroke-linecap="round"/><path class="n" d="M50 96 C48 70 50 40 54 8" stroke="#1E5515" stroke-width="3" stroke-linecap="round"/>
+    <ellipse class="m s" cx="36" cy="30" rx="8" ry="15" transform="rotate(-40 36 30)"/>
+    <ellipse class="m s" cx="68" cy="34" rx="8" ry="15" transform="rotate(40 68 34)"/>
+    <ellipse class="m s" cx="34" cy="58" rx="8" ry="15" transform="rotate(-40 34 58)"/>
+    <ellipse class="m s" cx="68" cy="62" rx="8" ry="15" transform="rotate(40 68 62)"/>
+    <ellipse class="m s" cx="54" cy="14" rx="7" ry="13"/></g>
+</svg>

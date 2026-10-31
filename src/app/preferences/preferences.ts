@@ -1,7 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { IngredientListService } from '../generate-recipe/ingredient-list.service';
+import { Ingredient } from '../generate-recipe/ingredient.model';
+import { IngredientListService, MIN_INGREDIENTS } from '../generate-recipe/ingredient-list.service';
+import { describeUnsuitableIngredients, findUnsuitableIngredients } from './diet-check/diet-check';
 import { RecipeGeneratorService } from '../recipe/recipe-generator.service';
 import { RecipeRequestService } from '../recipe/recipe-request.service';
 import {
@@ -18,6 +20,7 @@ import {
 import { Button } from '../shared/button/button';
 import { ChipGroup, ChipOption } from '../shared/chip-group/chip-group';
 import { Header } from '../shared/header/header';
+import { Popup } from '../shared/popup/popup';
 import { Stepper } from '../shared/stepper/stepper';
 
 type PreferencesFormControls = {
@@ -30,7 +33,7 @@ type PreferencesFormControls = {
 
 @Component({
   selector: 'app-preferences',
-  imports: [Button, ChipGroup, Header, ReactiveFormsModule, RouterLink, Stepper],
+  imports: [Button, ChipGroup, Header, Popup, ReactiveFormsModule, RouterLink, Stepper],
   templateUrl: './preferences.html',
   styleUrl: './preferences.scss',
 })
@@ -39,6 +42,11 @@ export class Preferences {
   private readonly recipeRequestService = inject(RecipeRequestService);
   private readonly recipeGenerator = inject(RecipeGeneratorService);
   private readonly router = inject(Router);
+
+  readonly unsuitableIngredients = signal<string[]>([]);
+  readonly isDietPopupOpen = computed(this.hasUnsuitableIngredients.bind(this));
+  readonly dietMessage = computed(this.buildDietMessage.bind(this));
+  readonly canContinueWithout = computed(this.hasEnoughSuitableIngredients.bind(this));
 
   readonly minServings = MIN_SERVINGS;
   readonly maxServings = MAX_SERVINGS;
@@ -81,21 +89,61 @@ export class Preferences {
     diet: new FormControl<RecipeDiet>('vegetarian', { nonNullable: true }),
   });
 
-  /** Builds the recipe request from the ingredients and preferences and stores it for the next step. */
-  generateRecipe(): void {
+  /** Checks the ingredients against the diet, then starts the recipe request or opens the diet popup. */
+  async generateRecipe(): Promise<void> {
     if (this.preferencesForm.invalid) {
       this.preferencesForm.markAllAsTouched();
       return;
     }
-    this.recipeRequestService.setRequest(this.buildRecipeRequest());
+    const diet = this.preferencesForm.controls.diet.value;
+    const names = this.ingredientList.ingredients().map(function (ingredient) {
+      return ingredient.name;
+    });
+    const unsuitable = await findUnsuitableIngredients(names, diet);
+    if (unsuitable.length === 0) {
+      this.startGenerating(this.ingredientList.ingredients());
+      return;
+    }
+    this.unsuitableIngredients.set(unsuitable);
+  }
+
+  /** Closes the diet popup so the preferences can be changed. */
+  closeDietPopup(): void {
+    this.unsuitableIngredients.set([]);
+  }
+
+  /** Starts the recipe request with only the ingredients that fit the diet. */
+  continueWithoutUnsuitable(): void {
+    const unsuitable = this.unsuitableIngredients();
+    const suitable = this.ingredientList.ingredients().filter(function (ingredient) {
+      return !unsuitable.includes(ingredient.name);
+    });
+    this.closeDietPopup();
+    this.startGenerating(suitable);
+  }
+
+  private hasUnsuitableIngredients(): boolean {
+    return this.unsuitableIngredients().length > 0;
+  }
+
+  private buildDietMessage(): string {
+    return describeUnsuitableIngredients(this.unsuitableIngredients(), this.preferencesForm.controls.diet.value);
+  }
+
+  private hasEnoughSuitableIngredients(): boolean {
+    return this.ingredientList.ingredients().length - this.unsuitableIngredients().length >= MIN_INGREDIENTS;
+  }
+
+  private startGenerating(ingredients: Ingredient[]): void {
+    this.recipeRequestService.setRequest(this.buildRecipeRequest(ingredients));
     this.recipeGenerator.reset();
     this.router.navigateByUrl('/generating');
   }
 
-  private buildRecipeRequest(): RecipeRequest {
+  private buildRecipeRequest(ingredients: Ingredient[]): RecipeRequest {
     const preferences = this.preferencesForm.getRawValue();
     return {
-      ingredients: this.ingredientList.ingredients(),
+      ingredients,
       servings: preferences.servings,
       cooks: preferences.cooks as CookCount,
       timeCategory: preferences.timeCategory,

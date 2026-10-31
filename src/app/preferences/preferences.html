@@ -57,3 +57,17 @@
     </form>
   </div>
 </main>
+
+<app-popup heading="Ups! Check your diet" [isOpen]="isDietPopupOpen()" (closed)="closeDietPopup()">
+  <p class="preferences__popup-text">{{ dietMessage() }}</p>
+  <button class="preferences__popup-link" type="button" (click)="closeDietPopup()">
+    Change preferences or ingredients
+    <span class="preferences__popup-arrow" aria-hidden="true"></span>
+  </button>
+  @if (canContinueWithout()) {
+    <button class="preferences__popup-link" type="button" (click)="continueWithoutUnsuitable()">
+      Continue without these
+      <span class="preferences__popup-arrow" aria-hidden="true"></span>
+    </button>
+  }
+</app-popup>

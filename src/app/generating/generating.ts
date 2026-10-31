@@ -20,6 +20,7 @@ export class Generating {
   readonly errorMessage = this.generator.errorMessage;
   readonly hasIngredientProblem = this.generator.hasIngredientProblem;
   readonly dots = computed(() => '.'.repeat(this.dotCount()));
+  readonly prefersReducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   constructor() {
     effect(this.openResultsOnSuccess.bind(this));
@@ -45,7 +46,7 @@ export class Generating {
   }
 
   private animateDots(): void {
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    if (this.prefersReducedMotion) {
       this.dotCount.set(3);
       return;
     }

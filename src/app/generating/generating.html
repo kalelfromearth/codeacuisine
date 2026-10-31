@@ -20,7 +20,23 @@
         }
       </section>
     } @else {
-      <img class="generating__picture" src="images/gif/gif.gif" alt="" width="436" height="613" />
+      @if (prefersReducedMotion) {
+        <img class="generating__picture" src="images/loading/loading-poster.webp" alt="" width="436" height="613" />
+      } @else {
+        <video
+          class="generating__picture"
+          src="images/loading/loading.mp4"
+          poster="images/loading/loading-poster.webp"
+          width="436"
+          height="613"
+          autoplay
+          loop
+          muted
+          playsinline
+          aria-hidden="true"
+          [muted]="true"
+        ></video>
+      }
       <h1 class="generating__title">
         Generating<span class="generating__dots" aria-hidden="true">{{ dots() }}</span>
       </h1>

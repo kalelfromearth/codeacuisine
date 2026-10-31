@@ -261,13 +261,13 @@
 
     &--ingredients {
       padding: 0 70px;
-      @include band-caps('images/titleBox/ingredients-art.png', 74px, 17.5px, 4.5px, 74px, 70px, -463px top);
+      @include band-caps('images/titleBox/ingredients-art.webp', 74px, 17.5px, 4.5px, 74px, 70px, -463px top);
     }
 
     &--directions {
       height: 39.7px;
       padding: 0 75px 0 55px;
-      @include band-caps('images/titleBox/directions-art.png', 67px, 19.9px, 8.3px, 63px, 48px, -463px top, 21.5px);
+      @include band-caps('images/titleBox/directions-art.webp', 67px, 19.9px, 8.3px, 63px, 48px, -463px top, 21.5px);
     }
 
     // After the modifiers on purpose: from tablet on, the banner image replaces the small banner.
@@ -293,7 +293,7 @@
     z-index: 1;
     width: 57px;
     height: 67px;
-    background: url('images/titleBox/directions-art.png') -512px top / auto 67px no-repeat;
+    background: url('images/titleBox/directions-art.webp') -512px top / auto 67px no-repeat;
     pointer-events: none;
 
     @include md {

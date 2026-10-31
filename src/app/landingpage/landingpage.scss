@@ -44,6 +44,29 @@
     margin-top: 32px;
   }
 
+  &__better-life {
+    @include flex($justify: flex-start, $gap: 8px);
+    @include font(1.125rem, 500, $color: $color-cream);
+    min-height: 44px;
+    margin-top: 16px;
+    padding: 0 20px;
+    border: 2px solid $color-cream;
+    border-radius: 8px;
+    background: none;
+    cursor: pointer;
+
+    @media (hover: hover) {
+      &:hover {
+        background-color: rgba($color-cream, 0.15);
+      }
+    }
+
+    &:focus-visible {
+      outline: 3px solid $color-cream;
+      outline-offset: 3px;
+    }
+  }
+
   &__plates {
     position: absolute;
     top: 0;
@@ -84,5 +107,34 @@
 
   &__arrow {
     font-size: 1.25rem;
+  }
+}
+
+.better-life {
+  &__text {
+    @include font(1.125rem, 400);
+    margin-top: 8px;
+    line-height: 1.5;
+  }
+
+  &__close {
+    @include font(1.25rem, 500, $color: $color-primary);
+    align-self: flex-start;
+    min-height: 44px;
+    margin-top: 12px;
+    padding: 0 24px;
+    border: none;
+    border-radius: 8px;
+    background-color: $color-cream;
+    cursor: pointer;
+
+    &:hover {
+      background-color: $color-cream-hover;
+    }
+
+    &:focus-visible {
+      outline: 3px solid $color-cream;
+      outline-offset: 3px;
+    }
   }
 }

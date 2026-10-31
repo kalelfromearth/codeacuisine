@@ -10,6 +10,12 @@
       <p class="hero__eyebrow">AI-Powered recipe generator</p>
       <h1 class="hero__title">Code à Cuisine</h1>
       <app-button class="hero__cta" link="/generate-recipe">Get started</app-button>
+      @if (isBetterLifeButtonVisible()) {
+        <button class="hero__better-life" type="button" (click)="openBetterLife()">
+          Better Life
+          <span class="hero__better-life-leaf" aria-hidden="true">🌱</span>
+        </button>
+      }
     </section>
 
     <section class="cookbook-teaser">
@@ -20,3 +26,16 @@
     </section>
   </div>
 </main>
+
+<app-popup heading="Better Life" [isOpen]="isBetterLifeOpen()" (closed)="closeBetterLife()">
+  <p class="better-life__text">
+    Vegetarian and vegan meals are rich in fibre and vitamins and are linked to a lower risk of heart disease and
+    type 2 diabetes.
+  </p>
+  <p class="better-life__text">
+    They are also kinder to animals. In industrial farming, millions of animals live in cramped conditions and
+    suffer badly. Every plant-based meal is a small step against that.
+  </p>
+  <p class="better-life__text">Choose Vegetarian or Vegan in your preferences and we will cook it for you.</p>
+  <button class="better-life__close" type="button" (click)="closeBetterLife()">Got it</button>
+</app-popup>

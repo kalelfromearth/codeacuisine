@@ -1,4 +1,5 @@
 import { Component, computed, effect, inject, input, signal, untracked } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
 import { IngredientListService } from '../generate-recipe/ingredient-list.service';
 import { describeIngredientAmount } from '../generate-recipe/ingredient.model';
@@ -8,9 +9,24 @@ import { forgetLike, isRecipeLiked, rememberLike } from '../recipe/liked-recipes
 import { RecipeStoreService } from '../recipe/recipe-store.service';
 import { Recipe, RecipeIngredient, buildRecipeTags } from '../recipe/recipe.model';
 import { Header } from '../shared/header/header';
+import { buildPageTitle } from '../shared/page-title';
 
 type RecipeLoadStatus = 'loading' | 'ready' | 'missing' | 'error';
 type LikeChange = 1 | -1;
+
+interface BackLink {
+  path: string;
+  label: string;
+}
+
+// The cuisine list passes its address along when a recipe is opened. Only cookbook addresses are accepted.
+function readListBackLink(): BackLink | null {
+  const state = history.state as { backTo?: unknown; backLabel?: unknown } | null;
+  if (typeof state?.backTo === 'string' && state.backTo.startsWith('/library/') && typeof state.backLabel === 'string') {
+    return { path: state.backTo, label: state.backLabel };
+  }
+  return null;
+}
 
 function isOwnIngredient(ingredient: RecipeIngredient): boolean {
   return !ingredient.isExtra;
@@ -30,6 +46,7 @@ export class RecipeDetail {
   private readonly generator = inject(RecipeGeneratorService);
   private readonly ingredientList = inject(IngredientListService);
   private readonly recipeStore = inject(RecipeStoreService);
+  private readonly pageTitle = inject(Title);
 
   /** The Firestore id of the recipe from the route. */
   readonly id = input.required<string>();
@@ -38,6 +55,7 @@ export class RecipeDetail {
   readonly status = signal<RecipeLoadStatus>('loading');
   readonly hasResults = computed(() => this.generator.recipes().length > 0);
   readonly film = computed(() => this.findFilm());
+  readonly listBack = signal<BackLink | null>(readListBackLink());
   readonly failureText = computed(() => this.buildFailureText());
   readonly ownIngredients = computed(() => this.recipe()?.ingredients.filter(isOwnIngredient) ?? []);
   readonly extraIngredients = computed(() => this.recipe()?.ingredients.filter(isExtraIngredient) ?? []);
@@ -130,12 +148,14 @@ export class RecipeDetail {
       }
     } catch {
       this.status.set('error');
+      this.pageTitle.setTitle(buildPageTitle('Recipe not available'));
     }
   }
 
   private applyRecipe(recipe: Recipe | null): void {
     this.recipe.set(recipe);
     this.status.set(recipe ? 'ready' : 'missing');
+    this.pageTitle.setTitle(buildPageTitle(recipe ? recipe.title : 'Recipe not available'));
     this.likeCount.set(recipe?.likes ?? 0);
     this.isLiked.set(recipe ? isRecipeLiked(recipe.id) : false);
   }

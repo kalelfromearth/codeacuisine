@@ -43,7 +43,11 @@
           <ul class="library-list__rows">
             @for (recipe of currentPage.recipes; track recipe.id; let position = $index) {
               <li>
-                <a class="library-list__row" [routerLink]="'/recipes/' + recipe.id">
+                <a
+                  class="library-list__row"
+                  [routerLink]="'/recipes/' + recipe.id"
+                  [state]="{ backTo: '/library/' + cuisine(), backLabel: title() }"
+                >
                   <span class="library-list__rank" aria-hidden="true">{{ firstRank() + position + 1 }}.</span>
                   <span class="library-list__main">
                     <span class="library-list__time">

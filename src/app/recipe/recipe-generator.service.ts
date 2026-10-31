@@ -27,6 +27,7 @@ export class RecipeGeneratorService {
   private readonly recipeRequestService = inject(RecipeRequestService);
   private readonly recipeStore = inject(RecipeStoreService);
   private unsavedDrafts: RecipeDraft[] = [];
+  private savedRecipes: Recipe[] = [];
 
   readonly status = signal<GeneratorStatus>('idle');
   readonly recipes = signal<Recipe[]>([]);
@@ -40,6 +41,7 @@ export class RecipeGeneratorService {
       return;
     }
     this.startLoading();
+    this.savedRecipes = [];
     try {
       await this.handleResponse(await this.postRequest(request));
     } catch (error) {
@@ -88,6 +90,7 @@ export class RecipeGeneratorService {
     this.errorMessage.set('');
     this.hasIngredientProblem.set(false);
     this.unsavedDrafts = [];
+    this.savedRecipes = [];
   }
 
   private loadRecipeById(id: string): Promise<Recipe | null> {
@@ -130,16 +133,16 @@ export class RecipeGeneratorService {
   }
 
   private async saveDrafts(drafts: RecipeDraft[]): Promise<void> {
-    try {
-      const savedRecipes = await this.recipeStore.saveRecipes(drafts);
-      rememberResultIds(savedRecipes.map(getRecipeId));
-      this.recipes.set(savedRecipes);
-      this.unsavedDrafts = [];
-      this.status.set('success');
-    } catch {
-      this.unsavedDrafts = drafts;
+    const result = await this.recipeStore.saveRecipes(drafts);
+    this.savedRecipes = [...this.savedRecipes, ...result.saved];
+    this.unsavedDrafts = result.failed;
+    if (result.failed.length > 0) {
       this.fail('We could not save your recipes. Please try again.');
+      return;
     }
+    rememberResultIds(this.savedRecipes.map(getRecipeId));
+    this.recipes.set(this.savedRecipes);
+    this.status.set('success');
   }
 
   private async readJson(response: Response): Promise<GeneratorResponse | null> {

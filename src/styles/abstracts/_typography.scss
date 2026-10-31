@@ -3,6 +3,7 @@
   src: url('fonts/Quicksand-VariableFont_wght.ttf') format('truetype-variations');
   font-weight: 100 700;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -10,6 +11,7 @@
   src: url('fonts/Ubuntu-Bold.ttf');
   font-weight: 700;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -17,6 +19,7 @@
   src: url('fonts/Ubuntu-Medium.ttf');
   font-weight: 500;
   font-style: normal;
+  font-display: swap;
 }
 
 $font-family-quicksand: 'Quicksand', sans-serif;

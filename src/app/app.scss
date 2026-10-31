@@ -1,0 +1,20 @@
+@use 'abstracts' as *;
+
+// Hidden until a keyboard user reaches it with the Tab key.
+.skip-link {
+  @include font(1rem, 500, $color: $color-cream);
+  position: absolute;
+  top: -100px;
+  left: 16px;
+  z-index: 100;
+  padding: 12px 20px;
+  border-radius: 8px;
+  background-color: $color-text;
+  text-decoration: none;
+
+  &:focus {
+    top: 16px;
+    outline: 3px solid $color-cream;
+    outline-offset: 2px;
+  }
+}

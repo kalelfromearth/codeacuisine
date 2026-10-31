@@ -1,4 +1,5 @@
 import { Component, computed, effect, inject, input, signal, untracked } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
 import { IngredientListService } from '../generate-recipe/ingredient-list.service';
 import {
@@ -11,6 +12,7 @@ import {
 import { FILM_CUISINE, FILM_RECIPES, FilmInfo, isFilmRecipe } from '../recipe/film-recipes';
 import { RECIPE_CUISINES, Recipe, RecipeCuisine, buildRecipeTags, formatRecipeLabel } from '../recipe/recipe.model';
 import { Header } from '../shared/header/header';
+import { buildPageTitle } from '../shared/page-title';
 
 type ListStatus = 'loading' | 'ready' | 'error' | 'missing';
 
@@ -33,6 +35,7 @@ function findCuisine(name: string): RecipeCuisine | null {
 export class LibraryList {
   private readonly recipeStore = inject(RecipeStoreService);
   private readonly ingredientList = inject(IngredientListService);
+  private readonly pageTitle = inject(Title);
   private readonly pageCache = new Map<string, RecipePage>();
 
   /** The cuisine from the route, for example "italian". */
@@ -59,6 +62,7 @@ export class LibraryList {
 
   constructor() {
     effect(this.loadCurrentPage.bind(this));
+    effect(this.updatePageTitle.bind(this));
   }
 
   /** Shows the page with the given number. */
@@ -87,6 +91,10 @@ export class LibraryList {
   /** Forgets the old ingredients so the next recipe starts with an empty list. */
   startNewRecipe(): void {
     this.ingredientList.clearIngredients();
+  }
+
+  private updatePageTitle(): void {
+    this.pageTitle.setTitle(buildPageTitle(this.status() === 'missing' ? 'Cuisine not found' : this.title()));
   }
 
   private buildTitle(): string {

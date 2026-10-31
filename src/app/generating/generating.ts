@@ -35,7 +35,8 @@ export class Generating {
 
   private openResultsOnSuccess(): void {
     if (this.generator.status() === 'success') {
-      this.router.navigateByUrl('/recipes');
+      // Replace the loading page in the browser history, so that Back from the results does not land here again.
+      this.router.navigateByUrl('/recipes', { replaceUrl: true });
     }
   }
 

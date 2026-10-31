@@ -1,0 +1,46 @@
+@use 'abstracts' as *;
+
+:host {
+  @include light-page;
+}
+
+.not-found {
+  padding: 48px 0 56px;
+  color: $color-text;
+
+  &__content {
+    @include flex($direction: column, $align: flex-start, $justify: flex-start, $gap: 16px);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  &__title {
+    @include font(2rem, 700, $color: $color-heading);
+    line-height: 1.1;
+
+    @include md {
+      font-size: 2.5rem;
+    }
+  }
+
+  &__text {
+    @include font(1.125rem, 400);
+  }
+
+  &__links {
+    @include flex($direction: column, $align: flex-start, $justify: flex-start, $gap: 4px);
+  }
+
+  &__link {
+    @include arrow-link($color-heading);
+
+    &:focus-visible {
+      outline: 3px solid $color-heading;
+      outline-offset: 2px;
+    }
+  }
+
+  &__icon {
+    @include mask-icon('images/icons/arrow-right.svg', 28px, 18px);
+  }
+}

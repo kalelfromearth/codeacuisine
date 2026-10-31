@@ -82,6 +82,25 @@ function readCreatedAt(value: unknown): string {
   return value instanceof Timestamp ? value.toDate().toISOString() : new Date().toISOString();
 }
 
+/** The result of saving several drafts: the recipes that were saved and the drafts that failed. */
+export interface SaveResult {
+  saved: Recipe[];
+  failed: RecipeDraft[];
+}
+
+function splitSaveResults(drafts: RecipeDraft[], results: PromiseSettledResult<Recipe>[]): SaveResult {
+  const saved: Recipe[] = [];
+  const failed: RecipeDraft[] = [];
+  results.forEach(function (result, index) {
+    if (result.status === 'fulfilled') {
+      saved.push(result.value);
+    } else {
+      failed.push(drafts[index]);
+    }
+  });
+  return { saved, failed };
+}
+
 function toRecipe(id: string, data: DocumentData): Recipe {
   const fields = pickDocumentFields(data as RecipeDraft);
   return { ...fields, id, likes: data['likes'], createdAt: readCreatedAt(data['createdAt']) };
@@ -112,9 +131,10 @@ function buildPageConstraints(
 export class RecipeStoreService {
   private readonly firestore = inject(FirebaseService).firestore;
 
-  /** Saves all drafts as new recipes and returns them with their ids. */
-  saveRecipes(drafts: RecipeDraft[]): Promise<Recipe[]> {
-    return Promise.all(drafts.map(this.saveRecipe.bind(this)));
+  /** Saves all drafts as new recipes. A draft that fails does not stop the others. */
+  async saveRecipes(drafts: RecipeDraft[]): Promise<SaveResult> {
+    const results = await Promise.allSettled(drafts.map(this.saveRecipe.bind(this)));
+    return splitSaveResults(drafts, results);
   }
 
   /** Saves one draft with 0 likes and the server time and returns it with its new id. */

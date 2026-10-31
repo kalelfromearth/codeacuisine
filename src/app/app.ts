@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 @Component({
@@ -8,5 +8,13 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './app.scss'
 })
 export class App {
-  protected readonly title = signal('codeacuisine');
+  /** Moves the keyboard focus to the main content of the current page, past the header. */
+  skipToContent(event: Event): void {
+    event.preventDefault();
+    const main = document.querySelector<HTMLElement>('main');
+    if (main) {
+      main.setAttribute('tabindex', '-1');
+      main.focus();
+    }
+  }
 }

@@ -24,3 +24,7 @@ body {
     padding: 0 32px;
   }
 }
+// The main area gets the focus from the skip link, it does not need a visible frame itself.
+main[tabindex="-1"]:focus {
+  outline: none;
+}

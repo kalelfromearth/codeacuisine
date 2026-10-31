@@ -9,6 +9,11 @@
             <span class="recipe-detail__icon recipe-detail__icon--back" aria-hidden="true"></span>
             <span class="recipe-detail__back-text">Film cuisine</span>
           </a>
+        } @else if (listBack(); as back) {
+          <a class="recipe-detail__back" [routerLink]="back.path" [attr.aria-label]="'Back to ' + back.label">
+            <span class="recipe-detail__icon recipe-detail__icon--back" aria-hidden="true"></span>
+            <span class="recipe-detail__back-text">{{ back.label }}</span>
+          </a>
         } @else if (hasResults()) {
           <a class="recipe-detail__back" routerLink="/recipes" aria-label="Back to recipe results">
             <span class="recipe-detail__icon recipe-detail__icon--back" aria-hidden="true"></span>

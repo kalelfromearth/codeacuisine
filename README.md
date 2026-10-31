@@ -17,6 +17,7 @@ I built it as the final project of my training as a frontend developer at the De
 
 ## Highlights
 
+- **AI from Swisscom.** The recipes are written by the language model of Swisscom myAI. The key stays in n8n and never reaches the browser.
 - **Three really different recipes per request.** Three AI calls run in parallel, each with its own angle (a classic pan dish, a different dish type, a creative idea), so the suggestions do not repeat each other.
 - **Ingredients are checked before any recipe is written.** A fourth, deterministic AI call flags input that is not food (keyboard mashing, objects), and the user gets a clear message instead of a made-up recipe.
 - **A diet check in the browser.** With Vegetarian or Vegan selected, ingredients like tuna or milk are caught from word lists (German and English, loaded only when needed) and the user can continue without them.

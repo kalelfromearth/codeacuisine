@@ -10,6 +10,27 @@ import { Header } from '../shared/header/header';
 type LibraryStatus = 'loading' | 'ready' | 'error';
 type Shelf = 'liked' | 'newest';
 
+interface BackLink {
+  path: string;
+  label: string;
+}
+
+const RESULTS_PATH = '/recipes';
+
+// The results page passes its address along when it opens the cookbook. Any other address leads to the start page.
+function readBackLink(): BackLink {
+  const state = history.state as { backTo?: unknown } | null;
+  return state?.backTo === RESULTS_PATH
+    ? { path: RESULTS_PATH, label: 'the recipe results' }
+    : { path: '/', label: 'the start page' };
+}
+
+// The photos of the cuisine tiles. A cuisine without an entry shows a coloured placeholder instead.
+const CUISINE_PHOTOS: Record<string, string> = {
+  german: 'images/cookbook/german.webp',
+  italian: 'images/cookbook/italian.webp',
+};
+
 @Component({
   selector: 'app-library',
   imports: [Header, NgTemplateOutlet, RouterLink],
@@ -25,11 +46,17 @@ export class Library {
   readonly mostLiked = signal<Recipe[]>([]);
   readonly newest = signal<Recipe[]>([]);
   readonly status = signal<LibraryStatus>('loading');
+  readonly back = signal<BackLink>(readBackLink());
   readonly activeShelf = signal<Shelf>('liked');
   readonly shownRecipes = computed(() => (this.activeShelf() === 'liked' ? this.mostLiked() : this.newest()));
 
   constructor() {
     this.loadShelves();
+  }
+
+  /** Returns the photo of a cuisine for its tile, or null while there is no photo yet. */
+  getPhoto(cuisine: string): string | null {
+    return CUISINE_PHOTOS[cuisine] ?? null;
   }
 
   /** Returns the name of a cuisine as shown on its tile, for example "Italian cuisine". */

@@ -27,7 +27,7 @@
 
 <main class="library">
   <div class="wrapper library__content">
-    <a class="library__back" routerLink="/" aria-label="Back to the start page">
+    <a class="library__back" [routerLink]="back().path" [attr.aria-label]="'Back to ' + back().label">
       <span class="library__icon library__icon--back" aria-hidden="true"></span>
       <span class="library__back-text">Back</span>
     </a>
@@ -94,16 +94,20 @@
                 {{ describeCuisine(cuisine) }}
                 <span class="library__icon library__icon--arrow" aria-hidden="true"></span>
               </span>
-              <span
-                class="library__cuisine-picture"
-                [class.library__cuisine-picture--film]="cuisine === filmCuisine"
-                aria-hidden="true"
-              >
-                @if (cuisine === filmCuisine) {
-                  <span class="library__icon library__icon--clapper"></span>
-                }
-                {{ describeCuisine(cuisine) }}
-              </span>
+              @if (getPhoto(cuisine); as photo) {
+                <img class="library__cuisine-photo" [src]="photo" alt="" width="800" height="800" loading="lazy" />
+              } @else {
+                <span
+                  class="library__cuisine-picture"
+                  [class.library__cuisine-picture--film]="cuisine === filmCuisine"
+                  aria-hidden="true"
+                >
+                  @if (cuisine === filmCuisine) {
+                    <span class="library__icon library__icon--clapper"></span>
+                  }
+                  {{ describeCuisine(cuisine) }}
+                </span>
+              }
             </a>
           </li>
         }

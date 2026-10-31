@@ -1,0 +1,34 @@
+# Builds the app and runs the unit tests on every push to main and on every pull request.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # The real environment file is not in the repository, the build only needs its shape.
+      - name: Use the example environment
+        run: cp src/environments/environment.example.ts src/environments/environment.ts
+
+      - name: Build
+        run: npx ng build
+
+      - name: Run the unit tests
+        run: npx ng test --watch=false

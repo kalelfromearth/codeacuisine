@@ -1,0 +1,59 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isValidNutrition(nutrition) {
+      return nutrition is map
+        && nutrition.keys().hasOnly(['calories', 'protein', 'fat', 'carbs'])
+        && nutrition.keys().hasAll(['calories', 'protein', 'fat', 'carbs'])
+        && nutrition.calories is int && nutrition.calories >= 0 && nutrition.calories <= 5000
+        && nutrition.protein is int && nutrition.protein >= 0 && nutrition.protein <= 5000
+        && nutrition.fat is int && nutrition.fat >= 0 && nutrition.fat <= 5000
+        && nutrition.carbs is int && nutrition.carbs >= 0 && nutrition.carbs <= 5000;
+    }
+
+    function isValidNewRecipe(recipe) {
+      return recipe.keys().hasOnly([
+          'title', 'cookingMinutes', 'timeCategory', 'cuisine', 'diet', 'servings', 'cooks',
+          'nutrition', 'ingredients', 'steps', 'likes', 'createdAt'
+        ])
+        && recipe.keys().hasAll([
+          'title', 'cookingMinutes', 'timeCategory', 'cuisine', 'diet', 'servings', 'cooks',
+          'nutrition', 'ingredients', 'steps', 'likes', 'createdAt'
+        ])
+        && recipe.title is string && recipe.title.size() >= 1 && recipe.title.size() <= 100
+        && recipe.cookingMinutes is int && recipe.cookingMinutes >= 1 && recipe.cookingMinutes <= 600
+        && recipe.timeCategory in ['quick', 'medium', 'complex']
+        && recipe.cuisine in ['german', 'italian', 'indian', 'japanese', 'gourmet', 'fusion']
+        && recipe.diet in ['vegetarian', 'vegan', 'keto', 'none']
+        && recipe.servings is int && recipe.servings >= 1 && recipe.servings <= 12
+        && recipe.cooks is int && recipe.cooks >= 1 && recipe.cooks <= 4
+        && isValidNutrition(recipe.nutrition)
+        && recipe.ingredients is list && recipe.ingredients.size() >= 2 && recipe.ingredients.size() <= 20
+        && recipe.steps is list && recipe.steps.size() >= 2 && recipe.steps.size() <= 12
+        && recipe.likes == 0
+        && recipe.createdAt == request.time;
+    }
+
+    match /recipes/{recipeId} {
+      // A single recipe may be read by everyone, lists only in pages of at most 12 recipes.
+      allow get: if true;
+      allow list: if request.query.limit <= 12;
+
+      allow create: if isValidNewRecipe(request.resource.data);
+
+      // Only the number of hearts may change, by exactly one and never below zero.
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes'])
+        && request.resource.data.likes is int
+        && request.resource.data.likes >= 0
+        && (request.resource.data.likes == resource.data.likes + 1
+          || request.resource.data.likes == resource.data.likes - 1);
+
+      allow delete: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -73,3 +73,4 @@ Kurz und knapp, neueste Einträge unten. Format: `Datum – was`.
 - 2026-10-31: Widescreen-Vorgabe aus Figma (Breakpoint 1440px, fünf Teller auf der Startseite) geprüft: Inhalt zentriert und Hintergrund voll breit sind da, Breakpoint 1440px und das Fünf-Teller-Bild fehlen noch. Auf die Testtag-Liste gesetzt, Andreas liefert den Figma-Link zu den Components.
 - 2026-10-31: Testtag-Checkliste für 2026-11-01 als `docs/TESTTAG.md` angelegt (UI, Funktionen, Bedienung, Vor dem Upload).
 - 2026-10-31: README: neues Highlight "AI from Swisscom" (Modell von Swisscom myAI, Schlüssel nur in n8n).
+- 2026-11-02: Startseite: Teller-Spalte unter 768px 10px schmaler (`max-width: calc(100% - 230px)` statt 220px), weil Titel bei ca. 530px zu eng an den Tellern lag. Noch im Browser zu prüfen.

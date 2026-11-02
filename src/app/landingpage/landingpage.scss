@@ -5,7 +5,7 @@
   position: relative;
   max-width: 1440px;
   margin: 0 auto;
-  min-height: 100dvh;
+  min-height: calc(100dvh - var(--footer-height, 0px));
   overflow-x: clip;
 }
 

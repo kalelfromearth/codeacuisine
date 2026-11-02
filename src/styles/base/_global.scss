@@ -30,6 +30,16 @@ html:has(app-landingpage, app-generating, app-recipes) {
   --scrollbar-track: #{$color-primary};
 }
 
+// The footer with the imprint link is as high as this, the pages are shorter by the same amount so that the start page does not scroll.
+html {
+  --footer-height: 56px;
+  --page-text: #{$color-heading};
+}
+
+html:has(app-landingpage, app-generating, app-recipes) {
+  --page-text: #{$color-cream};
+}
+
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);

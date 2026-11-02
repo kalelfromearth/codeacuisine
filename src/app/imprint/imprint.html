@@ -1,0 +1,56 @@
+<app-header background="light"></app-header>
+
+<main class="imprint">
+  <div class="wrapper imprint__content">
+    <h1 class="imprint__title">Imprint <span class="imprint__subtitle">(Impressum)</span></h1>
+
+    <section class="imprint__section" aria-labelledby="imprint-provider">
+      <h2 class="imprint__heading" id="imprint-provider">Provider of this website</h2>
+      <address class="imprint__address">
+        Andreas Kissner<br />
+        Rue du Champ Fort 6<br />
+        2853 Courfaivre<br />
+        Switzerland
+      </address>
+    </section>
+
+    <section class="imprint__section" aria-labelledby="imprint-contact">
+      <h2 class="imprint__heading" id="imprint-contact">Contact</h2>
+      <p class="imprint__text">
+        E-mail:
+        <a class="imprint__link" [href]="'mailto:' + contactEmail">{{ contactEmail }}</a>
+      </p>
+    </section>
+
+    <section class="imprint__section" aria-labelledby="imprint-project">
+      <h2 class="imprint__heading" id="imprint-project">About this project</h2>
+      <p class="imprint__text">
+        Code à Cuisine is a private learning and portfolio project, built during the training at the Developer
+        Akademie. It is not run for profit. The recipes are created by an AI and are meant as inspiration. Please check
+        ingredients, cooking times and allergens yourself before you cook.
+      </p>
+    </section>
+
+    <section class="imprint__section" aria-labelledby="imprint-data">
+      <h2 class="imprint__heading" id="imprint-data">Your input and the cookbook</h2>
+      <p class="imprint__text">
+        The ingredients and preferences you enter are sent to an automation server and to an AI service to create your
+        recipes. Every created recipe is saved in the public cookbook, where everybody can read it. Please do not enter
+        personal data.
+      </p>
+    </section>
+
+    <section class="imprint__section" aria-labelledby="imprint-liability">
+      <h2 class="imprint__heading" id="imprint-liability">Liability</h2>
+      <p class="imprint__text">
+        The contents of this website were created with care. There is no guarantee that they are correct, complete or up
+        to date. I am not responsible for the contents of external websites that are linked here.
+      </p>
+    </section>
+
+    <a class="imprint__back" routerLink="/">
+      Go to the start page
+      <span class="imprint__icon" aria-hidden="true"></span>
+    </a>
+  </div>
+</main>

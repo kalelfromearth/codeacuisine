@@ -19,5 +19,6 @@ export const routes: Routes = [
     { path : 'recipes/:id' , loadComponent: () => import('./recipe-detail/recipe-detail').then(page => page.RecipeDetail)},
     { path : 'library' , loadComponent: () => import('./library/library').then(page => page.Library), title: buildPageTitle('Cookbook')},
     { path : 'library/:cuisine' , loadComponent: () => import('./library-list/library-list').then(page => page.LibraryList)},
+    { path : 'imprint' , loadComponent: () => import('./imprint/imprint').then(page => page.Imprint), title: buildPageTitle('Imprint')},
     { path : '**' , loadComponent: () => import('./not-found/not-found').then(page => page.NotFound), title: buildPageTitle('Page not found')}
 ];

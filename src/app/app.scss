@@ -18,3 +18,26 @@
     outline-offset: 2px;
   }
 }
+
+// The footer sits below every page, its colour follows the page (light text on the dark pages).
+.site-footer {
+  color: var(--page-text);
+
+  &__content {
+    @include flex($justify: flex-start);
+    min-height: var(--footer-height);
+  }
+
+  &__link {
+    @include flex;
+    @include font(1rem, 500);
+    min-height: 44px;
+    color: inherit;
+    text-decoration: underline;
+
+    &:focus-visible {
+      outline: 3px solid currentColor;
+      outline-offset: 2px;
+    }
+  }
+}

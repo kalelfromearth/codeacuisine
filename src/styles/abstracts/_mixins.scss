@@ -51,13 +51,13 @@
 
 @mixin light-page {
   display: block;
-  min-height: 100dvh;
+  min-height: calc(100dvh - var(--footer-height, 0px));
   background-color: $color-surface;
 }
 
 @mixin dark-page {
   display: block;
-  min-height: 100dvh;
+  min-height: calc(100dvh - var(--footer-height, 0px));
   background-color: $color-primary;
   color: $color-cream;
 }

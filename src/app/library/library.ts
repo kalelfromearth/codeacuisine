@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, ElementRef, Injector, afterNextRender, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IngredientListService } from '../generate-recipe/ingredient-list.service';
 import { RecipeStoreService } from '../recipe/recipe-store.service';
@@ -15,6 +15,7 @@ interface BackLink {
   label: string;
 }
 
+const DRAG_START_DISTANCE_PX = 6;
 const RESULTS_PATH = '/recipes';
 const RECIPE_PATH = /^\/recipes\/[A-Za-z0-9-]+$/;
 
@@ -54,10 +55,13 @@ const CUISINE_PHOTOS: Record<string, CuisinePhoto> = {
   imports: [Header, NgTemplateOutlet, RouterLink],
   templateUrl: './library.html',
   styleUrl: './library.scss',
+  host: { '(window:resize)': 'refreshShelfEdges()' },
 })
 export class Library {
   private readonly recipeStore = inject(RecipeStoreService);
   private readonly ingredientList = inject(IngredientListService);
+  private readonly injector = inject(Injector);
+  private readonly shelfList = viewChild<ElementRef<HTMLElement>>('shelfList');
 
   readonly filmCuisine = FILM_CUISINE;
   readonly cuisines: readonly string[] = [...RECIPE_CUISINES, FILM_CUISINE];
@@ -68,8 +72,68 @@ export class Library {
   readonly activeShelf = signal<Shelf>('liked');
   readonly shownRecipes = computed(() => (this.activeShelf() === 'liked' ? this.mostLiked() : this.newest()));
 
+  readonly isDragging = signal(false);
+  private isMousePressed = false;
+  private dragStartX = 0;
+  private dragStartScroll = 0;
+  readonly canScrollBack = signal(false);
+  readonly canScrollForward = signal(false);
+
   constructor() {
     this.loadShelves();
+    effect(this.refreshAfterShelfChange.bind(this));
+  }
+
+  /** Scrolls the recipe row by about one screen to the left (-1) or to the right (1). */
+  scrollShelf(direction: -1 | 1): void {
+    const list = this.shelfList()?.nativeElement;
+    if (!list) {
+      return;
+    }
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    list.scrollBy({ left: direction * list.clientWidth * 0.8, behavior: reduceMotion ? 'auto' : 'smooth' });
+  }
+
+  /** Starts dragging the recipe row with the left mouse button. A finger just swipes, so touch is ignored. */
+  startShelfDrag(event: PointerEvent, list: HTMLElement): void {
+    if (event.pointerType !== 'mouse' || event.button !== 0) {
+      return;
+    }
+    this.isMousePressed = true;
+    this.dragStartX = event.clientX;
+    this.dragStartScroll = list.scrollLeft;
+  }
+
+  /** Moves the recipe row with the mouse. Only a real drag captures the pointer, so a plain click still opens the card. */
+  moveShelfDrag(event: PointerEvent, list: HTMLElement): void {
+    if (!this.isMousePressed || event.buttons === 0) {
+      this.endShelfDrag();
+      return;
+    }
+    const distance = event.clientX - this.dragStartX;
+    if (!this.isDragging() && Math.abs(distance) > DRAG_START_DISTANCE_PX) {
+      this.isDragging.set(true);
+      list.setPointerCapture(event.pointerId);
+    }
+    if (this.isDragging()) {
+      list.scrollLeft = this.dragStartScroll - distance;
+    }
+  }
+
+  /** Ends the mouse drag of the recipe row. */
+  endShelfDrag(): void {
+    this.isMousePressed = false;
+    this.isDragging.set(false);
+  }
+
+  /** Checks whether the recipe row has more cards on the left or on the right and updates the arrows. */
+  refreshShelfEdges(): void {
+    const list = this.shelfList()?.nativeElement;
+    if (!list) {
+      return;
+    }
+    this.canScrollBack.set(list.scrollLeft > 1);
+    this.canScrollForward.set(list.scrollLeft + list.clientWidth < list.scrollWidth - 1);
   }
 
   /** Returns the photo of a cuisine for its tile, or null while there is no photo yet. */
@@ -95,6 +159,11 @@ export class Library {
   /** Forgets the old ingredients so the next recipe starts with an empty list. */
   startNewRecipe(): void {
     this.ingredientList.clearIngredients();
+  }
+
+  private refreshAfterShelfChange(): void {
+    this.shownRecipes();
+    afterNextRender(this.refreshShelfEdges.bind(this), { injector: this.injector });
   }
 
   private async loadShelves(): Promise<void> {

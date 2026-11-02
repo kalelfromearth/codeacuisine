@@ -146,17 +146,92 @@
     stroke-linejoin: round;
   }
 
+  &__carousel {
+    position: relative;
+  }
+
+  // The row is swiped with a finger or moved with the arrows, so the scrollbar is hidden. The ends fade out where more cards follow.
   &__list {
     @include flex($align: stretch, $justify: flex-start, $gap: 16px);
-    padding: 0 0 8px;
+    padding: 0;
     margin: 0;
     overflow-x: auto;
     list-style: none;
+    scroll-snap-type: x proximity;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 var(--fade-start, 0px),
+      #000 calc(100% - var(--fade-end, 0px)),
+      transparent
+    );
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    @media (hover: hover) {
+      cursor: grab;
+    }
+
+    // While the mouse drags, the cards must not snap or get selected, they snap into place after the release.
+    &--dragging {
+      cursor: grabbing;
+      scroll-snap-type: none;
+      user-select: none;
+    }
+  }
+
+  // Arrows only help where there is no touch, a phone is swiped.
+  &__arrow {
+    @include flex;
+    position: absolute;
+    top: 50%;
+    z-index: 1;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background-color: $color-primary;
+    color: $color-cream;
+    cursor: pointer;
+    transform: translateY(-50%);
+    transition: opacity 0.25s ease;
+
+    &--back {
+      left: 4px;
+    }
+
+    &--forward {
+      right: 4px;
+    }
+
+    &:disabled {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    &:focus-visible {
+      outline: 3px solid $color-heading;
+      outline-offset: 2px;
+    }
+
+    @media (hover: none) {
+      display: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
   }
 
   &__item {
     flex: none;
     width: 260px;
+    scroll-snap-align: start;
   }
 
   &__card {

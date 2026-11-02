@@ -1,7 +1,29 @@
 <app-header background="light"></app-header>
 
 <ng-template #recipeList let-recipes>
-  <ul class="library__list">
+  <div class="library__carousel">
+    <button
+      class="library__arrow library__arrow--back"
+      type="button"
+      aria-label="Show earlier recipes"
+      [disabled]="!canScrollBack()"
+      (click)="scrollShelf(-1)"
+    >
+      <span class="library__icon library__icon--back" aria-hidden="true"></span>
+    </button>
+    <ul
+      #shelfList
+      class="library__list"
+      [class.library__list--dragging]="isDragging()"
+      (pointerdown)="startShelfDrag($event, shelfList)"
+      (pointermove)="moveShelfDrag($event, shelfList)"
+      (pointerup)="endShelfDrag()"
+      (pointercancel)="endShelfDrag()"
+      (dragstart)="$event.preventDefault()"
+      [style.--fade-start]="canScrollBack() ? '40px' : '0px'"
+      [style.--fade-end]="canScrollForward() ? '40px' : '0px'"
+      (scroll)="refreshShelfEdges()"
+    >
     @for (recipe of recipes; track recipe.id) {
       <li class="library__item">
         <a class="library__card" [routerLink]="'/recipes/' + recipe.id">
@@ -22,7 +44,17 @@
         </a>
       </li>
     }
-  </ul>
+    </ul>
+    <button
+      class="library__arrow library__arrow--forward"
+      type="button"
+      aria-label="Show more recipes"
+      [disabled]="!canScrollForward()"
+      (click)="scrollShelf(1)"
+    >
+      <span class="library__icon library__icon--arrow" aria-hidden="true"></span>
+    </button>
+  </div>
 </ng-template>
 
 <main class="library">

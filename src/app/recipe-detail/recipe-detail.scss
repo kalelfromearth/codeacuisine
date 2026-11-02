@@ -528,8 +528,46 @@
   }
 
   &__footer-links {
-    @include flex($direction: column, $align: flex-end, $justify: flex-start, $gap: 4px);
-    align-self: flex-end;
+    @include flex($direction: column, $align: stretch, $justify: flex-start, $gap: 16px);
+    align-self: stretch;
+  }
+
+  // A soft box with a short invitation and a green button to the cookbook.
+  &__inspiration {
+    @include flex($justify: space-between, $gap: 16px);
+    padding: 16px;
+    border-radius: 20px;
+    background-color: $color-card-soft;
+    color: $color-text;
+  }
+
+  &__inspiration-text {
+    @include font(1rem, 500);
+    flex: 1;
+    min-width: 0;
+    text-wrap: pretty;
+  }
+
+  &__inspiration-button {
+    @include flex;
+    @include font(1rem, 500, $color: $color-cream);
+    flex: none;
+    min-height: 44px;
+    padding: 0 20px;
+    border-radius: 8px;
+    background-color: $color-primary;
+    text-decoration: none;
+
+    @media (hover: hover) {
+      &:hover {
+        background-color: $color-heading;
+      }
+    }
+
+    &:focus-visible {
+      outline: 3px solid $color-heading;
+      outline-offset: 2px;
+    }
   }
 
   &__new {

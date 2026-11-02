@@ -168,6 +168,7 @@
       background-color: $color-chef-1;
     }
 
+    // Every chef has his own picture: the chef hat, a cloche, a pretzel and a pizza.
     &--2 {
       background-color: $color-chef-2;
     }
@@ -178,6 +179,25 @@
 
     &--4 {
       background-color: $color-chef-4;
+    }
+
+    &--2::before,
+    &--3::before,
+    &--4::before {
+      width: 24px;
+      height: 24px;
+    }
+
+    &--2::before {
+      background-image: url('images/cookbook/icons/gourmet.svg');
+    }
+
+    &--3::before {
+      background-image: url('images/cookbook/icons/german.svg');
+    }
+
+    &--4::before {
+      background-image: url('images/cookbook/icons/italian.svg');
     }
   }
 

@@ -41,7 +41,7 @@
   }
 
   &__actions {
-    @include flex($justify: flex-start);
+    @include flex;
     width: 100%;
 
     @include md {

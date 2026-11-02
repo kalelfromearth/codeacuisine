@@ -82,9 +82,13 @@
   }
 
   &__actions {
-    @include flex($gap: 4px);
+    @include flex;
     flex: none;
     margin-left: auto;
+
+    @include md {
+      gap: 4px;
+    }
   }
 
   &__edit-form {

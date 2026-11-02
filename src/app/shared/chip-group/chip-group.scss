@@ -19,12 +19,12 @@
 
   &__legend {
     @include flex($justify: flex-start, $gap: 8px);
-    @include font(1.25rem, 500, $color: $color-primary);
+    @include font(1.25rem, 700, $color: $color-primary);
     margin-bottom: 12px;
     padding: 0;
 
     @include md {
-      @include font(1.5rem, 500, $color: $color-primary);
+      @include font(1.5rem, 700, $color: $color-primary);
       margin-bottom: 16px;
     }
   }

@@ -7,6 +7,7 @@ import {
   UNIT_LABELS,
 } from '../ingredient.model';
 import { amountWithinUnitLimit } from '../ingredient-amount.validator';
+import { capitalizeIngredientName } from '../ingredient-name.format';
 import { plausibleIngredientName } from '../ingredient-name.validator';
 import {
   BLOCKED_AMOUNT_KEYS,
@@ -76,7 +77,8 @@ export class IngredientForm {
       this.ingredientForm.markAllAsTouched();
       return;
     }
-    this.ingredientList.addIngredient(this.ingredientForm.getRawValue());
+    const entered = this.ingredientForm.getRawValue();
+    this.ingredientList.addIngredient({ ...entered, name: capitalizeIngredientName(entered.name) });
     this.resetForm();
   }
 

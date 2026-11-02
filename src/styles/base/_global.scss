@@ -5,8 +5,23 @@ body {
   overflow-x: hidden;
 }
 
-body {
+// The room for the scrollbar is always kept free, so the page does not jump when it becomes taller than the window.
+html {
+  scrollbar-gutter: stable;
+}
+
+// The colour behind the page also fills the free room for the scrollbar: white, and green on the dark pages.
+html {
+  background-color: $color-surface;
+}
+
+html:has(app-landingpage, app-generating, app-recipes) {
   background-color: $color-primary;
+}
+
+body {
+  // Touch devices would flash a blue rectangle when tapping buttons and fields.
+  -webkit-tap-highlight-color: transparent;
 }
 
 *{

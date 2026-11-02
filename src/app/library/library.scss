@@ -102,13 +102,18 @@
 
   &__tab {
     @include flex($justify: flex-start, $gap: 12px);
-    @include font(1.5rem, 500, $color: $color-primary);
+    @include font(1.25rem, 500, $color: $color-primary);
     min-height: 44px;
     padding: 0;
     border: none;
     border-bottom: 3px solid transparent;
     background: none;
     cursor: pointer;
+    text-align: left;
+
+    @include md {
+      font-size: 1.5rem;
+    }
 
     @media (hover: hover) {
       &:hover {

@@ -19,6 +19,22 @@ html:has(app-landingpage, app-generating, app-recipes) {
   background-color: $color-primary;
 }
 
+// Slim scrollbars in the colours of the page: a green thumb on a soft track, and the other way round on the dark pages.
+html {
+  --scrollbar-thumb: #{$color-primary};
+  --scrollbar-track: #{$color-card-soft};
+}
+
+html:has(app-landingpage, app-generating, app-recipes) {
+  --scrollbar-thumb: #{$color-cream};
+  --scrollbar-track: #{$color-primary};
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
 body {
   // Touch devices would flash a blue rectangle when tapping buttons and fields.
   -webkit-tap-highlight-color: transparent;

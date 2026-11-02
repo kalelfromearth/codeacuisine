@@ -15,9 +15,35 @@
       formControlName="name"
       placeholder="e.g. Pasta"
       autocomplete="off"
+      role="combobox"
+      aria-autocomplete="list"
+      [attr.aria-expanded]="isSuggestionListOpen()"
+      [attr.aria-controls]="isSuggestionListOpen() ? 'ingredient-suggestions' : null"
+      [attr.aria-activedescendant]="activeSuggestion() >= 0 ? 'ingredient-suggestion-' + activeSuggestion() : null"
+      (input)="onNameInput()"
+      (keydown)="handleNameKeys($event)"
+      (blur)="closeSuggestions()"
       [attr.aria-invalid]="ingredientForm.controls.name.touched && ingredientForm.controls.name.invalid"
       [attr.aria-describedby]="ingredientForm.controls.name.touched && ingredientForm.controls.name.invalid ? 'ingredient-name-error' : null"
     />
+    @if (isSuggestionListOpen()) {
+      <ul class="ingredient-form__suggestions" id="ingredient-suggestions" role="listbox" aria-label="Ingredient suggestions">
+        @for (suggestion of suggestions(); track suggestion; let position = $index) {
+          <li
+            class="ingredient-form__suggestion"
+            [class.ingredient-form__suggestion--active]="position === activeSuggestion()"
+            role="option"
+            [id]="'ingredient-suggestion-' + position"
+            [attr.aria-selected]="position === activeSuggestion()"
+            (mousedown)="$event.preventDefault()"
+            (click)="chooseSuggestion(suggestion)"
+          >
+            {{ suggestion }}
+          </li>
+        }
+      </ul>
+    }
+    <p class="ingredient-form__visually-hidden" role="status">{{ suggestionStatus() }}</p>
     @if (ingredientForm.controls.name.touched && ingredientForm.controls.name.invalid) {
       <p class="ingredient-form__error" id="ingredient-name-error">{{ getNameErrorMessage() }}</p>
     }

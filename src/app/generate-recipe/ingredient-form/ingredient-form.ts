@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
   IngredientUnit,
@@ -13,6 +13,7 @@ import {
   buildAmountErrorMessage,
   capAmountToUnitLimit,
 } from '../ingredient-amount.rules';
+import { IngredientSuggestionService } from '../ingredient-suggestion.service';
 import { InfoTip } from '../../shared/info-tip/info-tip';
 import { UnitSelect } from '../unit-select/unit-select';
 import {
@@ -20,6 +21,9 @@ import {
   MAX_INGREDIENTS,
   MIN_INGREDIENTS,
 } from '../ingredient-list.service';
+
+const MIN_SUGGESTION_LENGTH = 2;
+const SUGGESTION_DELAY_MS = 300;
 
 type IngredientFormControls = {
   name: FormControl<string>;
@@ -35,7 +39,14 @@ type IngredientFormControls = {
 })
 export class IngredientForm {
   private readonly ingredientList = inject(IngredientListService);
+  private readonly suggestionService = inject(IngredientSuggestionService);
+  private suggestionTimer: ReturnType<typeof setTimeout> | undefined;
+  private suggestionRequest: AbortController | null = null;
 
+  readonly suggestions = signal<string[]>([]);
+  readonly activeSuggestion = signal(-1);
+  readonly isSuggestionListOpen = computed(this.hasSuggestions.bind(this));
+  readonly suggestionStatus = computed(this.describeSuggestions.bind(this));
   readonly minIngredients = MIN_INGREDIENTS;
   readonly maxIngredients = MAX_INGREDIENTS;
   readonly maxAmountByUnit = MAX_AMOUNT_BY_UNIT;
@@ -117,7 +128,76 @@ export class IngredientForm {
     );
   }
 
+  /** Waits a moment after typing, then asks for suggestions for the entered text. */
+  onNameInput(): void {
+    clearTimeout(this.suggestionTimer);
+    this.suggestionRequest?.abort();
+    const text = this.ingredientForm.controls.name.value.trim();
+    if (text.length < MIN_SUGGESTION_LENGTH) {
+      this.closeSuggestions();
+      return;
+    }
+    this.suggestionTimer = setTimeout(this.loadSuggestions.bind(this, text), SUGGESTION_DELAY_MS);
+  }
+
+  /** Moves through the suggestions with the arrow keys, takes one with Enter and closes the list with Escape. */
+  handleNameKeys(event: KeyboardEvent): void {
+    if (!this.isSuggestionListOpen()) {
+      return;
+    }
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      event.preventDefault();
+      this.moveActiveSuggestion(event.key === 'ArrowDown' ? 1 : -1);
+    } else if (event.key === 'Enter' && this.activeSuggestion() >= 0) {
+      event.preventDefault();
+      this.chooseSuggestion(this.suggestions()[this.activeSuggestion()]);
+    } else if (event.key === 'Escape') {
+      event.preventDefault();
+      this.closeSuggestions();
+    }
+  }
+
+  /** Puts the chosen suggestion into the name field. */
+  chooseSuggestion(text: string): void {
+    this.ingredientForm.controls.name.setValue(text);
+    this.closeSuggestions();
+  }
+
+  /** Closes the list of suggestions and drops a request that is still running. */
+  closeSuggestions(): void {
+    clearTimeout(this.suggestionTimer);
+    this.suggestionRequest?.abort();
+    this.suggestions.set([]);
+    this.activeSuggestion.set(-1);
+  }
+
+  private async loadSuggestions(text: string): Promise<void> {
+    const request = new AbortController();
+    this.suggestionRequest = request;
+    const found = await this.suggestionService.suggest(text, request.signal);
+    if (!request.signal.aborted) {
+      this.suggestions.set(found);
+      this.activeSuggestion.set(-1);
+    }
+  }
+
+  private moveActiveSuggestion(step: number): void {
+    const count = this.suggestions().length;
+    const next = this.activeSuggestion() + step;
+    this.activeSuggestion.set(next < 0 ? count - 1 : next % count);
+  }
+
+  private hasSuggestions(): boolean {
+    return this.suggestions().length > 0;
+  }
+
+  private describeSuggestions(): string {
+    const count = this.suggestions().length;
+    return count > 0 ? `${count} suggestions available. Use the arrow keys and Enter to choose one.` : '';
+  }
+
   private resetForm(): void {
+    this.closeSuggestions();
     this.ingredientForm.reset({ name: '', amount: 100, unit: 'gram' });
     // The amount was reset before the unit, so its check used the old unit and has to run again.
     this.ingredientForm.controls.amount.updateValueAndValidity();

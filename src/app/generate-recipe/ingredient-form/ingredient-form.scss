@@ -45,6 +45,38 @@
     width: 100%;
   }
 
+  &__suggestions {
+    @include flex($direction: column, $align: stretch, $justify: flex-start, $gap: 4px);
+    margin: 0;
+    padding: 0 0 0 8px;
+    list-style: none;
+  }
+
+  &__suggestion {
+    @include flex($justify: flex-start);
+    @include font(1.125rem, 400);
+    min-height: 40px;
+    padding: 6px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+
+    @media (hover: hover) {
+      &:hover {
+        background-color: $color-cream;
+      }
+    }
+
+    &--active {
+      background-color: $color-cream;
+      outline: 2px solid $color-heading;
+      outline-offset: -2px;
+    }
+  }
+
+  &__visually-hidden {
+    @include visually-hidden;
+  }
+
   &__serving {
     @include flex($align: flex-start, $justify: flex-start, $gap: 12px);
     flex-wrap: wrap;

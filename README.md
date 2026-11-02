@@ -41,6 +41,8 @@ flowchart LR
     F --> G{Read and clean AI answer}
     G -- not food --> E2[422 with the names to check]
     G -- unusable --> E3[502 or 429]
+    G -- "under 70 % or over 3 extras" --> R[One more try<br/>for that recipe]
+    R --> F
     G -- ok --> H[3 recipes as JSON]
     H --> A
     A -- "save with addDoc" --> I[(Cloud Firestore)]
@@ -50,7 +52,7 @@ flowchart LR
 
 1. **Angular** collects ingredients and preferences in typed reactive forms and checks them right away (amounts per unit, plausible ingredient names, 3 to 10 ingredients).
 2. **n8n** validates the request again, because anyone could call the webhook directly. It builds four prompts and calls the AI model. The AI key exists only in n8n, never in the frontend.
-3. The workflow **never forwards raw AI output**. It removes HTML and control characters, shortens texts, rounds numbers, enforces the allowed units and limits each amount to what the user actually has.
+3. The workflow **never forwards raw AI output**. It removes HTML and control characters, shortens texts, rounds numbers, enforces the allowed units and limits each amount to what the user actually has. It also checks that every recipe uses at least 70 % of the ingredients that fit the diet and adds at most 3 extras. A recipe that breaks this gets one more try with the reason.
 4. **Angular saves** the three recipes to Firestore. The security rules accept only documents with exactly the expected fields, types and lengths.
 5. The **cookbook** reads from Firestore with small, indexed queries.
 

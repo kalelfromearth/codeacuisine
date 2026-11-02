@@ -2,7 +2,7 @@
 
 .btn {
   @include flex($gap: 10px, $display: inline-flex);
-  min-height: 52px;
+  min-height: var(--button-min-height, 52px);
   padding: 4px 16px;
   border: none;
   @include font(1rem, 600);

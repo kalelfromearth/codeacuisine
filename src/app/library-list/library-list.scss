@@ -1,5 +1,12 @@
 @use 'abstracts' as *;
 
+// The title moves into the band of the header image as soon as the band is wide enough for it, earlier than the tablet size.
+@mixin wide-band {
+  @media (min-width: 600px) {
+    @content;
+  }
+}
+
 :host {
   @include light-page;
 }
@@ -58,6 +65,12 @@
       outline: 3px solid $color-heading;
       outline-offset: 2px;
     }
+
+    &--bottom {
+      align-self: center;
+      border-radius: 0;
+      margin-top: 8px;
+    }
   }
 
   // The header is a cream band with the title. A cuisine with a header image gets the illustrations on both ends.
@@ -76,11 +89,12 @@
     // The picture is already a band with illustrations, so the box itself stays empty.
     &--art {
       @include flex($direction: column, $gap: 8px);
+      position: relative;
       padding: 0;
       border-radius: 0;
       background: none;
 
-      @include md {
+      @include wide-band {
         display: block;
         position: relative;
         min-height: 0;
@@ -96,7 +110,7 @@
     width: 100%;
     height: 64px;
 
-    @include md {
+    @include wide-band {
       position: absolute;
       inset: 0;
       height: auto;
@@ -136,12 +150,23 @@
       font-size: 2.25rem;
     }
 
-    // On a wide screen the title sits in the middle of the band of the header image.
+    // The title sits in the middle of the band of the header image, smaller on a phone so that it fits between the illustrations.
     &--on-art {
+      @include flex;
+      position: absolute;
+      inset: 0;
+      font-size: 1rem;
+
+      @media (min-width: 400px) {
+        font-size: 1.25rem;
+      }
+
+      @include wide-band {
+        font-size: 1.75rem;
+      }
+
       @include md {
-        @include flex;
-        position: absolute;
-        inset: 0;
+        font-size: 2.25rem;
       }
     }
   }

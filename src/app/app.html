@@ -1,7 +1,8 @@
 <a class="skip-link" href="#main" (click)="skipToContent($event)">Skip to content</a>
 <router-outlet />
 <footer class="site-footer">
-  <div class="wrapper site-footer__content">
+  <nav class="wrapper site-footer__content" aria-label="Legal">
     <a class="site-footer__link" routerLink="/imprint">Imprint</a>
-  </div>
+    <a class="site-footer__link" routerLink="/privacy">Privacy policy</a>
+  </nav>
 </footer>

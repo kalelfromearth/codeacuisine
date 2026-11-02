@@ -1,0 +1,85 @@
+<app-header background="light"></app-header>
+
+<main class="legal">
+  <div class="wrapper legal__content">
+    <h1 class="legal__title">Privacy policy <span class="legal__subtitle">(Datenschutz)</span></h1>
+
+    <section class="legal__section" aria-labelledby="privacy-controller">
+      <h2 class="legal__heading" id="privacy-controller">Who is responsible</h2>
+      <p class="legal__text">
+        Andreas Kissner, Rue du Champ Fort 6, 2853 Courfaivre, Switzerland<br />
+        E-mail: <a class="legal__link" [href]="'mailto:' + contactEmail">{{ contactEmail }}</a>
+      </p>
+      <p class="legal__text">
+        Code à Cuisine is a private learning and portfolio project. This page explains in plain words which data is
+        used, what for and where it goes.
+      </p>
+    </section>
+
+    <section class="legal__section" aria-labelledby="privacy-short">
+      <h2 class="legal__heading" id="privacy-short">In short</h2>
+      <ul class="legal__list">
+        <li>You do not need an account, and you never enter your name or your e-mail address.</li>
+        <li>There are no cookies, no tracking and no analytics.</li>
+        <li>Your ingredients and preferences are used to create recipes, and the recipes are public in the cookbook.</li>
+      </ul>
+    </section>
+
+    <section class="legal__section" aria-labelledby="privacy-hosting">
+      <h2 class="legal__heading" id="privacy-hosting">Hosting of the website</h2>
+      <p class="legal__text">
+        The website is hosted by IONOS SE, Germany. When you open a page, the server stores technical data in log files,
+        for example your IP address, the time, the page and your browser. This is needed to deliver the website safely
+        and is done by every web server.
+      </p>
+    </section>
+
+    <section class="legal__section" aria-labelledby="privacy-recipes">
+      <h2 class="legal__heading" id="privacy-recipes">Creating recipes</h2>
+      <p class="legal__text">
+        When you create recipes, your ingredients, the number of portions and cooks, the cooking time, the cuisine and the
+        diet are sent to an automation server (n8n) on a virtual server of IONOS SE, Germany. The server also sees your
+        IP address, to protect the service against too many requests. From there, the recipe request is passed on to the
+        AI service myAI of Swisscom (Schweiz) AG, Switzerland. Your IP address is not passed on to the AI service.
+      </p>
+      <p class="legal__text">
+        While you type an ingredient, the first letters are sent through the same server to Open Food Facts, a free food
+        database, to show suggestions.
+      </p>
+    </section>
+
+    <section class="legal__section" aria-labelledby="privacy-cookbook">
+      <h2 class="legal__heading" id="privacy-cookbook">The public cookbook</h2>
+      <p class="legal__text">
+        Every created recipe and the hearts it gets are saved in Cloud Firestore, a database of Google (Google Ireland
+        Limited and Google LLC, USA). Your browser connects to Google directly to load and save recipes, so Google sees your
+        IP address. Data can be processed in the USA. The recipes stay in the cookbook without a time limit and everybody
+        can read them. Please do not enter personal data as an ingredient.
+      </p>
+    </section>
+
+    <section class="legal__section" aria-labelledby="privacy-browser">
+      <h2 class="legal__heading" id="privacy-browser">Stored in your browser</h2>
+      <p class="legal__text">
+        The website remembers in the storage of your browser which recipes you gave a heart and whether you have already
+        seen the "Better Life" hint. While the tab is open, it also keeps your current ingredients and your last results.
+        This data never leaves your device, and you can delete it in the settings of your browser at any time.
+      </p>
+    </section>
+
+    <section class="legal__section" aria-labelledby="privacy-rights">
+      <h2 class="legal__heading" id="privacy-rights">Your rights</h2>
+      <p class="legal__text">
+        You can ask which data about you is processed, and you can ask to correct or delete it. If a recipe in the
+        cookbook should be removed, write an e-mail to
+        <a class="legal__link" [href]="'mailto:' + contactEmail">{{ contactEmail }}</a>. You can also complain to the
+        Swiss data protection authority (FDPIC) or to a data protection authority in your country.
+      </p>
+    </section>
+
+    <a class="legal__back" routerLink="/">
+      Go to the start page
+      <span class="legal__icon" aria-hidden="true"></span>
+    </a>
+  </div>
+</main>

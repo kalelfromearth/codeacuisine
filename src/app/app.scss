@@ -24,7 +24,7 @@
   color: var(--page-text);
 
   &__content {
-    @include flex($justify: flex-start);
+    @include flex($justify: flex-start, $gap: 24px);
     min-height: var(--footer-height);
   }
 

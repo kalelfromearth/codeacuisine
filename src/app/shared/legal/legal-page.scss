@@ -4,7 +4,7 @@
   @include light-page;
 }
 
-.imprint {
+.legal {
   padding: 48px 0 56px;
   color: $color-text;
 
@@ -49,6 +49,13 @@
     @include font(1.125rem, 400);
     line-height: 1.5;
     text-wrap: pretty;
+  }
+
+  &__list {
+    @include font(1.125rem, 400);
+    @include flex($direction: column, $align: flex-start, $justify: flex-start, $gap: 4px);
+    padding-left: 24px;
+    line-height: 1.5;
   }
 
   &__link {

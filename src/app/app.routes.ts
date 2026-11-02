@@ -20,5 +20,6 @@ export const routes: Routes = [
     { path : 'library' , loadComponent: () => import('./library/library').then(page => page.Library), title: buildPageTitle('Cookbook')},
     { path : 'library/:cuisine' , loadComponent: () => import('./library-list/library-list').then(page => page.LibraryList)},
     { path : 'imprint' , loadComponent: () => import('./imprint/imprint').then(page => page.Imprint), title: buildPageTitle('Imprint')},
+    { path : 'privacy' , loadComponent: () => import('./privacy/privacy').then(page => page.Privacy), title: buildPageTitle('Privacy policy')},
     { path : '**' , loadComponent: () => import('./not-found/not-found').then(page => page.NotFound), title: buildPageTitle('Page not found')}
 ];

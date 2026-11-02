@@ -28,11 +28,15 @@
   }
 }
 
-.landingpage__imprint {
+.landingpage__legal {
+  @include flex($justify: flex-start, $gap: 24px);
+  margin-top: 16px;
+}
+
+.landingpage__legal-link {
   @include flex;
   @include font(1rem, 500, $color: $color-cream);
   min-height: 44px;
-  margin-top: 16px;
   text-decoration: none;
 
   &:focus-visible {

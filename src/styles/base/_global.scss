@@ -40,6 +40,11 @@ html:has(app-landingpage, app-generating, app-recipes) {
   --page-text: #{$color-cream};
 }
 
+// The start page has its own imprint link under the cookbook teaser. This rule is global, because a component style would also scope the app-landingpage inside :has().
+html:has(app-landingpage) .site-footer {
+  display: none;
+}
+
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);

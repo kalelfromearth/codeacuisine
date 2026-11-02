@@ -33,7 +33,7 @@
     @include font(1rem, 500);
     min-height: 44px;
     color: inherit;
-    text-decoration: underline;
+    text-decoration: none;
 
     &:focus-visible {
       outline: 3px solid currentColor;

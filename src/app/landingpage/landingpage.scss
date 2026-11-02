@@ -5,7 +5,7 @@
   position: relative;
   max-width: 1440px;
   margin: 0 auto;
-  min-height: calc(100dvh - var(--footer-height, 0px));
+  min-height: 100dvh;
   overflow-x: clip;
 }
 
@@ -25,6 +25,19 @@
     @include md {
       max-width: 560px;
     }
+  }
+}
+
+.landingpage__imprint {
+  @include flex;
+  @include font(1rem, 500, $color: $color-cream);
+  min-height: 44px;
+  margin-top: 16px;
+  text-decoration: none;
+
+  &:focus-visible {
+    outline: 3px solid $color-cream;
+    outline-offset: 3px;
   }
 }
 

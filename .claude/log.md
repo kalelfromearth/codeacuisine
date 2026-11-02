@@ -106,3 +106,4 @@ Kurz und knapp, neueste Einträge unten. Format: `Datum – was`.
 - 2026-11-02: Startseite: "Go to cookbook" steht rechts neben "Hungry for inspiration?" (Flex-Zeile mit space-between), bricht auf sehr schmalen Breiten unter den Text um.
 - 2026-11-02: Startseite Desktop (ab lg): "Get started" und "Better Life" nur noch 30px hoch. Der gemeinsame Button liest seine Mindesthöhe jetzt aus `--button-min-height` (Standard 52px), die Startseite setzt den Wert.
 - 2026-11-02: Startseite Desktop (ab lg): "Get started" und "Better Life" doch 60px hoch statt 30px.
+- 2026-11-02: Auswahl-Chips (Cooking time, Cuisine, Diet preferences in `chip-group`): auf allen Breiten 30px hoch (vorher 36px mobil, 44px ab md).

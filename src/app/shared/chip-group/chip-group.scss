@@ -5,17 +5,13 @@
 }
 
 .chip-group {
-  --chip-height: 36px;
+  --chip-height: 30px;
 
   min-inline-size: 0;
   margin: 0;
   padding: 0;
   border: none;
   color: $color-text;
-
-  @include md {
-    --chip-height: 44px;
-  }
 
   &__legend {
     @include flex($justify: flex-start, $gap: 8px);

@@ -46,7 +46,7 @@
   }
 
   &__serving {
-    @include flex($justify: flex-start, $gap: 12px);
+    @include flex($align: flex-start, $justify: flex-start, $gap: 12px);
     flex-wrap: wrap;
 
     @include lg {

@@ -41,6 +41,12 @@
 
   .unit-select {
     anchor-scope: --unit-select;
+    transition: margin-bottom $select-duration $select-easing;
+
+    // The list floats above the page, so the box around it makes room for the three options while it is open.
+    &:has(.unit-select__select:open) {
+      margin-bottom: 146px;
+    }
   }
 
   .unit-select__select {
@@ -151,6 +157,7 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
+    .unit-select,
     .unit-select__select::picker-icon,
     .unit-select__select::picker(select),
     .unit-select__select option {

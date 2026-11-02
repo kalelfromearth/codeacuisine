@@ -74,3 +74,6 @@ Kurz und knapp, neueste Einträge unten. Format: `Datum – was`.
 - 2026-10-31: Testtag-Checkliste für 2026-11-01 als `docs/TESTTAG.md` angelegt (UI, Funktionen, Bedienung, Vor dem Upload).
 - 2026-10-31: README: neues Highlight "AI from Swisscom" (Modell von Swisscom myAI, Schlüssel nur in n8n).
 - 2026-11-02: Startseite: Teller-Spalte unter 768px 10px schmaler (`max-width: calc(100% - 230px)` statt 220px), weil Titel bei ca. 530px zu eng an den Tellern lag. Noch im Browser zu prüfen.
+- 2026-11-02: Blaues Aufblitzen beim Tippen (z. B. Einheiten-Auswahl in der Handy-Ansicht der DevTools): `-webkit-tap-highlight-color: transparent` auf dem body in `_global.scss`. Am Desktop trat es nicht auf.
+- 2026-11-02: Einheiten-Auswahl: Solange die Liste offen ist, wächst die Box darum mit (`.unit-select:has(...:open)` mit `margin-bottom: 146px`, weich animiert, ohne Bewegung bei reduzierter Animation). Höhe aus dem Screenshot gerechnet (3 Einträge je ca. 41px + 16px + 6px Abstand), noch im Browser zu prüfen (Handy und Desktop).
+- 2026-11-02: Zeile mit Menge, Einheit und Plus (`ingredient-form__serving`) oben ausgerichtet (`align-items: flex-start`), damit die Mengenzahl neben der Einheiten-Auswahl bleibt, wenn die Box bei offener Liste wächst.

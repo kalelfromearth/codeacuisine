@@ -464,16 +464,33 @@
     @include flex($justify: space-between, $gap: 16px);
     padding-top: 24px;
     border-top: 1px solid $color-card;
+
+    @include md {
+      justify-content: center;
+      gap: 16px 24px;
+    }
   }
 
   &__like-text {
     @include flex($direction: column, $align: flex-start, $justify: flex-start, $gap: 6px);
     @include font(1.125rem, 400);
-    max-width: 320px;
+    flex: 1;
+    min-width: 0;
+
+    @include md {
+      flex: none;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 4px 16px;
+    }
   }
 
   &__like-title {
     @include font(1.375rem, 500);
+
+    @include md {
+      font-weight: 700;
+    }
   }
 
   &__like-action {
@@ -539,6 +556,13 @@
     border-radius: 20px;
     background-color: $color-card-soft;
     color: $color-text;
+
+    @include md {
+      order: -1;
+      justify-content: center;
+      gap: 16px 24px;
+      padding: 24px;
+    }
   }
 
   &__inspiration-text {
@@ -546,6 +570,11 @@
     flex: 1;
     min-width: 0;
     text-wrap: pretty;
+
+    @include md {
+      flex: none;
+      font-size: 1.25rem;
+    }
   }
 
   &__inspiration-button {
@@ -554,7 +583,7 @@
     flex: none;
     min-height: 44px;
     padding: 0 20px;
-    border-radius: 8px;
+    border-radius: 0;
     background-color: $color-primary;
     text-decoration: none;
 

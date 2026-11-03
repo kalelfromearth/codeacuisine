@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, input, signal, untracked } from '@angular/core';
+import { ApplicationRef, Component, computed, effect, inject, input, signal, untracked } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
 import { IngredientListService } from '../generate-recipe/ingredient-list.service';
@@ -10,6 +10,8 @@ import { RecipeStoreService } from '../recipe/recipe-store.service';
 import { Recipe, RecipeIngredient, buildRecipeTags } from '../recipe/recipe.model';
 import { Header } from '../shared/header/header';
 import { buildPageTitle } from '../shared/page-title';
+import { QrCode, createQrCode } from './recipe-print/qr-code';
+import { PrintMode, RecipePrint } from './recipe-print/recipe-print';
 
 type RecipeLoadStatus = 'loading' | 'ready' | 'missing' | 'error';
 type LikeChange = 1 | -1;
@@ -38,7 +40,7 @@ function isExtraIngredient(ingredient: RecipeIngredient): boolean {
 
 @Component({
   selector: 'app-recipe-detail',
-  imports: [Header, RouterLink],
+  imports: [Header, RecipePrint, RouterLink],
   templateUrl: './recipe-detail.html',
   styleUrl: './recipe-detail.scss',
 })
@@ -47,6 +49,7 @@ export class RecipeDetail {
   private readonly ingredientList = inject(IngredientListService);
   private readonly recipeStore = inject(RecipeStoreService);
   private readonly pageTitle = inject(Title);
+  private readonly appRef = inject(ApplicationRef);
 
   /** The Firestore id of the recipe from the route. */
   readonly id = input.required<string>();
@@ -67,6 +70,10 @@ export class RecipeDetail {
   readonly isLiked = signal(false);
   readonly likeCount = signal(0);
   private readonly isSavingLike = signal(false);
+
+  readonly printMode = signal<PrintMode>('recipe');
+  readonly qrCode = signal<QrCode | null>(null);
+  readonly recipeUrl = computed(() => new URL(`recipes/${this.id()}`, document.baseURI).href);
 
   constructor() {
     effect(this.showRecipe.bind(this));
@@ -107,9 +114,38 @@ export class RecipeDetail {
     }
   }
 
+  /** Opens the print dialog of the browser with the recipe card, which can also be saved as a PDF there. */
+  printRecipe(): Promise<void> {
+    return this.startPrinting('recipe');
+  }
+
+  /** Opens the print dialog of the browser with only the shopping list of the extra ingredients. */
+  printShoppingList(): Promise<void> {
+    return this.startPrinting('shopping');
+  }
+
   /** Forgets the old ingredients so the next recipe starts with an empty list. */
   startNewRecipe(): void {
     this.ingredientList.clearIngredients();
+  }
+
+  // The card must be on the page before the dialog opens, so the change is drawn at once and not on the next frame.
+  private async startPrinting(mode: PrintMode): Promise<void> {
+    this.printMode.set(mode);
+    await this.prepareQrCode();
+    this.appRef.tick();
+    window.print();
+  }
+
+  private async prepareQrCode(): Promise<void> {
+    if (this.qrCode()) {
+      return;
+    }
+    try {
+      this.qrCode.set(await createQrCode(this.recipeUrl()));
+    } catch {
+      // Without the code the card still shows the address as text.
+    }
   }
 
   private invert(value: boolean): boolean {

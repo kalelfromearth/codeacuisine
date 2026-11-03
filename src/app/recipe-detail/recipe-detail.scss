@@ -62,6 +62,33 @@
     text-decoration: none;
   }
 
+  &__print {
+    @include flex($justify: flex-end, $gap: 8px 16px);
+    flex-wrap: wrap;
+  }
+
+  &__print-button {
+    @include flex($gap: 8px);
+    @include font(1rem, 500, $color: $color-heading);
+    min-height: 44px;
+    padding: 0 12px;
+    border: 1px solid $color-card;
+    border-radius: 8px;
+    background: none;
+    cursor: pointer;
+
+    @media (hover: hover) {
+      &:hover {
+        background-color: $color-cream;
+      }
+    }
+
+    &:focus-visible {
+      outline: 3px solid $color-heading;
+      outline-offset: 2px;
+    }
+  }
+
   &__back-text {
     display: none;
 
@@ -672,10 +699,25 @@
       mask-image: url('images/icons/arrow-right.svg');
     }
 
+    &--print {
+      width: 20px;
+      height: 20px;
+      mask-image: url('images/icons/print.svg');
+    }
+
     @media (prefers-reduced-motion: reduce) {
       &--caret {
         transition: none;
       }
+    }
+  }
+
+  // On paper only the recipe card is printed, the screen layout with its colours and buttons is left out.
+  @media print {
+    padding: 0;
+
+    &__content > :not(app-recipe-print) {
+      display: none;
     }
   }
 }

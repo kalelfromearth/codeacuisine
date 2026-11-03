@@ -79,3 +79,21 @@ body {
 main[tabindex="-1"]:focus {
   outline: none;
 }
+
+// Paper gets no header, footer or skip link, only the content of the page.
+@media print {
+  @page {
+    margin: 48px;
+  }
+
+  html,
+  body {
+    background: $color-print-paper;
+  }
+
+  app-header,
+  .site-footer,
+  .skip-link {
+    display: none;
+  }
+}

@@ -1,0 +1,100 @@
+<div class="recipe-print">
+  <header class="recipe-print__head">
+    <img class="recipe-print__logo" src="images/logo/logoCodeACuisineBeige.svg" alt="Code à Cuisine" width="95" height="32" />
+    <p class="recipe-print__kind">{{ mode() === 'shopping' ? 'Shopping list' : 'Recipe card' }}</p>
+  </header>
+
+  @if (mode() === 'shopping') {
+    <h1 class="recipe-print__title">Shopping list</h1>
+    <p class="recipe-print__meta">For {{ recipe().title }} · {{ recipe().servings }} servings</p>
+    <ul class="recipe-print__checklist">
+      @for (ingredient of extraIngredients(); track ingredient.name) {
+        <li class="recipe-print__check-item">
+          <span class="recipe-print__box" aria-hidden="true"></span>
+          <span class="recipe-print__amount">{{ describeAmount(ingredient) }}</span>
+          {{ ingredient.name }}
+        </li>
+      }
+    </ul>
+  } @else {
+    <h1 class="recipe-print__title">{{ recipe().title }}</h1>
+    <p class="recipe-print__meta">
+      {{ recipe().cookingMinutes }} min · {{ recipe().servings }} servings · {{ recipe().cooks }}
+      {{ recipe().cooks === 1 ? 'cook' : 'cooks' }}
+      @for (tag of tags(); track tag) {
+        · {{ tag }}
+      }
+    </p>
+
+    <section class="recipe-print__section">
+      <h2 class="recipe-print__heading">Ingredients</h2>
+      <div class="recipe-print__columns">
+        <div>
+          <h3 class="recipe-print__subheading">Your ingredients</h3>
+          <ul class="recipe-print__checklist">
+            @for (ingredient of ownIngredients(); track ingredient.name) {
+              <li class="recipe-print__check-item">
+                <span class="recipe-print__box" aria-hidden="true"></span>
+                <span class="recipe-print__amount">{{ describeAmount(ingredient) }}</span>
+                {{ ingredient.name }}
+              </li>
+            }
+          </ul>
+        </div>
+        @if (extraIngredients().length > 0) {
+          <div>
+            <h3 class="recipe-print__subheading">To buy or from the pantry</h3>
+            <ul class="recipe-print__checklist">
+              @for (ingredient of extraIngredients(); track ingredient.name) {
+                <li class="recipe-print__check-item">
+                  <span class="recipe-print__box" aria-hidden="true"></span>
+                  <span class="recipe-print__amount">{{ describeAmount(ingredient) }}</span>
+                  {{ ingredient.name }}
+                </li>
+              }
+            </ul>
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="recipe-print__section">
+      <h2 class="recipe-print__heading">Directions</h2>
+      <ol class="recipe-print__steps">
+        @for (step of recipe().steps; track $index) {
+          <li class="recipe-print__step">
+            <p class="recipe-print__step-title">
+              {{ step.title }}
+              @if (recipe().cooks > 1) {
+                <span class="recipe-print__chef">Chef {{ step.chef }}</span>
+              }
+            </p>
+            <p class="recipe-print__step-text">{{ step.text }}</p>
+          </li>
+        }
+      </ol>
+    </section>
+
+    <section class="recipe-print__section">
+      <h2 class="recipe-print__heading">Nutrition per serving</h2>
+      <dl class="recipe-print__nutrition">
+        <div><dt>Energy</dt><dd>{{ recipe().nutrition.calories }} kcal</dd></div>
+        <div><dt>Protein</dt><dd>{{ recipe().nutrition.protein }}g</dd></div>
+        <div><dt>Fat</dt><dd>{{ recipe().nutrition.fat }}g</dd></div>
+        <div><dt>Carbs</dt><dd>{{ recipe().nutrition.carbs }}g</dd></div>
+      </dl>
+    </section>
+  }
+
+  <footer class="recipe-print__foot">
+    @if (qrCode(); as code) {
+      <svg class="recipe-print__qr" [attr.viewBox]="'-2 -2 ' + (code.size + 4) + ' ' + (code.size + 4)" aria-hidden="true">
+        <path [attr.d]="code.path" />
+      </svg>
+    }
+    <p class="recipe-print__foot-text">
+      Created with Code à Cuisine on {{ printedOn }}<br />
+      {{ recipeUrl() }}
+    </p>
+  </footer>
+</div>

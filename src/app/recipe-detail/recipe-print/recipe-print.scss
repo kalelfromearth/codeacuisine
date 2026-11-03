@@ -1,0 +1,148 @@
+@use 'abstracts' as *;
+
+// The card only exists on paper, on the screen the normal recipe page is shown.
+:host {
+  display: none;
+
+  @media print {
+    display: block;
+  }
+}
+
+.recipe-print {
+  @include flex($direction: column, $align: stretch, $justify: flex-start, $gap: 20px);
+  color: $color-print-ink;
+  background: $color-print-paper;
+
+  &__head {
+    @include flex($justify: space-between, $gap: 16px);
+    padding-bottom: 12px;
+    border-bottom: 2px solid $color-print-ink;
+  }
+
+  // The logo is beige for the dark header, on white paper it is printed black.
+  &__logo {
+    width: 95px;
+    height: 32px;
+    filter: brightness(0);
+  }
+
+  &__kind {
+    @include font(1rem, 600, $color: $color-print-ink);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  &__title {
+    @include font(1.75rem, 700, $color: $color-print-ink);
+    line-height: 1.15;
+  }
+
+  &__meta {
+    @include font(1rem, 500, $color: $color-print-ink);
+  }
+
+  &__section {
+    @include flex($direction: column, $align: stretch, $justify: flex-start, $gap: 10px);
+  }
+
+  &__heading {
+    @include font(1.25rem, 700, $color: $color-print-ink);
+    padding-bottom: 4px;
+    border-bottom: 1px solid $color-print-ink;
+  }
+
+  &__subheading {
+    @include font(1rem, 700, $color: $color-print-ink);
+    margin-bottom: 6px;
+  }
+
+  &__columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  &__checklist {
+    @include flex($direction: column, $align: stretch, $justify: flex-start, $gap: 6px);
+    padding: 0;
+    list-style: none;
+  }
+
+  &__check-item {
+    @include flex($justify: flex-start, $gap: 8px);
+    @include font(1rem, 400, $color: $color-print-ink);
+    break-inside: avoid;
+  }
+
+  // An empty box to tick off with a pen while shopping or cooking.
+  &__box {
+    flex: none;
+    width: 14px;
+    height: 14px;
+    border: 1.5px solid $color-print-ink;
+    border-radius: 2px;
+  }
+
+  &__amount {
+    flex: none;
+    min-width: 72px;
+    font-weight: 700;
+  }
+
+  &__steps {
+    @include flex($direction: column, $align: stretch, $justify: flex-start, $gap: 12px);
+    padding-left: 24px;
+  }
+
+  &__step {
+    @include font(1rem, 400, $color: $color-print-ink);
+    break-inside: avoid;
+  }
+
+  &__step-title {
+    font-weight: 700;
+  }
+
+  &__chef {
+    margin-left: 8px;
+    padding: 0 6px;
+    border: 1px solid $color-print-ink;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+
+  &__step-text {
+    line-height: 1.4;
+  }
+
+  &__nutrition {
+    @include flex($justify: flex-start, $gap: 32px);
+    @include font(1rem, 400, $color: $color-print-ink);
+
+    dt {
+      font-weight: 700;
+    }
+  }
+
+  &__foot {
+    @include flex($justify: flex-start, $gap: 16px);
+    margin-top: 8px;
+    padding-top: 12px;
+    border-top: 1px solid $color-print-ink;
+    break-inside: avoid;
+  }
+
+  &__qr {
+    flex: none;
+    width: 96px;
+    height: 96px;
+    fill: $color-print-ink;
+  }
+
+  &__foot-text {
+    @include font(1rem, 400, $color: $color-print-ink);
+    line-height: 1.4;
+    word-break: break-all;
+  }
+}

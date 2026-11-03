@@ -38,6 +38,9 @@ Der Workflow prüft die Anfrage erneut. Der Browser allein genügt nicht, weil j
 | 200 | alles gut | `{ status: "ok", recipes: [3 Rezepte] }` |
 | 400 | Anfrage ungültig (Knoten "Validate request") | `{ status: "error", errors: [...] }`, z. B. falsche Einheit, Menge außerhalb der Grenzen, unbekannte Küche |
 | 422 | Eine KI-Prüfung hält Zutaten für keine Lebensmittel | `{ status: "error", message: "These don't look like ingredients: …" }` |
+| 429 | Tageslimit dieser IP erreicht (Knoten "Check daily quota", vor jedem KI-Aufruf) | `{ status: "error", reason: "quota-ip", message: "You have used your 3 recipe requests for today…", limit, remaining: 0 }` |
+| 429 | Tageslimit der ganzen App erreicht | `{ status: "error", reason: "quota-total", message: "Code à Cuisine has reached its daily limit…", limit, remaining: 0 }` |
+| 429 | Dieselbe IP fragt innerhalb von 30 Sekunden erneut | `{ status: "error", reason: "too-fast", message: "Please wait a few seconds…", retryAfterSeconds }` |
 | 429 | Der KI-Anbieter meldet ein Limit (Rate Limit) | `{ status: "error", message: "The AI service is busy at the moment. Please try again in a few minutes." }` |
 | 502 | Die KI liefert keine drei brauchbaren Rezepte | `{ status: "error", message: "The AI did not create three usable recipes. Please try again." }` |
 
@@ -51,7 +54,8 @@ Weitere Schutzmaßnahmen im Workflow:
 - **Fehler-Workflow mit E-Mail:** Stürzt ein Knoten unerwartet ab, startet der Workflow `Code a Cuisine - Error Handler` (`n8n/code-a-cuisine-error-handler.json`). Er besteht aus einem Error Trigger und einer E-Mail mit Workflow-Name, fehlgeschlagenem Knoten, Fehlermeldung, Zeit und Link zur Ausführung. Im Hauptworkflow ist er unter den Einstellungen als "Error Workflow" eingetragen.
 - **Parallelität:** Der Anbieter erlaubt höchstens zwei gleichzeitige Aufrufe, deshalb verarbeitet der Knoten "Call AI" je zwei im Block.
 
-Nicht umgesetzt: die Tageslimits pro IP. Die Client-IP wird bereits erfasst, die Begrenzung selbst kommt nach der Abnahme.
+- **Tageslimit (US 11, Kostenairbag):** Vor jedem KI-Aufruf prüft "Check daily quota" die Data Table `codeacuisine_quota`: höchstens 3 Durchgänge pro IP und 12 für die ganze App pro Tag (Zürcher Zeit), dazu 30 Sekunden Pause zwischen zwei Durchgängen einer IP. Ein Durchgang ist ein Klick auf "Generate" mit drei Rezepten. Gezählt wird, bevor die KI gefragt wird ("Prepare counters", "Count request"), damit zwei gleichzeitige Anfragen das Limit nicht überholen. Endet der Durchgang mit 422, 429 oder 502, geben "Prepare refund" und "Give quota back" ihn zurück. Gespeichert wird nur ein SHA-256-Hash aus IP und Tag, nie die IP. "Remove old days" löscht frühere Tage. Die IP kommt aus `x-real-ip`, den nginx selbst setzt (`x-forwarded-for` könnte ein Client fälschen), IPv4 in IPv6-Schreibweise (`::ffff:1.2.3.4`) gilt als dieselbe Adresse. Die Grenzen stehen als Konstanten oben in "Check daily quota" und "Describe quota". Zum Zurücksetzen die Zeilen der Data Table löschen.
+- **Quota-Status:** `GET …/webhook/code-a-cuisine/quota` antwortet mit `{ status: "ok", limit, remaining }` und zählt nie. Jede erfolgreiche Antwort enthält außerdem `remainingToday`.
 
 ## 3. Angular: Anfrage und Speichern
 
@@ -60,12 +64,14 @@ Nicht umgesetzt: die Tageslimits pro IP. Die Client-IP wird bereits erfasst, die
 | Fall | Meldung |
 | --- | --- |
 | 422 | "Ups! Check your ingredients" mit Link "Back to ingredients" |
-| 429 | Meldung des Workflows, zum Beispiel "The AI service is busy at the moment. Please try again in a few minutes." (ohne Meldung: "The daily limit is reached. Please try again tomorrow.") |
+| 429 | Meldung des Workflows, zum Beispiel "The AI service is busy at the moment. Please try again in a few minutes." (ohne Meldung: "The daily limit is reached. Please try again tomorrow."). Bei `quota-ip` und `quota-total` heißt die Überschrift "That's it for today", statt "Try again" gibt es "Browse the cookbook" und "Back to the start page". |
 | 400 | "Some of your entries are not valid. Please go back and check them." |
 | anderer Fehler | "Something went wrong while creating your recipes. Please try again." |
 | Zeitüberschreitung nach 120 s | "This is taking too long. Please try again." |
 | kein Netz | "We could not reach the recipe service. Please check your connection and try again." |
 | Speichern in Firestore schlägt fehl | "We could not save your recipes. Please try again." |
+
+Die Preferences-Seite fragt beim Öffnen den Quota-Status ab (`QuotaService`) und zeigt unter dem Knopf "2 of 3 recipe requests left today". Bei 0 ist der Knopf gesperrt. Schlägt die Abfrage fehl, fehlt nur der Hinweis, die Seite funktioniert normal und n8n prüft trotzdem.
 
 Wichtig beim Speichern: Schlägt es fehl, merkt sich die App die drei fertigen Rezepte. "Try again" speichert sie erneut, ohne die KI noch einmal zu fragen. So entstehen keine unnötigen Kosten.
 

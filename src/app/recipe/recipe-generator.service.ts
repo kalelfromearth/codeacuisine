@@ -1,5 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { environment } from '../../environments/environment';
+import { QuotaService, isQuotaUsedUp } from './quota.service';
 import { RecipeRequestService } from './recipe-request.service';
 import { RecipeStoreService } from './recipe-store.service';
 import { Recipe, RecipeDraft, RecipeRequest } from './recipe.model';
@@ -10,6 +11,9 @@ export type GeneratorStatus = 'idle' | 'loading' | 'success' | 'error';
 interface GeneratorResponse {
   recipes?: RecipeDraft[];
   message?: string;
+  reason?: string;
+  remaining?: unknown;
+  remainingToday?: unknown;
 }
 
 const REQUEST_TIMEOUT_MS = 120000;
@@ -26,6 +30,7 @@ function isRecipe(recipe: Recipe | null): recipe is Recipe {
 export class RecipeGeneratorService {
   private readonly recipeRequestService = inject(RecipeRequestService);
   private readonly recipeStore = inject(RecipeStoreService);
+  private readonly quotaService = inject(QuotaService);
   private unsavedDrafts: RecipeDraft[] = [];
   private savedRecipes: Recipe[] = [];
 
@@ -33,6 +38,7 @@ export class RecipeGeneratorService {
   readonly recipes = signal<Recipe[]>([]);
   readonly errorMessage = signal('');
   readonly hasIngredientProblem = signal(false);
+  readonly isQuotaUsedUp = signal(false);
 
   /** Sends the stored request to the n8n workflow, saves the recipes and stores them or an error message. */
   async generate(): Promise<void> {
@@ -89,6 +95,7 @@ export class RecipeGeneratorService {
     this.recipes.set([]);
     this.errorMessage.set('');
     this.hasIngredientProblem.set(false);
+    this.isQuotaUsedUp.set(false);
     this.unsavedDrafts = [];
     this.savedRecipes = [];
   }
@@ -110,6 +117,7 @@ export class RecipeGeneratorService {
     this.status.set('loading');
     this.errorMessage.set('');
     this.hasIngredientProblem.set(false);
+    this.isQuotaUsedUp.set(false);
     this.recipes.set([]);
   }
 
@@ -125,10 +133,13 @@ export class RecipeGeneratorService {
   private async handleResponse(response: Response): Promise<void> {
     const body = await this.readJson(response);
     if (response.ok && Array.isArray(body?.recipes) && body.recipes.length > 0) {
+      this.quotaService.updateRemaining(body.remainingToday);
       await this.saveDrafts(body.recipes);
       return;
     }
     this.hasIngredientProblem.set(response.status === 422);
+    this.isQuotaUsedUp.set(isQuotaUsedUp(body?.reason));
+    this.quotaService.updateRemaining(body?.remaining);
     this.fail(this.describeFailure(response.status, body?.message));
   }
 

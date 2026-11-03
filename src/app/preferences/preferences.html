@@ -52,7 +52,17 @@
       </div>
 
       <div class="preferences__submit">
-        <app-button variant="secondary" (click)="generateRecipe()">Generate a recipe</app-button>
+        <app-button variant="secondary" [disabled]="isQuotaUsedUp()" (click)="generateRecipe()">Generate a recipe</app-button>
+        @if (quota(); as quotaInfo) {
+          <p class="preferences__quota" aria-live="polite">
+            @if (quotaInfo.remaining > 0) {
+              <strong>{{ quotaInfo.remaining }} of {{ quotaInfo.limit }}</strong>
+              recipe {{ quotaInfo.limit === 1 ? 'request' : 'requests' }} left today
+            } @else {
+              You have used all recipe requests for today. Please come back tomorrow.
+            }
+          </p>
+        }
       </div>
     </form>
   </div>

@@ -5,7 +5,7 @@
     <ng-container [ngTemplateOutlet]="label"></ng-container>
   </a>
 } @else {
-  <button [class]="buttonClasses()" [type]="type()">
+  <button [class]="buttonClasses()" [type]="type()" [disabled]="disabled()">
     <ng-container [ngTemplateOutlet]="label"></ng-container>
   </button>
 }

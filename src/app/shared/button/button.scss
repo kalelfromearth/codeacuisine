@@ -10,6 +10,11 @@
   box-sizing: border-box;
   text-decoration: none;
 
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
   &--primary {
     background-color: $color-cream;
     color: $color-leaf;
@@ -19,7 +24,7 @@
     background-color: $color-primary;
     color: $color-cream;
 
-    &:hover {
+    &:hover:not(:disabled) {
       background-color: $color-heading;
     }
   }
@@ -29,7 +34,7 @@
     color: $color-heading;
     box-shadow: 0 0 0 1px $color-highlight;
 
-    &:hover {
+    &:hover:not(:disabled) {
       background-color: $color-cream-hover;
     }
   }

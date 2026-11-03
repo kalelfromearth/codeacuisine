@@ -10,6 +10,13 @@
           <div class="generating__actions">
             <app-button variant="light" link="/generate-recipe">Back to ingredients</app-button>
           </div>
+        } @else if (isQuotaUsedUp()) {
+          <h1 class="generating__title">That's it for today</h1>
+          <p class="generating__text">{{ errorMessage() }}</p>
+          <div class="generating__actions">
+            <app-button variant="light" link="/library">Browse the cookbook</app-button>
+            <app-button variant="primary" link="/">Back to the start page</app-button>
+          </div>
         } @else {
           <h1 class="generating__title">Ups! Something went wrong</h1>
           <p class="generating__text">{{ errorMessage() }}</p>

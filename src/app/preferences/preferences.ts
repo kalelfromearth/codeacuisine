@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { Ingredient } from '../generate-recipe/ingredient.model';
 import { IngredientListService, MIN_INGREDIENTS } from '../generate-recipe/ingredient-list.service';
 import { describeUnsuitableIngredients, findUnsuitableIngredients } from './diet-check/diet-check';
+import { QuotaService } from '../recipe/quota.service';
 import { RecipeGeneratorService } from '../recipe/recipe-generator.service';
 import { RecipeRequestService } from '../recipe/recipe-request.service';
 import {
@@ -42,7 +43,10 @@ export class Preferences {
   private readonly recipeRequestService = inject(RecipeRequestService);
   private readonly recipeGenerator = inject(RecipeGeneratorService);
   private readonly router = inject(Router);
+  private readonly quotaService = inject(QuotaService);
 
+  readonly quota = this.quotaService.quota;
+  readonly isQuotaUsedUp = this.quotaService.isUsedUp;
   readonly unsuitableIngredients = signal<string[]>([]);
   readonly isDietPopupOpen = computed(this.hasUnsuitableIngredients.bind(this));
   readonly dietMessage = computed(this.buildDietMessage.bind(this));
@@ -89,8 +93,15 @@ export class Preferences {
     diet: new FormControl<RecipeDiet>('vegetarian', { nonNullable: true }),
   });
 
+  constructor() {
+    this.quotaService.refresh();
+  }
+
   /** Checks the ingredients against the diet, then starts the recipe request or opens the diet popup. */
   async generateRecipe(): Promise<void> {
+    if (this.isQuotaUsedUp()) {
+      return;
+    }
     if (this.preferencesForm.invalid) {
       this.preferencesForm.markAllAsTouched();
       return;

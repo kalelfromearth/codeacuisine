@@ -60,7 +60,12 @@
   }
 
   &__submit {
-    @include flex;
+    @include flex($direction: column, $gap: 12px);
+  }
+
+  &__quota {
+    @include font(1rem, 400, $color: $color-heading);
+    text-align: center;
   }
 
   &__popup-text {

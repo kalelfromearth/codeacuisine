@@ -9,7 +9,7 @@
 .generating {
   @include flex($direction: column, $align: stretch, $justify: flex-start);
   flex: 1;
-  padding: 46px 0 18px;
+  padding: 6px 0 18px;
 
   &__content {
     @include flex($direction: column, $gap: 24px);

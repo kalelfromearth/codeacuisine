@@ -57,6 +57,16 @@ Weitere Schutzmaßnahmen im Workflow:
 - **Tageslimit (US 11, Kostenairbag):** Vor jedem KI-Aufruf prüft "Check daily quota" die Data Table `codeacuisine_quota`: höchstens 3 Durchgänge pro IP und 12 für die ganze App pro Tag (Zürcher Zeit), dazu 30 Sekunden Pause zwischen zwei Durchgängen einer IP. Ein Durchgang ist ein Klick auf "Generate" mit drei Rezepten. Gezählt wird, bevor die KI gefragt wird ("Prepare counters", "Count request"), damit zwei gleichzeitige Anfragen das Limit nicht überholen. Endet der Durchgang mit 422, 429 oder 502, geben "Prepare refund" und "Give quota back" ihn zurück. Gespeichert wird nur ein SHA-256-Hash aus IP und Tag, nie die IP. "Remove old days" löscht frühere Tage. Die IP kommt aus `x-real-ip`, den nginx selbst setzt (`x-forwarded-for` könnte ein Client fälschen), IPv4 in IPv6-Schreibweise (`::ffff:1.2.3.4`) gilt als dieselbe Adresse. Die Grenzen stehen als Konstanten oben in "Check daily quota" und "Describe quota". Zum Zurücksetzen die Zeilen der Data Table löschen.
 - **Quota-Status:** `GET …/webhook/code-a-cuisine/quota` antwortet mit `{ status: "ok", limit, remaining }` und zählt nie. Jede erfolgreiche Antwort enthält außerdem `remainingToday`.
 
+## 2a. Zutaten-Vorschläge (n8n)
+
+Datei: `n8n/code-a-cuisine-suggest-workflow.json`, Webhook `GET …/webhook/code-a-cuisine/suggest?q=…`
+
+- **Prüfung:** "Validate query" lässt nur 2 bis 30 Zeichen zu, nur Buchstaben, Leerzeichen, Apostroph und Bindestrich. Sonst kommt sofort eine leere Liste (200, kein Aufruf bei Open Food Facts).
+- **Cache:** Jede vollständige Antwort wird 24 Stunden in den Static Data des Workflows gemerkt (höchstens 1500 Einträge, die ältesten fliegen raus). Eine wiederholte Anfrage dauert so etwa 0,2 s statt 1 bis 2 s.
+- **Open Food Facts:** Deutsch und Englisch werden gleichzeitig gefragt (Zeitlimit 5 s, `continueRegularOutput`). Fällt eine Sprache aus, liefert die andere trotzdem Treffer. Open Food Facts antwortet bei schnellen Folgeanfragen mit 429. Dann wird nichts gemerkt, und die Antwort bekommt `Cache-Control: no-store`, damit der Browser keine leere Liste eine Stunde lang behält.
+- **Bereinigen:** Nur Treffer, deren Wortanfang passt, ohne Verpackungstexte (Zahlen, Klammern, "Aroma", "Konzentrat"), höchstens 25 Zeichen und 3 Wörter, höchstens 6 Treffer.
+- **Angular:** `IngredientSuggestionService` fragt erst nach 300 ms Pause und ab 2 Buchstaben, bricht veraltete Anfragen ab und prüft die Antwort (`readSuggestions`: nur kurze Texte, höchstens 6). Bei einem Fehler gibt es einfach keine Vorschläge, die Eingabe funktioniert normal weiter.
+
 ## 3. Angular: Anfrage und Speichern
 
 `RecipeGeneratorService` übersetzt jede Antwort in eine verständliche Meldung. Die Ladeseite zeigt sie mit den Knöpfen "Try again" und "Back to preferences".

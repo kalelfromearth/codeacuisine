@@ -19,6 +19,7 @@ I built it as the final project of my training as a frontend developer at the De
 
 - **AI from Swisscom.** The recipes are written by the language model of Swisscom myAI. The key stays in n8n and never reaches the browser.
 - **Three really different recipes per request.** Three AI calls run in parallel, each with its own angle (a classic pan dish, a different dish type, a creative idea), so the suggestions do not repeat each other.
+- **Suggestions while typing.** From the second letter, the ingredient field suggests German and English food names from the open database Open Food Facts. The request goes through n8n, which caches every answer for a day, so the app stays fast and the free database is not overloaded. The field is an accessible combobox with arrow keys, Enter and Escape.
 - **Ingredients are checked before any recipe is written.** A fourth, deterministic AI call flags input that is not food (keyboard mashing, objects), and the user gets a clear message instead of a made-up recipe.
 - **A diet check in the browser.** With Vegetarian or Vegan selected, ingredients like tuna or milk are caught from word lists (German and English, loaded only when needed) and the user can continue without them.
 - **Cooking together.** For two to four cooks, every step is assigned to a chef, and the work is shared fairly.
@@ -122,7 +123,7 @@ Fill in the Firebase web config from the Firebase console (Project settings, You
 
 ### 4. Import the n8n workflows
 
-1. In n8n, import [`n8n/code-a-cuisine-workflow.json`](n8n/code-a-cuisine-workflow.json) and [`n8n/code-a-cuisine-error-handler.json`](n8n/code-a-cuisine-error-handler.json).
+1. In n8n, import [`n8n/code-a-cuisine-workflow.json`](n8n/code-a-cuisine-workflow.json), [`n8n/code-a-cuisine-suggest-workflow.json`](n8n/code-a-cuisine-suggest-workflow.json) and [`n8n/code-a-cuisine-error-handler.json`](n8n/code-a-cuisine-error-handler.json). The suggestion workflow needs no credentials, activate it as well.
 2. Create a data table `codeacuisine_quota` with the columns `day` (string), `ipHash` (string), `requests` (number) and `lastRequestAt` (number), and select it in the five data table nodes of the main workflow. The limits are constants at the top of the nodes **Check daily quota** and **Describe quota**.
 3. In the node **Call AI**, create a Header Auth credential with `Authorization: Bearer <your key>`.
 4. In the error handler, choose an SMTP credential and set the sender and the recipient.
@@ -162,6 +163,8 @@ src/
 ├── app/
 │   ├── landingpage/       start page
 │   ├── not-found/         page for unknown addresses
+│   ├── imprint/           imprint
+│   ├── privacy/           privacy policy
 │   ├── generate-recipe/   ingredient form and list, validators
 │   ├── preferences/       servings, cooks, time, cuisine, diet, diet check
 │   ├── generating/        loading and error states
@@ -170,12 +173,12 @@ src/
 │   ├── library/           cookbook start page
 │   ├── library-list/      recipes of one cuisine with sorting and paging
 │   ├── recipe/            models, Firestore store, generator service, guards
-│   └── shared/            header, button, chips, stepper, popup, info tip
+│   └── shared/            header, button, chips, stepper, popup, info tip, legal pages style
 ├── environments/          environment.example.ts (environment.ts is ignored)
 └── styles/
     ├── abstracts/         colors, typography, variables, mixins
     └── base/              reset and global styles
-n8n/                       exported workflows without credentials
+n8n/                       exported workflows (recipes, suggestions, error handler) without credentials
 firestore.rules            Firestore security rules
 firestore.indexes.json     composite indexes for the cuisine lists
 docs/                      error handling overview
@@ -190,8 +193,6 @@ More details on every error case: [`docs/errorhandling.md`](docs/errorhandling.m
 
 ## About me
 
-I am Andreas Kissner, a frontend developer from <!-- city -->. I enjoy turning designs into fast, accessible interfaces and building the small automations behind them.
-
-<!-- [LinkedIn](https://www.linkedin.com/in/...) · [Portfolio](https://...) -->
+I am Andreas Kissner, a frontend developer. I enjoy turning designs into fast, accessible interfaces and building the small automations behind them.
 
 Design: Developer Akademie.

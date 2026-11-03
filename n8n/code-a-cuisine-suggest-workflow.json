@@ -1,0 +1,243 @@
+{
+  "name": "Code a Cuisine - Suggest Ingredients",
+  "nodes": [
+    {
+      "id": "a1d3f5b7-2c4e-4a60-8b1d-3e5f7a9c1b01",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [0, 300],
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "code-a-cuisine/suggest",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "81863b8b-a1a5-43e0-9824-46a040d549b0"
+    },
+    {
+      "id": "b2e4a6c8-3d5f-4b71-9c2e-4f6a8b0d2c02",
+      "name": "Validate query",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [260, 300],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const raw = $input.first().json.query ? $input.first().json.query.q : '';\nconst q = typeof raw === 'string' ? raw.trim().replace(/\\s+/g, ' ') : '';\nconst valid = q.length >= 2 && q.length <= 30 && /^[\\p{L}][\\p{L} '\\-]*$/u.test(q);\nreturn [{ json: { q, valid } }];"
+      }
+    },
+    {
+      "id": "c3f5b7d9-4e60-4c82-8d3f-5a7b9c1e3d03",
+      "name": "Is query valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [520, 300],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "d4a6c8e0-5f71-4d93-9e40-6b8c0d2f4e04",
+              "leftValue": "={{ $json.valid }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "4b13d5f7-c6e8-44a0-8fb7-3c5d7e9a1f11",
+      "name": "Read cache",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [780, 300],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const q = $input.first().json.q;\nconst cache = $getWorkflowStaticData('global').suggestionCache || {};\nconst hit = cache[q.toLowerCase()];\nconst isFresh = Boolean(hit) && Date.now() - hit.at < 24 * 60 * 60 * 1000;\nreturn [{ json: { q, isCached: isFresh, suggestions: isFresh ? hit.suggestions : [] } }];"
+      }
+    },
+    {
+      "id": "5c24e6a8-d7f9-45b1-90c8-4d6e8f0b2a12",
+      "name": "Is answer cached?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1040, 300],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "6d35f7b9-e8a0-46c2-81d9-5e7f9a1c3b13",
+              "leftValue": "={{ $json.isCached }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "e5b7d9f1-6082-4ea4-8f51-7c9d1e3a5f05",
+      "name": "Suggestions German",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1300, 200],
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "method": "GET",
+        "url": "https://world.openfoodfacts.org/api/v3/taxonomy_suggestions",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "tagtype", "value": "ingredients" },
+            { "name": "string", "value": "={{ $json.q }}" },
+            { "name": "lc", "value": "de" },
+            { "name": "limit", "value": "30" }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [{ "name": "User-Agent", "value": "CodeACuisine/1.0 (learning project)" }]
+        },
+        "options": {
+          "timeout": 5000
+        }
+      }
+    },
+    {
+      "id": "f6c8e0a2-7193-4fb5-9a62-8d0e2f4b6a06",
+      "name": "Suggestions English",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1300, 400],
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "method": "GET",
+        "url": "https://world.openfoodfacts.org/api/v3/taxonomy_suggestions",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "tagtype", "value": "ingredients" },
+            { "name": "string", "value": "={{ $json.q }}" },
+            { "name": "lc", "value": "en" },
+            { "name": "limit", "value": "30" }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [{ "name": "User-Agent", "value": "CodeACuisine/1.0 (learning project)" }]
+        },
+        "options": {
+          "timeout": 5000
+        }
+      }
+    },
+    {
+      "id": "07d9f1b3-82a4-40c6-8b73-9e1f3a5c7b07",
+      "name": "Merge languages",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [1560, 300],
+      "parameters": {}
+    },
+    {
+      "id": "18e0a2c4-93b5-41d7-9c84-0f2a4b6d8c08",
+      "name": "Clean suggestions",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1820, 300],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const fold = (text) => text.toLowerCase().replace(/ß/g, 'ss').normalize('NFD').replace(/[\u0300-\u036f]/g, '');\nconst q = $('Validate query').first().json.q;\nconst query = fold(q);\nconst answers = $input.all();\nconst failedCount = answers.filter((item) => item.json.error).length;\nif (failedCount === answers.length) {\n  return [{ json: { suggestions: [], unavailable: true } }];\n}\nconst unwanted = /pasteuri|aroma|flavour|flavor|konzentrat|concentrate|\\d|[(),%]/;\nconst seen = new Set();\nconst found = [];\nfor (const item of answers) {\n  const list = Array.isArray(item.json.suggestions) ? item.json.suggestions : [];\n  for (const entry of list) {\n    if (typeof entry !== 'string') continue;\n    const text = entry.trim();\n    const key = fold(text);\n    const words = key.split(/[\\s\\-]+/);\n    if (text.length < 2 || text.length > 25 || words.length > 3 || unwanted.test(key) || seen.has(key)) continue;\n    const rank = key.startsWith(query) ? 0 : words.some((word) => word.startsWith(query)) ? 1 : -1;\n    if (rank < 0) continue;\n    seen.add(key);\n    found.push({ text: text.charAt(0).toUpperCase() + text.slice(1), rank });\n  }\n}\nfound.sort((a, b) => a.rank - b.rank || a.text.length - b.text.length);\nconst suggestions = found.slice(0, 6).map((entry) => entry.text);\nif (failedCount === 0) {\n  const store = $getWorkflowStaticData('global');\n  const cache = store.suggestionCache || {};\n  cache[q.toLowerCase()] = { at: Date.now(), suggestions };\n  const keys = Object.keys(cache);\n  if (keys.length > 1500) {\n    keys.sort((a, b) => cache[a].at - cache[b].at).slice(0, keys.length - 1500).forEach((key) => delete cache[key]);\n  }\n  store.suggestionCache = cache;\n}\nreturn [{ json: { suggestions, unavailable: failedCount > 0 && suggestions.length === 0 } }];"
+      }
+    },
+    {
+      "id": "29f1b3d5-a4c6-42e8-8d95-1a3b5c7e9d09",
+      "name": "Respond suggestions",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [2080, 300],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { suggestions: $json.suggestions } }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Cache-Control",
+                "value": "={{ $json.unavailable === false || $json.isCached ? 'public, max-age=3600' : 'no-store' }}"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "3a02c4e6-b5d7-43f9-9ea6-2b4c6d8f0e10",
+      "name": "Respond empty",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [800, 560],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { suggestions: [] } }}",
+        "options": {
+          "responseCode": 200
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": { "main": [[{ "node": "Validate query", "type": "main", "index": 0 }]] },
+    "Validate query": { "main": [[{ "node": "Is query valid?", "type": "main", "index": 0 }]] },
+    "Is query valid?": {
+      "main": [
+        [{ "node": "Read cache", "type": "main", "index": 0 }],
+        [{ "node": "Respond empty", "type": "main", "index": 0 }]
+      ]
+    },
+    "Read cache": { "main": [[{ "node": "Is answer cached?", "type": "main", "index": 0 }]] },
+    "Is answer cached?": {
+      "main": [
+        [{ "node": "Respond suggestions", "type": "main", "index": 0 }],
+        [
+          { "node": "Suggestions German", "type": "main", "index": 0 },
+          { "node": "Suggestions English", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Suggestions German": { "main": [[{ "node": "Merge languages", "type": "main", "index": 0 }]] },
+    "Suggestions English": { "main": [[{ "node": "Merge languages", "type": "main", "index": 1 }]] },
+    "Merge languages": { "main": [[{ "node": "Clean suggestions", "type": "main", "index": 0 }]] },
+    "Clean suggestions": { "main": [[{ "node": "Respond suggestions", "type": "main", "index": 0 }]] }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

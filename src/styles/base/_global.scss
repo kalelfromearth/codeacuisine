@@ -40,8 +40,13 @@ html:has(app-landingpage, app-generating, app-recipes) {
   --page-text: #{$color-cream};
 }
 
-// The start page has its own imprint link under the cookbook teaser. This rule is global, because a component style would also scope the app-landingpage inside :has().
-html:has(app-landingpage) .site-footer {
+// The start page has its own imprint link under the cookbook teaser, and the loading page should fit the screen without scrolling.
+// This rule is global, because a component style would also scope the page names inside :has().
+html:has(app-landingpage, app-generating) {
+  --footer-height: 0px;
+}
+
+html:has(app-landingpage, app-generating) .site-footer {
   display: none;
 }
 

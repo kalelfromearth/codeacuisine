@@ -1,15 +1,19 @@
 @use 'abstracts' as *;
 
+// The page fills the room between header and footer instead of a calculated height, so it never grows taller than the screen.
 :host {
   @include dark-page;
+  @include flex($direction: column, $align: stretch, $justify: flex-start);
 }
 
 .generating {
+  @include flex($direction: column, $align: stretch, $justify: flex-start);
+  flex: 1;
   padding: 46px 0 18px;
 
   &__content {
     @include flex($direction: column, $gap: 24px);
-    min-height: calc(100dvh - 160px);
+    flex: 1;
   }
 
   &__picture {

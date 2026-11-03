@@ -107,6 +107,11 @@
     }
   }
 
+  // From 1440px on the Figma design shows five plates instead of three. The browser loads only the picture it shows.
+  &__plates-picture {
+    display: contents;
+  }
+
   &__plates-image {
     display: block;
     height: 100%;

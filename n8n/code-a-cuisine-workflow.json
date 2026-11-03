@@ -103,7 +103,7 @@
           "batching": {
             "batch": {
               "batchSize": 2,
-              "batchInterval": 0
+              "batchInterval": 2000
             }
           }
         }
@@ -111,7 +111,7 @@
       "onError": "continueRegularOutput",
       "retryOnFail": true,
       "maxTries": 2,
-      "waitBetweenTries": 2000
+      "waitBetweenTries": 8000
     },
     {
       "id": "33c3d4e5-f6a7-4b82-8c93-d4e5f6a7b803",

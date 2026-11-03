@@ -47,7 +47,14 @@
       <h1 class="generating__title">
         Generating<span class="generating__dots" aria-hidden="true">{{ dots() }}</span>
       </h1>
-      <p class="generating__text" role="status">Our AI is creating your recipes. This can take up to a minute.</p>
+      <p class="generating__text" role="status">
+        @if (isTakingLong()) {
+          This is taking a little longer than usual. Our AI service is busy right now, but we are still working on your
+          recipes. Thank you for your patience!
+        } @else {
+          Our AI is creating your recipes. This can take up to a minute.
+        }
+      </p>
     }
   </div>
 </main>

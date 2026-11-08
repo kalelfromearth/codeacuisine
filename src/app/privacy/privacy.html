@@ -44,8 +44,13 @@
       </p>
       <p class="legal__text">
         To keep the service fair and the costs low, every IP address may create recipes only a few times per day. For this
-        the server counts the requests of the day. It stores only a one-way hash made from your IP address and the date,
-        never the address itself, and deletes the counters of earlier days automatically.
+        the server counts the requests of the day. In this counter it stores only a one-way hash made from your IP
+        address, the date and a secret key, never the address itself, and it deletes the counters of earlier days
+        automatically.
+      </p>
+      <p class="legal__text">
+        The automation server also keeps a log of the requests it has handled, to find errors. This log contains the IP
+        address and the ingredients of the request, and it is deleted automatically after up to 14 days.
       </p>
       <p class="legal__text">
         While you type an ingredient, the first letters are sent through the same server to Open Food Facts, a free food

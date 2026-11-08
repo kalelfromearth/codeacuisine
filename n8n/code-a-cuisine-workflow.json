@@ -239,7 +239,7 @@
       "parameters": {
         "action": "hash",
         "type": "SHA256",
-        "value": "={{ $json.clientIp }}|{{ $now.setZone('Europe/Zurich').toISODate() }}",
+        "value": "={{ $json.salt }}|{{ $json.clientIp }}|{{ $now.setZone('Europe/Zurich').toISODate() }}",
         "dataPropertyName": "ipHash",
         "encoding": "hex"
       }
@@ -531,7 +531,7 @@
       "parameters": {
         "action": "hash",
         "type": "SHA256",
-        "value": "={{ $json.clientIp }}|{{ $now.setZone('Europe/Zurich').toISODate() }}",
+        "value": "={{ $json.salt }}|{{ $json.clientIp }}|{{ $now.setZone('Europe/Zurich').toISODate() }}",
         "dataPropertyName": "ipHash",
         "encoding": "hex"
       }
@@ -600,6 +600,58 @@
           }
         }
       }
+    },
+    {
+      "id": "c5d6e7f8-3333-4c44-8d55-e6f7a8b9ca03",
+      "name": "Make IP salt",
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 2,
+      "position": [540, 700],
+      "notes": "A random value. Only the first one is kept as the secret salt, see the next node.",
+      "parameters": {
+        "action": "generate",
+        "dataPropertyName": "newSalt",
+        "encodingType": "uuid"
+      }
+    },
+    {
+      "id": "d6e7f8a9-4444-4d55-9e66-f7a8b9cadb04",
+      "name": "Get IP salt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [670, 700],
+      "notes": "The secret salt for the IP hash. It lives only in the data of this workflow in n8n, never in the export or the repository.",
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// The secret salt for the IP hash. The first random value is kept and then lives only in the data of this workflow in n8n.\nconst store = $getWorkflowStaticData('global');\nconst { newSalt, ...rest } = $input.first().json;\nif (typeof store.ipSalt !== 'string' || store.ipSalt.length < 32) {\n  store.ipSalt = newSalt;\n}\nreturn [{ json: { ...rest, salt: store.ipSalt } }];\n"
+      }
+    },
+    {
+      "id": "b4c5d6e7-2222-4b33-9c44-d5e6f7a8b902",
+      "name": "Make status salt",
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 2,
+      "position": [390, 1160],
+      "notes": "A random value. Only the first one is kept as the secret salt, see the next node.",
+      "parameters": {
+        "action": "generate",
+        "dataPropertyName": "newSalt",
+        "encodingType": "uuid"
+      }
+    },
+    {
+      "id": "a3b4c5d6-1111-4a22-8b33-c4d5e6f7a801",
+      "name": "Get status salt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [390, 1040],
+      "notes": "The secret salt for the IP hash. It lives only in the data of this workflow in n8n, never in the export or the repository.",
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// The secret salt for the IP hash. The first random value is kept and then lives only in the data of this workflow in n8n.\nconst store = $getWorkflowStaticData('global');\nconst { newSalt, ...rest } = $input.first().json;\nif (typeof store.ipSalt !== 'string' || store.ipSalt.length < 32) {\n  store.ipSalt = newSalt;\n}\nreturn [{ json: { ...rest, salt: store.ipSalt } }];\n"
+      }
     }
   ],
   "connections": {
@@ -629,7 +681,7 @@
       "main": [
         [
           {
-            "node": "Hash client IP",
+            "node": "Make IP salt",
             "type": "main",
             "index": 0
           }
@@ -838,7 +890,7 @@
       "main": [
         [
           {
-            "node": "Hash status IP",
+            "node": "Make status salt",
             "type": "main",
             "index": 0
           }
@@ -872,6 +924,50 @@
         [
           {
             "node": "Respond quota status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Make IP salt": {
+      "main": [
+        [
+          {
+            "node": "Get IP salt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get IP salt": {
+      "main": [
+        [
+          {
+            "node": "Hash client IP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Make status salt": {
+      "main": [
+        [
+          {
+            "node": "Get status salt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get status salt": {
+      "main": [
+        [
+          {
+            "node": "Hash status IP",
             "type": "main",
             "index": 0
           }

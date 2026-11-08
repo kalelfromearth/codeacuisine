@@ -147,3 +147,4 @@ Kurz und knapp, neueste Einträge unten. Format: `Datum – was`.
 ## 2026-11-08
 
 - `CLAUDE.md` (lokal, nicht im Repo): Projektstruktur auf den aktuellen Stand gebracht (alle Seiten, `recipe/`, `shared/`, `n8n/`, `docs/`), die Einträge "(geplant)" sind weg.
+- `CLAUDE.md` (lokal): Regel zu Pfeilfunktionen um die Ausnahme ergänzt (einzeilige `computed(() => …)` und `import()` in den Routen), damit Regel und Code zusammenpassen. Entscheidung Andreas: die 22 `computed`-Zeilen bleiben.

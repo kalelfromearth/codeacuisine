@@ -36,9 +36,9 @@ service cloud.firestore {
     }
 
     match /recipes/{recipeId} {
-      // A single recipe may be read by everyone, lists only in pages of at most 12 recipes.
+      // A single recipe may be read by everyone. Lists show 12 recipes per page, the 13th only tells that a next page exists.
       allow get: if true;
-      allow list: if request.query.limit <= 12;
+      allow list: if request.query.limit <= 13;
 
       allow create: if isValidNewRecipe(request.resource.data);
 

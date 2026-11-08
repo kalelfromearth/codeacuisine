@@ -21,13 +21,16 @@ import {
 } from 'firebase/firestore';
 import { FirebaseService } from '../shared/firebase/firebase.service';
 import { findFilmRecipe } from './film-recipes';
+import { cutPage } from './page-cut';
 import { Recipe, RecipeCuisine, RecipeDraft, RecipeIngredient, RecipeStep } from './recipe.model';
 
 const RECIPES_COLLECTION = 'recipes';
 const FILM_LIKES_COLLECTION = 'filmLikes';
 
-/** Recipes per page. The Firestore rules allow lists of at most this size, keep both in sync. */
+/** Recipes per page. */
 export const RECIPES_PAGE_SIZE = 12;
+/** A page asks for one recipe more, which only tells that a next page exists. The Firestore rules allow lists of at most 13, keep both in sync. */
+const RECIPES_FETCH_SIZE = RECIPES_PAGE_SIZE + 1;
 /** Number of recipes in each row on the start page of the cookbook. */
 export const SHELF_COUNT = 3;
 
@@ -127,7 +130,7 @@ function buildPageConstraints(
   if (cursor) {
     constraints.push(startAfter(cursor));
   }
-  return [...constraints, limit(RECIPES_PAGE_SIZE)];
+  return [...constraints, limit(RECIPES_FETCH_SIZE)];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -208,11 +211,11 @@ export class RecipeStoreService {
   ): Promise<RecipePage> {
     const recipes = collection(this.firestore, RECIPES_COLLECTION);
     const snapshot = await getDocs(query(recipes, ...buildPageConstraints(cuisine, sort, cursor)));
-    const documents = snapshot.docs;
+    const page = cutPage(snapshot.docs, RECIPES_PAGE_SIZE);
     return {
-      recipes: documents.map(toRecipeFromDocument),
-      cursor: documents[documents.length - 1] ?? null,
-      hasMore: documents.length === RECIPES_PAGE_SIZE,
+      recipes: page.shown.map(toRecipeFromDocument),
+      cursor: page.shown[page.shown.length - 1] ?? null,
+      hasMore: page.hasMore,
     };
   }
 }

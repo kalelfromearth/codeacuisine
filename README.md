@@ -86,7 +86,7 @@ flowchart LR
 ## Security
 
 - The AI key and the n8n credentials never reach the browser. The Firebase web config is public by design and protected by the security rules.
-- **Firestore rules:** reading single recipes is public, lists are limited to 12 documents per query, new recipes must match the exact schema with `likes == 0` and the server timestamp, updates may only change `likes` by one, deleting is not allowed, every other path is closed. The hearts of the seven fixed film recipes live in their own collection `filmLikes`, which accepts only those seven ids.
+- **Firestore rules:** reading single recipes is public, lists are limited to 13 documents per query (a page of 12 plus one that only shows whether a next page exists), new recipes must match the exact schema with `likes == 0` and the server timestamp, updates may only change `likes` by one, deleting is not allowed, every other path is closed. The hearts of the seven fixed film recipes live in their own collection `filmLikes`, which accepts only those seven ids.
 - **n8n:** request validation, a daily quota per IP and for the whole app (the IP comes from the header that nginx sets and is stored only as a hash of IP and date), output cleaning, a timeout and one retry for the AI call, rate limit errors passed on as 429, and an error workflow that sends an email when something crashes unexpectedly.
 - **Server (`.htaccess`):** HTTPS redirect, security headers (`X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy`, HSTS) and compression.
 - `src/environments/environment.ts` is ignored by git. The repository contains only an example with placeholders, and the exported n8n workflows contain no credentials.

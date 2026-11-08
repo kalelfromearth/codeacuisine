@@ -81,6 +81,8 @@ Datei: `n8n/code-a-cuisine-suggest-workflow.json`, Webhook `GET …/webhook/code
 | kein Netz | "We could not reach the recipe service. Please check your connection and try again." |
 | Speichern in Firestore schlägt fehl | "We could not save your recipes. Please try again." |
 
+Kommt die Antwort "too-fast" (dieselbe IP fragt innerhalb von 30 Sekunden erneut), zeigt die Ladeseite "Just a moment" mit einem Zähler "Please wait N seconds before you try again". "Try again" ist gesperrt, bis der Zähler bei 0 ist. Die Sekunden schickt n8n als `retryAfterSeconds` mit, die App nimmt nur ganze Zahlen von 1 bis 120 an (`readWaitSeconds`). Für Screenreader steht der Satz einmal fest da, der laufende Zähler ist nur zum Ansehen (`aria-hidden`), damit nicht jede Sekunde vorgelesen wird.
+
 Die Preferences-Seite fragt beim Öffnen den Quota-Status ab (`QuotaService`) und zeigt unter dem Knopf "2 of 3 recipe requests left today". Bei 0 ist der Knopf gesperrt. Schlägt die Abfrage fehl, fehlt nur der Hinweis, die Seite funktioniert normal und n8n prüft trotzdem.
 
 Dauert die Antwort länger als 15 Sekunden, ändert die Ladeseite ihren Text: "This is taking a little longer than usual. Our AI service is busy right now, but we are still working on your recipes." So sieht die Nutzerin, dass nichts hängt, wenn der Anbieter bremst.

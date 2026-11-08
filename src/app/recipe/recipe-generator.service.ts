@@ -1,6 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { QuotaService, isQuotaUsedUp } from './quota.service';
+import { QuotaService, isQuotaUsedUp, readWaitSeconds } from './quota.service';
 import { RecipeRequestService } from './recipe-request.service';
 import { RecipeStoreService } from './recipe-store.service';
 import { Recipe, RecipeDraft, RecipeRequest } from './recipe.model';
@@ -14,6 +14,7 @@ interface GeneratorResponse {
   reason?: string;
   remaining?: unknown;
   remainingToday?: unknown;
+  retryAfterSeconds?: unknown;
 }
 
 const REQUEST_TIMEOUT_MS = 120000;
@@ -39,6 +40,8 @@ export class RecipeGeneratorService {
   readonly errorMessage = signal('');
   readonly hasIngredientProblem = signal(false);
   readonly isQuotaUsedUp = signal(false);
+  /** The seconds to wait when n8n asked for a short pause between two runs, otherwise 0. */
+  readonly retryAfterSeconds = signal(0);
 
   /** Sends the stored request to the n8n workflow, saves the recipes and stores them or an error message. */
   async generate(): Promise<void> {
@@ -96,6 +99,7 @@ export class RecipeGeneratorService {
     this.errorMessage.set('');
     this.hasIngredientProblem.set(false);
     this.isQuotaUsedUp.set(false);
+    this.retryAfterSeconds.set(0);
     this.unsavedDrafts = [];
     this.savedRecipes = [];
   }
@@ -118,6 +122,7 @@ export class RecipeGeneratorService {
     this.errorMessage.set('');
     this.hasIngredientProblem.set(false);
     this.isQuotaUsedUp.set(false);
+    this.retryAfterSeconds.set(0);
     this.recipes.set([]);
   }
 
@@ -139,6 +144,7 @@ export class RecipeGeneratorService {
     }
     this.hasIngredientProblem.set(response.status === 422);
     this.isQuotaUsedUp.set(isQuotaUsedUp(body?.reason));
+    this.retryAfterSeconds.set(readWaitSeconds(body?.reason, body?.retryAfterSeconds));
     this.quotaService.updateRemaining(body?.remaining);
     this.fail(this.describeFailure(response.status, body?.message));
   }

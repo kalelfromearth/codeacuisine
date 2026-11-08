@@ -1,4 +1,4 @@
-import { isQuotaUsedUp, readQuota } from './quota.service';
+import { isQuotaUsedUp, readQuota, readWaitSeconds } from './quota.service';
 
 describe('readQuota', function () {
   it('returns the limit and the remaining runs of a normal answer', function () {
@@ -33,5 +33,24 @@ describe('isQuotaUsedUp', function () {
     expect(isQuotaUsedUp('too-fast')).toBe(false);
     expect(isQuotaUsedUp(undefined)).toBe(false);
     expect(isQuotaUsedUp(429)).toBe(false);
+  });
+});
+
+describe('readWaitSeconds', function () {
+  it('returns the seconds of a too-fast answer', function () {
+    expect(readWaitSeconds('too-fast', 16)).toBe(16);
+  });
+
+  it('returns 0 for every other reason', function () {
+    expect(readWaitSeconds('quota-ip', 16)).toBe(0);
+    expect(readWaitSeconds(undefined, 16)).toBe(0);
+  });
+
+  it('returns 0 for seconds that cannot be a wait', function () {
+    expect(readWaitSeconds('too-fast', 0)).toBe(0);
+    expect(readWaitSeconds('too-fast', -3)).toBe(0);
+    expect(readWaitSeconds('too-fast', 2.5)).toBe(0);
+    expect(readWaitSeconds('too-fast', '16')).toBe(0);
+    expect(readWaitSeconds('too-fast', 100000)).toBe(0);
   });
 });

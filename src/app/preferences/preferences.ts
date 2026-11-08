@@ -99,18 +99,11 @@ export class Preferences {
 
   /** Checks the ingredients against the diet, then starts the recipe request or opens the diet popup. */
   async generateRecipe(): Promise<void> {
-    if (this.isQuotaUsedUp()) {
-      return;
-    }
-    if (this.preferencesForm.invalid) {
-      this.preferencesForm.markAllAsTouched();
+    if (!this.isReadyToGenerate()) {
       return;
     }
     const diet = this.preferencesForm.controls.diet.value;
-    const names = this.ingredientList.ingredients().map(function (ingredient) {
-      return ingredient.name;
-    });
-    const unsuitable = await findUnsuitableIngredients(names, diet);
+    const unsuitable = await findUnsuitableIngredients(this.readIngredientNames(), diet);
     if (unsuitable.length === 0) {
       this.startGenerating(this.ingredientList.ingredients());
       return;
@@ -131,6 +124,23 @@ export class Preferences {
     });
     this.closeDietPopup();
     this.startGenerating(suitable);
+  }
+
+  private isReadyToGenerate(): boolean {
+    if (this.isQuotaUsedUp()) {
+      return false;
+    }
+    if (this.preferencesForm.invalid) {
+      this.preferencesForm.markAllAsTouched();
+      return false;
+    }
+    return true;
+  }
+
+  private readIngredientNames(): string[] {
+    return this.ingredientList.ingredients().map(function (ingredient) {
+      return ingredient.name;
+    });
   }
 
   private hasUnsuitableIngredients(): boolean {

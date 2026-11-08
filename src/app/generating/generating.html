@@ -17,6 +17,22 @@
             <app-button variant="light" link="/library">Browse the cookbook</app-button>
             <app-button variant="primary" link="/">Back to the start page</app-button>
           </div>
+        } @else if (isTooFast()) {
+          <h1 class="generating__title">Just a moment</h1>
+          <p class="generating__text">
+            <span class="generating__visually-hidden">Please wait a few seconds before you try again.</span>
+            <span aria-hidden="true">
+              @if (secondsLeft() > 0) {
+                Please wait {{ secondsLeft() }} {{ secondsLeft() === 1 ? 'second' : 'seconds' }} before you try again.
+              } @else {
+                You can try again now.
+              }
+            </span>
+          </p>
+          <div class="generating__actions">
+            <app-button variant="light" [disabled]="secondsLeft() > 0" (click)="retry()">Try again</app-button>
+            <app-button variant="primary" link="/preferences">Back to preferences</app-button>
+          </div>
         } @else {
           <h1 class="generating__title">Ups! Something went wrong</h1>
           <p class="generating__text">{{ errorMessage() }}</p>

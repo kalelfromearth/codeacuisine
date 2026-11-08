@@ -1,4 +1,4 @@
-import { Component, DestroyRef, computed, effect, inject, signal } from '@angular/core';
+import { Component, DestroyRef, computed, effect, inject, signal, untracked } from '@angular/core';
 import { Router } from '@angular/router';
 import { RecipeGeneratorService } from '../recipe/recipe-generator.service';
 import { Button } from '../shared/button/button';
@@ -19,27 +19,66 @@ export class Generating {
   private readonly destroyRef = inject(DestroyRef);
   private readonly dotCount = signal(1);
   private slowTimerId: ReturnType<typeof setTimeout> | undefined;
+  private waitTimerId: ReturnType<typeof setInterval> | undefined;
 
   readonly status = this.generator.status;
   readonly errorMessage = this.generator.errorMessage;
   readonly hasIngredientProblem = this.generator.hasIngredientProblem;
   readonly isQuotaUsedUp = this.generator.isQuotaUsedUp;
+  readonly isTooFast = computed(this.hasToWait.bind(this));
+  /** The seconds that are left until "Try again" works after a too-fast answer. */
+  readonly secondsLeft = signal(0);
   readonly isTakingLong = signal(false);
   readonly dots = computed(() => '.'.repeat(this.dotCount()));
   readonly prefersReducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   constructor() {
     effect(this.openResultsOnSuccess.bind(this));
+    effect(this.startWaitCountdown.bind(this));
     this.startGenerationOnce();
     this.animateDots();
     this.watchForSlowAnswer();
     this.destroyRef.onDestroy(this.stopWatchingForSlowAnswer.bind(this));
+    this.destroyRef.onDestroy(this.stopWaitCountdown.bind(this));
   }
 
   /** Tries again after an error: saves the waiting recipes again or starts a new generation. */
   retry(): void {
+    if (this.secondsLeft() > 0) {
+      return;
+    }
     this.generator.retry();
     this.watchForSlowAnswer();
+  }
+
+  private hasToWait(): boolean {
+    return this.generator.retryAfterSeconds() > 0;
+  }
+
+  private startWaitCountdown(): void {
+    const seconds = this.generator.retryAfterSeconds();
+    untracked(this.runWaitCountdown.bind(this, seconds));
+  }
+
+  private runWaitCountdown(seconds: number): void {
+    this.stopWaitCountdown();
+    this.secondsLeft.set(seconds);
+    if (seconds > 0) {
+      this.waitTimerId = setInterval(this.tickWaitCountdown.bind(this), 1000);
+    }
+  }
+
+  private tickWaitCountdown(): void {
+    this.secondsLeft.update(function (seconds) {
+      return Math.max(0, seconds - 1);
+    });
+    if (this.secondsLeft() === 0) {
+      this.stopWaitCountdown();
+    }
+  }
+
+  private stopWaitCountdown(): void {
+    clearInterval(this.waitTimerId);
   }
 
   private openResultsOnSuccess(): void {

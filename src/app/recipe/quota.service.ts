@@ -4,6 +4,7 @@ import { environment } from '../../environments/environment';
 // The quota status lives next to the generate workflow in n8n, so no second setting is needed.
 const QUOTA_URL = environment.n8nWebhookUrl.replace(/\/generate$/, '/quota');
 const USED_UP_REASONS = ['quota-ip', 'quota-total'];
+const MAX_WAIT_SECONDS = 120;
 
 /** How many recipe runs one IP address may start per day and how many are left today. */
 export interface QuotaInfo {
@@ -26,6 +27,12 @@ export function readQuota(answer: unknown): QuotaInfo | null {
 /** Returns true when n8n refused a run because the daily quota of the IP or of the whole app is used up. */
 export function isQuotaUsedUp(reason: unknown): boolean {
   return typeof reason === 'string' && USED_UP_REASONS.includes(reason);
+}
+
+/** Returns the seconds a person has to wait after a "too-fast" answer of n8n, and 0 for every other answer. */
+export function readWaitSeconds(reason: unknown, seconds: unknown): number {
+  const isCount = Number.isInteger(seconds) && (seconds as number) > 0 && (seconds as number) <= MAX_WAIT_SECONDS;
+  return reason === 'too-fast' && isCount ? (seconds as number) : 0;
 }
 
 @Injectable({ providedIn: 'root' })

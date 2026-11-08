@@ -35,7 +35,7 @@
 
   &__dots {
     display: inline-block;
-    width: 1.5em;
+    width: 54px;
     text-align: left;
   }
 
@@ -47,6 +47,10 @@
 
   &__error {
     @include flex($direction: column, $gap: 24px);
+  }
+
+  &__visually-hidden {
+    @include visually-hidden;
   }
 
   &__actions {

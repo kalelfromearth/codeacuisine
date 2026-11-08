@@ -143,3 +143,7 @@ Kurz und knapp, neueste Einträge unten. Format: `Datum – was`.
 - 2026-11-03: Andreas hat die Meldung "taking a little longer" und "Try again" im Browser getestet: ok. `SLOW_AFTER_MS` steht wieder auf 15000.
 - 2026-11-03: Ladeseite: der längere Text ("taking a little longer…") brachte den Scrollbalken zurück. Oberer Abstand von `.generating` 46px auf 6px (Animation und Text 40px höher), `generating.scss`.
 - 2026-11-03: Plan Andreas: später neu bauen, hochladen und Testtag. Offen davor: Branch feature/ai-busy-hint nach main mergen, Quota auf 3/12 stellen (aktuell 100/500), Test-Rezepte in Firestore löschen, Swisscom-Limit ansehen; am Schluss Sicherheit (API-Key, Budget-Alarm, CORS) und n8n gemeinsam durchgehen.
+
+## 2026-11-08
+
+- `CLAUDE.md` (lokal, nicht im Repo): Projektstruktur auf den aktuellen Stand gebracht (alle Seiten, `recipe/`, `shared/`, `n8n/`, `docs/`), die Einträge "(geplant)" sind weg.

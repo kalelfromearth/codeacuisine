@@ -27,6 +27,7 @@ describe('isQuotaUsedUp', function () {
   it('is true when the quota of the IP or of the app is used up', function () {
     expect(isQuotaUsedUp('quota-ip')).toBe(true);
     expect(isQuotaUsedUp('quota-total')).toBe(true);
+    expect(isQuotaUsedUp('too-many-errors')).toBe(true);
   });
 
   it('is false for a short wait and for unknown reasons', function () {

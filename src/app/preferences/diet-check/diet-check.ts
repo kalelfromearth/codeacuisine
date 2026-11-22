@@ -29,10 +29,12 @@ export function normalizeForDietCheck(text: string): string {
     .replace(/[̀-ͯ]/g, '');
 }
 
+/** Returns all texts in the normalized form used by the diet check. */
 function normalizeAll(texts: string[]): string[] {
   return texts.map(normalizeForDietCheck);
 }
 
+/** Returns the word list with all words normalized and the whole words as a set for fast lookup. */
 function prepareList(list: DietWordList): PreparedList {
   return {
     whole: new Set(normalizeAll(list.whole)),
@@ -44,6 +46,7 @@ function prepareList(list: DietWordList): PreparedList {
   };
 }
 
+/** Loads the word lists on first use, prepares them and returns the prepared lists. */
 async function loadLists(): Promise<PreparedLists> {
   if (!preparedLists) {
     const words = await import('./diet-words');
@@ -55,12 +58,14 @@ async function loadLists(): Promise<PreparedLists> {
   return preparedLists;
 }
 
+/** Returns the text without the allowed phrases, which are replaced by spaces. */
 function removeAllowedPhrases(text: string, allowed: string[]): string {
   return allowed.reduce(function (rest, phrase) {
     return rest.split(phrase).join(' ');
   }, text);
 }
 
+/** Returns true when the token is a listed whole word or starts or ends with a listed part. */
 function isTokenListed(token: string, list: PreparedList): boolean {
   return (
     list.whole.has(token) ||
@@ -73,6 +78,7 @@ function isTokenListed(token: string, list: PreparedList): boolean {
   );
 }
 
+/** Returns true when the text matches the list, unless it contains a marker that excludes it. */
 function isListed(text: string, list: PreparedList): boolean {
   const isMarked = list.markers.some(function (marker) {
     return text.includes(marker);
@@ -89,6 +95,7 @@ function isListed(text: string, list: PreparedList): boolean {
   });
 }
 
+/** Returns true when the ingredient name does not fit the diet. */
 function isUnsuitable(name: string, diet: RecipeDiet, lists: PreparedLists): boolean {
   const text = normalizeForDietCheck(name);
   if (isListed(text, lists.meatAndFish)) {

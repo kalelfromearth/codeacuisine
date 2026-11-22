@@ -120,9 +120,10 @@
     @include flex($justify: flex-start, $gap: 32px);
     @include font(1rem, 400, $color: $color-print-ink);
 
-    dt {
-      font-weight: 700;
-    }
+  }
+
+  &__nutrition-label {
+    font-weight: 700;
   }
 
   &__foot {

@@ -44,6 +44,7 @@ export interface RecipePage {
   hasMore: boolean;
 }
 
+/** Returns a copy of the ingredient with only the fields that are stored. */
 function pickIngredient(ingredient: RecipeIngredient): RecipeIngredient {
   return {
     name: ingredient.name,
@@ -53,10 +54,12 @@ function pickIngredient(ingredient: RecipeIngredient): RecipeIngredient {
   };
 }
 
+/** Returns a copy of the step with only the fields that are stored. */
 function pickStep(step: RecipeStep): RecipeStep {
   return { title: step.title, text: step.text, chef: step.chef };
 }
 
+/** Returns the basic fields of the draft, such as title, time, cuisine and diet, that are stored. */
 function pickBasics(draft: RecipeDraft) {
   return {
     title: draft.title,
@@ -84,6 +87,12 @@ function pickDocumentFields(draft: RecipeDraft): RecipeDraft {
   };
 }
 
+/** Reads a number of hearts from a stored value. Anything unusable counts as 0. */
+function readLikeCount(data: Record<string, unknown>): number {
+  return Math.max(0, Number(data['likes']) || 0);
+}
+
+/** Returns the creation time as an ISO text, or the current time when the stored value is not a timestamp. */
 function readCreatedAt(value: unknown): string {
   return value instanceof Timestamp ? value.toDate().toISOString() : new Date().toISOString();
 }
@@ -94,6 +103,7 @@ export interface SaveResult {
   failed: RecipeDraft[];
 }
 
+/** Sorts the drafts into the recipes that were saved and the drafts whose saving failed. */
 function splitSaveResults(drafts: RecipeDraft[], results: PromiseSettledResult<Recipe>[]): SaveResult {
   const saved: Recipe[] = [];
   const failed: RecipeDraft[] = [];
@@ -107,20 +117,24 @@ function splitSaveResults(drafts: RecipeDraft[], results: PromiseSettledResult<R
   return { saved, failed };
 }
 
+/** Returns the recipe built from the id and the stored data of a Firestore document. */
 function toRecipe(id: string, data: DocumentData): Recipe {
   const fields = pickDocumentFields(data as RecipeDraft);
   return { ...fields, id, likes: data['likes'], createdAt: readCreatedAt(data['createdAt']) };
 }
 
+/** Returns the recipe built from a Firestore query result document. */
 function toRecipeFromDocument(document: QueryDocumentSnapshot<DocumentData>): Recipe {
   return toRecipe(document.id, document.data());
 }
 
+/** Returns the query order: most hearts first for "likes", always with the newest first as tie-breaker. */
 function buildSortConstraints(sort: RecipeSort): QueryConstraint[] {
   const newestFirst = orderBy('createdAt', 'desc');
   return sort === 'likes' ? [orderBy('likes', 'desc'), newestFirst] : [newestFirst];
 }
 
+/** Returns the query rules for one page of a cuisine: filter, order, start after the cursor and the page size. */
 function buildPageConstraints(
   cuisine: RecipeCuisine,
   sort: RecipeSort,
@@ -167,7 +181,7 @@ export class RecipeStoreService {
     const snapshot = await getDocs(query(collection(this.firestore, FILM_LIKES_COLLECTION), limit(RECIPES_PAGE_SIZE)));
     const likes: Record<string, number> = {};
     snapshot.docs.forEach(function (document) {
-      likes[document.id] = Math.max(0, Number(document.data()['likes']) || 0);
+      likes[document.id] = readLikeCount(document.data());
     });
     return likes;
   }
@@ -175,7 +189,7 @@ export class RecipeStoreService {
   /** Loads the hearts of one film recipe, 0 when nobody liked it yet. */
   async loadFilmLikeCount(id: string): Promise<number> {
     const snapshot = await getDoc(doc(this.firestore, FILM_LIKES_COLLECTION, id));
-    return snapshot.exists() ? Math.max(0, Number(snapshot.data()['likes']) || 0) : 0;
+    return snapshot.exists() ? readLikeCount(snapshot.data()) : 0;
   }
 
   /** Loads one recipe by its id, or returns null when no recipe with this id exists. */
@@ -197,6 +211,7 @@ export class RecipeStoreService {
     return this.loadOrdered('createdAt', count);
   }
 
+  /** Loads the given number of recipes, ordered by the field with the highest value first. */
   private async loadOrdered(field: 'likes' | 'createdAt', count: number): Promise<Recipe[]> {
     const recipes = collection(this.firestore, RECIPES_COLLECTION);
     const snapshot = await getDocs(query(recipes, orderBy(field, 'desc'), limit(count)));

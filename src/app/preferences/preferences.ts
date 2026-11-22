@@ -126,6 +126,7 @@ export class Preferences {
     this.startGenerating(suitable);
   }
 
+  /** Returns true when the quota is left and the form is valid, otherwise marks all fields as touched. */
   private isReadyToGenerate(): boolean {
     if (this.isQuotaUsedUp()) {
       return false;
@@ -137,30 +138,36 @@ export class Preferences {
     return true;
   }
 
+  /** Returns the names of all ingredients in the list. */
   private readIngredientNames(): string[] {
     return this.ingredientList.ingredients().map(function (ingredient) {
       return ingredient.name;
     });
   }
 
+  /** Returns true when at least one ingredient does not fit the chosen diet. */
   private hasUnsuitableIngredients(): boolean {
     return this.unsuitableIngredients().length > 0;
   }
 
+  /** Returns the message that names the ingredients not fitting the chosen diet. */
   private buildDietMessage(): string {
     return describeUnsuitableIngredients(this.unsuitableIngredients(), this.preferencesForm.controls.diet.value);
   }
 
+  /** Returns true when enough ingredients are left after removing the ones that do not fit the diet. */
   private hasEnoughSuitableIngredients(): boolean {
     return this.ingredientList.ingredients().length - this.unsuitableIngredients().length >= MIN_INGREDIENTS;
   }
 
+  /** Stores the request, resets the generator and opens the loading page. */
   private startGenerating(ingredients: Ingredient[]): void {
     this.recipeRequestService.setRequest(this.buildRecipeRequest(ingredients));
     this.recipeGenerator.reset();
     this.router.navigateByUrl('/generating');
   }
 
+  /** Returns the request for the recipe generator from the ingredients and the form values. */
   private buildRecipeRequest(ingredients: Ingredient[]): RecipeRequest {
     const preferences = this.preferencesForm.getRawValue();
     return {

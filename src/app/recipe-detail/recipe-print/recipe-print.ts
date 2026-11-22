@@ -29,6 +29,7 @@ export class RecipePrint {
     return describeIngredientAmount(ingredient);
   }
 
+  /** Returns the tags of the recipe on the print card. */
   private buildTags(): string[] {
     return buildRecipeTags(this.recipe());
   }

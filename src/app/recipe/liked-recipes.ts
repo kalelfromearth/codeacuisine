@@ -1,24 +1,19 @@
+import { readStoredIds } from './stored-ids';
+
 const LIKED_IDS_KEY = 'codeacuisine.likedRecipeIds';
 
+/** Returns the ids of the recipes this browser has given a heart. */
 function readLikedIds(): string[] {
-  try {
-    const ids: unknown = JSON.parse(localStorage.getItem(LIKED_IDS_KEY) ?? '[]');
-    return Array.isArray(ids) ? ids.filter(isId) : [];
-  } catch {
-    return [];
-  }
+  return readStoredIds(localStorage, LIKED_IDS_KEY);
 }
 
+/** Stores the ids of the liked recipes in this browser. */
 function writeLikedIds(ids: string[]): void {
   try {
     localStorage.setItem(LIKED_IDS_KEY, JSON.stringify(ids));
   } catch {
     // Without storage the heart is simply empty again after a reload.
   }
-}
-
-function isId(value: unknown): value is string {
-  return typeof value === 'string' && value.length > 0;
 }
 
 /** Returns true when this browser has already given the recipe a heart. */

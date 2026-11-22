@@ -2,6 +2,9 @@ export type IngredientUnit = 'piece' | 'ml' | 'gram';
 
 export const MIN_INGREDIENT_AMOUNT = 1;
 
+/** The units in the order they are offered in the unit list. */
+export const INGREDIENT_UNITS: IngredientUnit[] = ['piece', 'ml', 'gram'];
+
 export const UNIT_LABELS: Record<IngredientUnit, string> = {
   piece: 'pieces',
   ml: 'ml',

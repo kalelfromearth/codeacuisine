@@ -6,6 +6,7 @@ const SUGGEST_URL = environment.n8nWebhookUrl.replace(/\/generate$/, '/suggest')
 const MAX_SUGGESTIONS = 6;
 const MAX_SUGGESTION_LENGTH = 40;
 
+/** Returns true when the value is a non-empty text that is not longer than the allowed suggestion length. */
 function isSuggestionText(value: unknown): value is string {
   return typeof value === 'string' && value.trim().length > 0 && value.length <= MAX_SUGGESTION_LENGTH;
 }
@@ -37,6 +38,7 @@ export class IngredientSuggestionService {
     return suggestions;
   }
 
+  /** Requests the suggestions for the key from n8n and returns an empty list when the request fails. */
   private async fetchSuggestions(key: string, signal: AbortSignal): Promise<string[]> {
     try {
       const response = await fetch(`${SUGGEST_URL}?q=${encodeURIComponent(key)}`, { signal });

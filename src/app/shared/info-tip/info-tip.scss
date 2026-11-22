@@ -27,7 +27,7 @@
     padding: 12px 16px;
     border-radius: 12px;
     background-color: $color-text;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    @include popover-shadow;
     box-sizing: border-box;
     transform: translateX(-50%);
   }

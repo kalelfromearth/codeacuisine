@@ -45,7 +45,7 @@ $stepper-shadow-pressed: $stepper-shadow-hover, 0 0 14px 6px rgba($color-text, 0
     cursor: pointer;
     transition: box-shadow 0.35s ease;
 
-    @media (hover: hover) {
+    @include hover-device {
       &:hover:not(:disabled) {
         box-shadow: $stepper-shadow-hover;
       }
@@ -56,7 +56,7 @@ $stepper-shadow-pressed: $stepper-shadow-hover, 0 0 14px 6px rgba($color-text, 0
       transition-duration: 0.1s;
     }
 
-    @media (prefers-reduced-motion: reduce) {
+    @include reduced-motion {
       transition: none;
     }
 
@@ -118,7 +118,7 @@ $stepper-shadow-pressed: $stepper-shadow-hover, 0 0 14px 6px rgba($color-text, 0
     padding: 12px 16px;
     border-radius: 12px;
     background-color: $color-text;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    @include popover-shadow;
     box-sizing: border-box;
     transform-origin: 24px top;
 
@@ -139,7 +139,7 @@ $stepper-shadow-pressed: $stepper-shadow-hover, 0 0 14px 6px rgba($color-text, 0
       animation: stepper-bubble-pop 0.2s ease reverse forwards;
     }
 
-    @media (prefers-reduced-motion: reduce) {
+    @include reduced-motion {
       &--enter,
       &--leave {
         animation: none;

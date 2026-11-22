@@ -18,10 +18,12 @@ export interface DietWordList {
   markers: string[];
 }
 
+/** Returns the words of a text that are separated by white space. */
 function words(text: string): string[] {
   return text.trim().split(/\s+/);
 }
 
+/** Returns the trimmed phrases of a text that are separated by a vertical bar. */
 function phrases(text: string): string[] {
   return text.split('|').map(function (phrase) {
     return phrase.trim();

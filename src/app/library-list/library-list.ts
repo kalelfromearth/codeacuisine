@@ -27,10 +27,12 @@ const CUISINE_HEADERS: Record<string, string> = {
   film: 'images/cookbook/header-film.svg',
 };
 
+/** Returns the page number that belongs to an array index, used to create the list of page numbers. */
 function toPageNumber(_unused: unknown, index: number): number {
   return index + 1;
 }
 
+/** Returns the known cuisine with this name, or null when there is none. */
 function findCuisine(name: string): RecipeCuisine | null {
   return RECIPE_CUISINES.find(function (cuisine) {
     return cuisine === name;
@@ -78,8 +80,8 @@ export class LibraryList {
   }
 
   /** Shows the page with the given number. */
-  goToPage(number: number): void {
-    this.pageNumber.set(number);
+  goToPage(targetPage: number): void {
+    this.pageNumber.set(targetPage);
   }
 
   /** Changes the sorting of the list and starts again at the first page. */
@@ -105,20 +107,24 @@ export class LibraryList {
     this.ingredientList.clearIngredients();
   }
 
+  /** Sets the browser tab title to the cuisine title, or to a not-found title for an unknown cuisine. */
   private updatePageTitle(): void {
     this.pageTitle.setTitle(buildPageTitle(this.status() === 'missing' ? 'Cuisine not found' : this.title()));
   }
 
+  /** Returns the heading of the list, for example "Italian cuisine". */
   private buildTitle(): string {
     return this.isFilm() ? 'Film cuisine' : `${formatRecipeLabel(this.knownCuisine() ?? '')} cuisine`;
   }
 
+  /** Shows the film recipes at once and then loads their hearts. */
   private showFilmRecipes(): void {
     this.page.set({ recipes: [...FILM_RECIPES], cursor: null, hasMore: false });
     this.status.set('ready');
     untracked(this.showFilmLikes.bind(this));
   }
 
+  /** Loads the hearts of the film recipes and shows them, or keeps 0 hearts when loading fails. */
   private async showFilmLikes(): Promise<void> {
     try {
       const likes = await this.recipeStore.loadFilmLikes();
@@ -133,6 +139,7 @@ export class LibraryList {
     }
   }
 
+  /** Shows the film recipes or the current page of the cuisine, or marks an unknown cuisine as missing. */
   private loadCurrentPage(): void {
     if (this.isFilm()) {
       this.showFilmRecipes();
@@ -140,43 +147,46 @@ export class LibraryList {
     }
     const cuisine = this.knownCuisine();
     const sort = this.sort();
-    const number = this.pageNumber();
+    const targetPage = this.pageNumber();
     if (!cuisine) {
       this.status.set('missing');
       return;
     }
-    untracked(this.showPage.bind(this, cuisine, sort, number));
+    untracked(this.showPage.bind(this, cuisine, sort, targetPage));
   }
 
-  private async showPage(cuisine: RecipeCuisine, sort: RecipeSort, number: number): Promise<void> {
-    const key = `${cuisine}|${sort}|${number}`;
+  /** Shows the page from the cache, or loads it from the store and caches it. */
+  private async showPage(cuisine: RecipeCuisine, sort: RecipeSort, targetPage: number): Promise<void> {
+    const key = `${cuisine}|${sort}|${targetPage}`;
     const cachedPage = this.pageCache.get(key);
     if (cachedPage) {
-      this.applyPage(cachedPage, number);
+      this.applyPage(cachedPage, targetPage);
       return;
     }
     this.status.set('loading');
     try {
-      const page = await this.recipeStore.loadCuisinePage(cuisine, sort, this.pageStarts()[number - 1] ?? null);
+      const page = await this.recipeStore.loadCuisinePage(cuisine, sort, this.pageStarts()[targetPage - 1] ?? null);
       this.pageCache.set(key, page);
-      this.applyIfCurrent(page, cuisine, sort, number);
+      this.applyIfCurrent(page, cuisine, sort, targetPage);
     } catch {
       this.status.set('error');
     }
   }
 
-  private applyIfCurrent(page: RecipePage, cuisine: RecipeCuisine, sort: RecipeSort, number: number): void {
-    if (this.knownCuisine() === cuisine && this.sort() === sort && this.pageNumber() === number) {
-      this.applyPage(page, number);
+  /** Shows the loaded page only when cuisine, sorting and page number have not changed in the meantime. */
+  private applyIfCurrent(page: RecipePage, cuisine: RecipeCuisine, sort: RecipeSort, targetPage: number): void {
+    if (this.knownCuisine() === cuisine && this.sort() === sort && this.pageNumber() === targetPage) {
+      this.applyPage(page, targetPage);
     }
   }
 
-  private applyPage(page: RecipePage, number: number): void {
+  /** Shows the page and remembers the start of the next page when there is one. */
+  private applyPage(page: RecipePage, targetPage: number): void {
     this.page.set(page);
     this.status.set('ready');
     if (page.hasMore) {
       this.pageStarts.update(function (starts) {
-        return starts.length > number ? starts : [...starts, page.cursor];
+        return starts.length > targetPage ? starts : [...starts, page.cursor];
       });
     }
   }

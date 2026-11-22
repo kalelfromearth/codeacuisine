@@ -19,10 +19,12 @@ interface GeneratorResponse {
 
 const REQUEST_TIMEOUT_MS = 120000;
 
+/** Returns the id of the recipe. */
 function getRecipeId(recipe: Recipe): string {
   return recipe.id;
 }
 
+/** Returns true when the value is a recipe and not null. */
 function isRecipe(recipe: Recipe | null): recipe is Recipe {
   return recipe !== null;
 }
@@ -104,10 +106,12 @@ export class RecipeGeneratorService {
     this.savedRecipes = [];
   }
 
+  /** Loads the recipe with this id from the store, or null when it does not exist. */
   private loadRecipeById(id: string): Promise<Recipe | null> {
     return this.recipeStore.loadRecipe(id);
   }
 
+  /** Shows the restored recipes as the result and returns false when there are none. */
   private showRestoredRecipes(recipes: Recipe[]): boolean {
     if (recipes.length === 0) {
       return false;
@@ -117,6 +121,7 @@ export class RecipeGeneratorService {
     return true;
   }
 
+  /** Sets the loading state and clears the results, errors and wait time of the last run. */
   private startLoading(): void {
     this.status.set('loading');
     this.errorMessage.set('');
@@ -126,6 +131,7 @@ export class RecipeGeneratorService {
     this.recipes.set([]);
   }
 
+  /** Sends the request as JSON to the n8n webhook and aborts it after the timeout. */
   private postRequest(request: RecipeRequest): Promise<Response> {
     return fetch(environment.n8nWebhookUrl, {
       method: 'POST',
@@ -135,6 +141,7 @@ export class RecipeGeneratorService {
     });
   }
 
+  /** Saves the recipes of a successful answer, or sets the error state from a failed answer. */
   private async handleResponse(response: Response): Promise<void> {
     const body = await this.readJson(response);
     if (response.ok && Array.isArray(body?.recipes) && body.recipes.length > 0) {
@@ -149,6 +156,7 @@ export class RecipeGeneratorService {
     this.fail(this.describeFailure(response.status, body?.message));
   }
 
+  /** Saves the drafts as recipes and shows them, or sets the error state when some could not be saved. */
   private async saveDrafts(drafts: RecipeDraft[]): Promise<void> {
     const result = await this.recipeStore.saveRecipes(drafts);
     this.savedRecipes = [...this.savedRecipes, ...result.saved];
@@ -162,6 +170,7 @@ export class RecipeGeneratorService {
     this.status.set('success');
   }
 
+  /** Returns the JSON body of the response, or null when it is not valid JSON. */
   private async readJson(response: Response): Promise<GeneratorResponse | null> {
     try {
       return await response.json();
@@ -170,6 +179,7 @@ export class RecipeGeneratorService {
     }
   }
 
+  /** Returns the error message for an HTTP status, preferring the message of the server for limits and bad ingredients. */
   private describeFailure(status: number, serverMessage?: string): string {
     if (status === 429) {
       return serverMessage ?? 'The daily limit is reached. Please try again tomorrow.';
@@ -183,6 +193,7 @@ export class RecipeGeneratorService {
     return serverMessage ?? 'Something went wrong while creating your recipes. Please try again.';
   }
 
+  /** Returns the error message for a request that timed out or could not reach the service. */
   private describeNetworkError(error: unknown): string {
     if (error instanceof DOMException && error.name === 'TimeoutError') {
       return 'This is taking too long. Please try again.';
@@ -190,6 +201,7 @@ export class RecipeGeneratorService {
     return 'We could not reach the recipe service. Please check your connection and try again.';
   }
 
+  /** Shows the message and sets the error state. */
   private fail(message: string): void {
     this.errorMessage.set(message);
     this.status.set('error');

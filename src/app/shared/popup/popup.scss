@@ -26,7 +26,7 @@ $popup-easing: cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   &::backdrop {
-    background-color: rgba(7, 9, 35, 0);
+    background-color: rgba($color-backdrop, 0);
     transition:
       background-color $popup-duration $popup-easing,
       overlay $popup-duration allow-discrete,
@@ -34,7 +34,7 @@ $popup-easing: cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   &[open]::backdrop {
-    background-color: rgba(7, 9, 35, 0.55);
+    background-color: rgba($color-backdrop, 0.55);
   }
 
   &__box {
@@ -68,11 +68,11 @@ $popup-easing: cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .popup[open]::backdrop {
-    background-color: rgba(7, 9, 35, 0);
+    background-color: rgba($color-backdrop, 0);
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
+@include reduced-motion {
   .popup,
   .popup::backdrop {
     transition: none;

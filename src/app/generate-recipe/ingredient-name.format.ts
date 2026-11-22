@@ -1,3 +1,4 @@
+/** Returns the separator followed by the letter in upper case, used as replacer for each word start. */
 function capitalizeWordStart(_match: string, separator: string, letter: string): string {
   return separator + letter.toUpperCase();
 }

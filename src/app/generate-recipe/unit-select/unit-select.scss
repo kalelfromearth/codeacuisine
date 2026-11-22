@@ -90,7 +90,7 @@
       border: none;
       border-radius: 20px;
       background-color: $color-cream;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+      @include popover-shadow;
       clip-path: inset(0 0 100% 0 round 20px);
       opacity: 0;
       transition:
@@ -156,7 +156,7 @@
     }
   }
 
-  @media (prefers-reduced-motion: reduce) {
+  @include reduced-motion {
     .unit-select,
     .unit-select__select::picker-icon,
     .unit-select__select::picker(select),

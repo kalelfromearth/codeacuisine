@@ -32,6 +32,7 @@ export class Popup {
     }
   }
 
+  /** Opens or closes the native dialog so that it matches the open state. */
   private syncDialogWithOpenState(): void {
     const dialog = this.dialogElement().nativeElement;
     if (this.isOpen() && !dialog.open) {

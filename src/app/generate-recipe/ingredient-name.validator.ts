@@ -8,10 +8,12 @@ const KEYBOARD_MASH = /sdf|dfg|fgh|ghj|hjk|jkl|xcv|cvb|vbn|qwe|yxc/;
 const MIN_LETTERS = 2;
 const MIN_LETTERS_FOR_VOWEL_CHECK = 3;
 
+/** Returns the lower case words of a name, split at everything that is not a letter. */
 function splitIntoWords(name: string): string[] {
   return name.toLowerCase().split(/[^\p{L}]+/u).filter(Boolean);
 }
 
+/** Returns true when the word looks like gibberish, for example without a vowel or with a keyboard mash. */
 function isImplausibleWord(word: string): boolean {
   const withoutGermanClusters = word.replace(/tsch|sch/g, 's');
   const missesVowel = word.length >= MIN_LETTERS_FOR_VOWEL_CHECK && !HAS_VOWEL.test(word);

@@ -1,18 +1,20 @@
 import { Component, ElementRef, Injector, afterNextRender, inject, signal } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import {
+  INGREDIENT_UNITS,
   Ingredient,
   IngredientUnit,
   MAX_AMOUNT_BY_UNIT,
-  MIN_INGREDIENT_AMOUNT,
   formatIngredientAmount,
 } from '../ingredient.model';
-import { amountWithinUnitLimit } from '../ingredient-amount.validator';
 import {
-  BLOCKED_AMOUNT_KEYS,
+  blockNonWholeNumberKey,
   buildAmountErrorMessage,
   capAmountToUnitLimit,
+  createAmountControl,
+  limitTypedAmount,
 } from '../ingredient-amount.rules';
+import { prefersReducedMotion } from '../../shared/motion';
 import { IngredientListService, MIN_INGREDIENTS } from '../ingredient-list.service';
 import { UnitSelect } from '../unit-select/unit-select';
 
@@ -34,20 +36,12 @@ export class IngredientList {
 
   readonly minIngredients = MIN_INGREDIENTS;
   readonly ingredients = this.ingredientList.ingredients;
-  readonly units: IngredientUnit[] = ['piece', 'ml', 'gram'];
+  readonly units = INGREDIENT_UNITS;
   readonly editingPosition = signal<number | null>(null);
   readonly closingPosition = signal<number | null>(null);
 
   readonly editForm: FormGroup<IngredientEditControls> = new FormGroup<IngredientEditControls>({
-    amount: new FormControl(1, {
-      nonNullable: true,
-      validators: [
-        Validators.required,
-        Validators.min(MIN_INGREDIENT_AMOUNT),
-        amountWithinUnitLimit,
-        Validators.pattern(/^\d+$/),
-      ],
-    }),
+    amount: createAmountControl(1),
     unit: new FormControl<IngredientUnit>('gram', { nonNullable: true }),
   });
 
@@ -117,9 +111,7 @@ export class IngredientList {
 
   /** Prevents typing characters that are not part of a whole number. */
   blockNonWholeNumberKeys(event: KeyboardEvent): void {
-    if (BLOCKED_AMOUNT_KEYS.includes(event.key)) {
-      event.preventDefault();
-    }
+    blockNonWholeNumberKey(event);
   }
 
   /** Returns the maximum amount allowed for the unit selected in the edit row. */
@@ -129,10 +121,7 @@ export class IngredientList {
 
   /** Caps the amount at the maximum of the selected unit while the user is typing. */
   limitAmountToMaximum(event: Event): void {
-    const typedAmount = Number((event.target as HTMLInputElement).value);
-    if (typedAmount > this.getCurrentMaxAmount()) {
-      this.editForm.controls.amount.setValue(this.getCurrentMaxAmount());
-    }
+    limitTypedAmount(event, this.editForm.controls.amount, this.editForm.controls.unit.value);
   }
 
   /** Applies the limit of the newly selected unit to the amount in the edit row. */
@@ -146,23 +135,27 @@ export class IngredientList {
     return buildAmountErrorMessage(this.editForm.controls.amount.errors, this.editForm.controls.unit.value);
   }
 
+  /** Starts the closing animation of the edit row, or closes it at once when reduced motion is preferred. */
   private beginClosing(position: number): void {
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    if (prefersReducedMotion()) {
       this.stopEditing(position);
       return;
     }
     this.closingPosition.set(position);
   }
 
+  /** Leaves the edit mode and moves the focus back to the edit button of that row. */
   private stopEditing(position: number): void {
     this.editingPosition.set(null);
     this.focusAfterRender(`[data-edit-position="${position}"]`);
   }
 
+  /** Focuses the element matching the selector once the next render has finished. */
   private focusAfterRender(selector: string): void {
     afterNextRender(this.focusElement.bind(this, selector), { injector: this.injector });
   }
 
+  /** Focuses the element inside this component that matches the selector, if it exists. */
   private focusElement(selector: string): void {
     this.hostElement.nativeElement.querySelector<HTMLElement>(selector)?.focus();
   }

@@ -14,7 +14,7 @@
   flex: 1;
   color: $color-cream;
 
-  .wrapper {
+  &__wrapper {
     @include flex($direction: column, $align: flex-start);
     flex: 1;
     max-width: 240px;
@@ -80,7 +80,7 @@
       min-height: 60px;
     }
 
-    @media (hover: hover) {
+    @include hover-device {
       &:hover {
         background-color: rgba($color-cream, 0.15);
       }

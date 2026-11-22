@@ -5,20 +5,18 @@ import { IngredientListService } from '../generate-recipe/ingredient-list.servic
 import { RecipeStoreService } from '../recipe/recipe-store.service';
 import { FILM_CUISINE } from '../recipe/film-recipes';
 import { RECIPE_CUISINES, Recipe, buildRecipeTags, formatRecipeLabel } from '../recipe/recipe.model';
+import { BackLink } from '../shared/back-link';
 import { Header } from '../shared/header/header';
+import { prefersReducedMotion } from '../shared/motion';
 
 type LibraryStatus = 'loading' | 'ready' | 'error';
 type Shelf = 'liked' | 'newest';
-
-interface BackLink {
-  path: string;
-  label: string;
-}
 
 const DRAG_START_DISTANCE_PX = 6;
 const RESULTS_PATH = '/recipes';
 const RECIPE_PATH = /^\/recipes\/[A-Za-z0-9-]+$/;
 
+/** Returns the link target and label for going back from the cookbook, based on where the visitor came from. */
 // The results page and a recipe page pass their address along when they open the cookbook. Any other address leads to the start page.
 function readBackLink(): BackLink {
   const state = history.state as { backTo?: unknown } | null;
@@ -35,6 +33,7 @@ interface CuisinePhoto {
   height: number;
 }
 
+/** Returns the 800 by 800 pixel cookbook photo of the cuisine. */
 function squarePhoto(cuisine: string): CuisinePhoto {
   return { src: `images/cookbook/${cuisine}.webp`, width: 800, height: 800 };
 }
@@ -90,7 +89,7 @@ export class Library {
     if (!list) {
       return;
     }
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const reduceMotion = prefersReducedMotion();
     list.scrollBy({ left: direction * list.clientWidth * 0.8, behavior: reduceMotion ? 'auto' : 'smooth' });
   }
 
@@ -161,11 +160,13 @@ export class Library {
     this.ingredientList.clearIngredients();
   }
 
+  /** Reads the shown recipes to track them and updates the shelf edges after the next render. */
   private refreshAfterShelfChange(): void {
     this.shownRecipes();
     afterNextRender(this.refreshShelfEdges.bind(this), { injector: this.injector });
   }
 
+  /** Loads the most liked and the newest recipes and marks the cookbook as ready. */
   private async loadShelves(): Promise<void> {
     try {
       const [mostLiked, newest] = await Promise.all([

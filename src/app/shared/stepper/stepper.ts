@@ -60,6 +60,7 @@ export class Stepper {
     return `Increase ${this.unitPlural().toLowerCase()}`;
   }
 
+  /** Sets the value of the control within the minimum and maximum and marks the control as dirty. */
   private setLimitedValue(newValue: number): void {
     const limitedValue = Math.min(this.max(), Math.max(this.min(), newValue));
     this.control().setValue(limitedValue);

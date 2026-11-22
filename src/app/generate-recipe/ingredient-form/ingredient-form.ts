@@ -1,18 +1,19 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
+  INGREDIENT_UNITS,
   IngredientUnit,
   MAX_AMOUNT_BY_UNIT,
-  MIN_INGREDIENT_AMOUNT,
   UNIT_LABELS,
 } from '../ingredient.model';
-import { amountWithinUnitLimit } from '../ingredient-amount.validator';
 import { capitalizeIngredientName } from '../ingredient-name.format';
 import { plausibleIngredientName } from '../ingredient-name.validator';
 import {
-  BLOCKED_AMOUNT_KEYS,
+  blockNonWholeNumberKey,
   buildAmountErrorMessage,
   capAmountToUnitLimit,
+  createAmountControl,
+  limitTypedAmount,
 } from '../ingredient-amount.rules';
 import { IngredientSuggestionService } from '../ingredient-suggestion.service';
 import { InfoTip } from '../../shared/info-tip/info-tip';
@@ -52,22 +53,14 @@ export class IngredientForm {
   readonly maxIngredients = MAX_INGREDIENTS;
   readonly maxAmountByUnit = MAX_AMOUNT_BY_UNIT;
   readonly isListFull = this.ingredientList.isListFull;
-  readonly units: IngredientUnit[] = ['piece', 'ml', 'gram'];
+  readonly units = INGREDIENT_UNITS;
 
   readonly ingredientForm: FormGroup<IngredientFormControls> = new FormGroup<IngredientFormControls>({
     name: new FormControl('', {
       nonNullable: true,
       validators: [Validators.required, Validators.pattern(/\S/), plausibleIngredientName],
     }),
-    amount: new FormControl(100, {
-      nonNullable: true,
-      validators: [
-        Validators.required,
-        Validators.min(MIN_INGREDIENT_AMOUNT),
-        amountWithinUnitLimit,
-        Validators.pattern(/^\d+$/),
-      ],
-    }),
+    amount: createAmountControl(100),
     unit: new FormControl<IngredientUnit>('gram', { nonNullable: true }),
   });
 
@@ -84,9 +77,7 @@ export class IngredientForm {
 
   /** Prevents typing characters that are not part of a whole number. */
   blockNonWholeNumberKeys(event: KeyboardEvent): void {
-    if (BLOCKED_AMOUNT_KEYS.includes(event.key)) {
-      event.preventDefault();
-    }
+    blockNonWholeNumberKey(event);
   }
 
   /** Returns the maximum amount allowed for the currently selected unit. */
@@ -101,10 +92,7 @@ export class IngredientForm {
 
   /** Caps the amount at the maximum of the selected unit while the user is typing. */
   limitAmountToMaximum(event: Event): void {
-    const typedAmount = Number((event.target as HTMLInputElement).value);
-    if (typedAmount > this.getCurrentMaxAmount()) {
-      this.ingredientForm.controls.amount.setValue(this.getCurrentMaxAmount());
-    }
+    limitTypedAmount(event, this.ingredientForm.controls.amount, this.ingredientForm.controls.unit.value);
   }
 
   /** Applies the limit of the newly selected unit to the amount and revalidates it. */
@@ -173,6 +161,7 @@ export class IngredientForm {
     this.activeSuggestion.set(-1);
   }
 
+  /** Asks the suggestion service for the typed text and shows the answer unless the request was aborted. */
   private async loadSuggestions(text: string): Promise<void> {
     const request = new AbortController();
     this.suggestionRequest = request;
@@ -183,21 +172,25 @@ export class IngredientForm {
     }
   }
 
+  /** Moves the highlighted suggestion up or down and wraps around at both ends of the list. */
   private moveActiveSuggestion(step: number): void {
     const count = this.suggestions().length;
     const next = this.activeSuggestion() + step;
     this.activeSuggestion.set(next < 0 ? count - 1 : next % count);
   }
 
+  /** Returns true when at least one suggestion is currently shown. */
   private hasSuggestions(): boolean {
     return this.suggestions().length > 0;
   }
 
+  /** Returns the screen reader hint with the number of suggestions, or an empty text when there are none. */
   private describeSuggestions(): string {
     const count = this.suggestions().length;
     return count > 0 ? `${count} suggestions available. Use the arrow keys and Enter to choose one.` : '';
   }
 
+  /** Closes the suggestions and sets the form back to its empty start values. */
   private resetForm(): void {
     this.closeSuggestions();
     this.ingredientForm.reset({ name: '', amount: 100, unit: 'gram' });

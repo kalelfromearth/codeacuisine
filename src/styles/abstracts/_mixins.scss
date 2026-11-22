@@ -31,6 +31,13 @@
 
 //Breakpoints
 
+// Any width for the few places that need a breakpoint between the named ones.
+@mixin from($width) {
+  @media (min-width: #{$width}) {
+    @content;
+  }
+}
+
 @mixin md {
   @media (min-width: 768px) {
     @content;
@@ -47,6 +54,30 @@
   @media (min-width: 1200px) {
     @content;
   }
+}
+
+// Styles for devices with a real mouse, so touch screens keep no sticky hover state.
+@mixin hover-device {
+  @media (hover: hover) {
+    @content;
+  }
+}
+
+@mixin touch-device {
+  @media (hover: none) {
+    @content;
+  }
+}
+
+@mixin reduced-motion {
+  @media (prefers-reduced-motion: reduce) {
+    @content;
+  }
+}
+
+// Shadow of small boxes that open above the page, like the unit list and the tips.
+@mixin popover-shadow {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 }
 
 @mixin light-page {

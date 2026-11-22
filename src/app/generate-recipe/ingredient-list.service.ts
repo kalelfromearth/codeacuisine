@@ -6,6 +6,7 @@ export const MAX_INGREDIENTS = 10;
 
 const INGREDIENTS_KEY = 'codeacuisine.ingredients';
 
+/** Returns true when the value is an ingredient with a name, a known unit and a whole amount within the unit limit. */
 function isIngredient(value: unknown): value is Ingredient {
   if (!value || typeof value !== 'object') {
     return false;
@@ -16,6 +17,7 @@ function isIngredient(value: unknown): value is Ingredient {
     && maxAmount !== undefined && (amount as number) >= 1 && (amount as number) <= maxAmount;
 }
 
+/** Returns the valid ingredients saved in this tab, or an empty list when nothing usable is stored. */
 // The list survives a reload of the page in the same tab, but is gone when the tab is closed.
 function readSavedIngredients(): Ingredient[] {
   try {
@@ -68,6 +70,7 @@ export class IngredientListService {
     });
   }
 
+  /** Writes the current ingredient list to the session storage of this tab. */
   private saveIngredients(): void {
     const ingredients = this.ingredients();
     try {

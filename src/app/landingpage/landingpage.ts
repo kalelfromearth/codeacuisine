@@ -6,6 +6,7 @@ import { Popup } from '../shared/popup/popup';
 
 const BETTER_LIFE_SEEN_KEY = 'codeacuisine.betterLifeSeen';
 
+/** Returns true when this browser has already seen the Better Life information. */
 function readBetterLifeSeen(): boolean {
   try {
     return localStorage.getItem(BETTER_LIFE_SEEN_KEY) === '1';
@@ -14,6 +15,7 @@ function readBetterLifeSeen(): boolean {
   }
 }
 
+/** Stores in this browser that the Better Life information has been seen. */
 function rememberBetterLifeSeen(): void {
   try {
     localStorage.setItem(BETTER_LIFE_SEEN_KEY, '1');

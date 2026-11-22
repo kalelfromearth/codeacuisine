@@ -60,7 +60,7 @@
     border-radius: 999px;
     cursor: pointer;
 
-    @media (hover: hover) {
+    @include hover-device {
       &:hover {
         background-color: $color-cream;
       }
@@ -106,7 +106,7 @@
     cursor: pointer;
     transition: background-color 0.35s ease;
 
-    @media (hover: hover) {
+    @include hover-device {
       &:hover:not(:disabled) {
         background-color: $color-cream;
       }
@@ -117,7 +117,7 @@
       cursor: not-allowed;
     }
 
-    @media (prefers-reduced-motion: reduce) {
+    @include reduced-motion {
       transition: none;
     }
   }

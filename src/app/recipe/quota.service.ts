@@ -12,6 +12,7 @@ export interface QuotaInfo {
   remaining: number;
 }
 
+/** Returns true when the value is a whole number of zero or more. */
 function isCount(value: unknown): value is number {
   return Number.isInteger(value) && (value as number) >= 0;
 }
@@ -61,6 +62,7 @@ export class QuotaService {
     }
   }
 
+  /** Returns true when the known quota has no runs left. */
   private hasNoRunsLeft(): boolean {
     return this.quota()?.remaining === 0;
   }

@@ -9,7 +9,7 @@
             <span class="recipe-detail__icon recipe-detail__icon--back" aria-hidden="true"></span>
             <span class="recipe-detail__back-text">Film cuisine</span>
           </a>
-        } @else if (listBack(); as back) {
+        } @else if (listBack; as back) {
           <a class="recipe-detail__back" [routerLink]="back.path" [attr.aria-label]="'Back to ' + back.label">
             <span class="recipe-detail__icon recipe-detail__icon--back" aria-hidden="true"></span>
             <span class="recipe-detail__back-text">{{ back.label }}</span>
@@ -61,20 +61,20 @@
               <h2 class="recipe-detail__nutrition-title">Nutritional information</h2>
               <dl class="recipe-detail__nutrition-list">
                 <div class="recipe-detail__nutrition-item">
-                  <dt>Energy</dt>
-                  <dd>{{ recipe.nutrition.calories }} kcal</dd>
+                  <dt class="recipe-detail__nutrition-label">Energy</dt>
+                  <dd class="recipe-detail__nutrition-value">{{ recipe.nutrition.calories }} kcal</dd>
                 </div>
                 <div class="recipe-detail__nutrition-item">
-                  <dt>Protein</dt>
-                  <dd>{{ recipe.nutrition.protein }}g</dd>
+                  <dt class="recipe-detail__nutrition-label">Protein</dt>
+                  <dd class="recipe-detail__nutrition-value">{{ recipe.nutrition.protein }}g</dd>
                 </div>
                 <div class="recipe-detail__nutrition-item">
-                  <dt>Fat</dt>
-                  <dd>{{ recipe.nutrition.fat }}g</dd>
+                  <dt class="recipe-detail__nutrition-label">Fat</dt>
+                  <dd class="recipe-detail__nutrition-value">{{ recipe.nutrition.fat }}g</dd>
                 </div>
                 <div class="recipe-detail__nutrition-item">
-                  <dt>Carbs</dt>
-                  <dd>{{ recipe.nutrition.carbs }}g</dd>
+                  <dt class="recipe-detail__nutrition-label">Carbs</dt>
+                  <dd class="recipe-detail__nutrition-value">{{ recipe.nutrition.carbs }}g</dd>
                 </div>
               </dl>
             </div>
@@ -206,7 +206,7 @@
                 [class.recipe-detail__heart--active]="isLiked()"
                 (click)="toggleLike()"
               >
-                <svg viewBox="0 0 24 22" aria-hidden="true">
+                <svg class="recipe-detail__heart-icon" viewBox="0 0 24 22" aria-hidden="true">
                   <path d="M12 20S2 13.6 2 7.4A5.2 5.2 0 0 1 12 5a5.2 5.2 0 0 1 10 2.4C22 13.6 12 20 12 20z" />
                 </svg>
               </button>

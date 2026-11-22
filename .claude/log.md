@@ -159,3 +159,4 @@ Kurz und knapp, neueste Einträge unten. Format: `Datum – was`.
 ## 2026-11-22
 
 - Entscheidung Andreas: Der nginx-Teil (`limit_conn` 1 pro IP auf dem Rezept-Webhook, `limit_req` auf `/webhook`, Prüfung dass `X-Real-IP` gesetzt wird) und das Schließen von Port 5678 (Docker umgeht `ufw`, von außen offen) werden **nach der Prüfung und Abnahme** gemacht, nicht vorher. Bis dahin gilt: Quota nicht atomar und `X-Real-IP` über Port 5678 fälschbar, beides steht ehrlich in `docs/errorhandling.md`. Beim Wiederaufnehmen: Schritt 1 ist `grep -rl "n8n.andreas-kissner.cloud" /etc/nginx/` im SSH-Fenster (`root@ubuntu`), nicht in der PowerShell. Danach Port 5678 auf `127.0.0.1` binden, meine n8n-Verbindung braucht dann einen SSH-Tunnel.
+- 2026-11-22: Andreas hat die aktuellen Firestore-Regeln (`recipes`: `limit <= 13`) veröffentlicht. Von außen per REST nachgeprüft (runQuery auf `recipes`): Limit 12 gleich 200, Limit 13 gleich 200, Limit 14 gleich 403, ohne Limit gleich 403.

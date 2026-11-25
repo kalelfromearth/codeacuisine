@@ -46,9 +46,19 @@
 }
 
 .hero {
+  // On big screens the heading and the buttons sit in the middle between the logo and the cookbook link.
+  @include lg {
+    @include flex($direction: column, $align: flex-start, $justify: center);
+    flex: 1;
+  }
+
   &__eyebrow {
     margin-top: 20px;
     @include font(1.5rem, 600);
+
+    @include lg {
+      margin-top: 0;
+    }
   }
 
   &__title {

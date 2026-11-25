@@ -10,8 +10,11 @@ I built it as the final project of my training as a frontend developer at the De
 
 [![CI](https://github.com/AndreasKissner/codeacuisine/actions/workflows/ci.yml/badge.svg)](https://github.com/AndreasKissner/codeacuisine/actions/workflows/ci.yml)
 
-<!-- Add 2 or 3 screenshots or a short GIF here: start page, results, recipe detail on mobile.
-![Recipe results on desktop](docs/screenshots/results.webp) -->
+![Start page on desktop](docs/screenshots/start.webp)
+
+![Cookbook on desktop](docs/screenshots/cookbook.webp)
+
+<img src="docs/screenshots/recipe-mobile.webp" alt="Cuisine list on a phone" width="320" />
 
 ---
 

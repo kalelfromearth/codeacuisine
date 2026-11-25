@@ -44,6 +44,8 @@ Thumbs.db
 
 # Claude
 CLAUDE.md
+# The logbook names open weak spots of the server, so it stays on this computer.
+.claude/log.md
 STATUS.md
 TODO.md
 # Design exports (stay local)

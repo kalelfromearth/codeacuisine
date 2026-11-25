@@ -1,7 +1,0 @@
----
-name:
-description:
-model:
-tools:
----
-

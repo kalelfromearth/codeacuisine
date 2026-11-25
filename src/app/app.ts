@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
+import { LoadErrorService } from './shared/load-error/load-error.service';
 
 @Component({
   selector: 'app-root',
@@ -8,6 +9,8 @@ import { RouterLink, RouterOutlet } from '@angular/router';
   styleUrl: './app.scss'
 })
 export class App {
+  protected readonly loadError = inject(LoadErrorService);
+
   /** Moves the keyboard focus to the main content of the current page, past the header. */
   skipToContent(event: Event): void {
     event.preventDefault();

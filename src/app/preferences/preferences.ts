@@ -48,6 +48,7 @@ export class Preferences {
   readonly quota = this.quotaService.quota;
   readonly isQuotaUsedUp = this.quotaService.isUsedUp;
   readonly unsuitableIngredients = signal<string[]>([]);
+  readonly hasDietCheckError = signal(false);
   readonly isDietPopupOpen = computed(this.hasUnsuitableIngredients.bind(this));
   readonly dietMessage = computed(this.buildDietMessage.bind(this));
   readonly canContinueWithout = computed(this.hasEnoughSuitableIngredients.bind(this));
@@ -102,8 +103,10 @@ export class Preferences {
     if (!this.isReadyToGenerate()) {
       return;
     }
-    const diet = this.preferencesForm.controls.diet.value;
-    const unsuitable = await findUnsuitableIngredients(this.readIngredientNames(), diet);
+    const unsuitable = await this.checkDiet();
+    if (unsuitable === null) {
+      return;
+    }
     if (unsuitable.length === 0) {
       this.startGenerating(this.ingredientList.ingredients());
       return;
@@ -142,6 +145,17 @@ export class Preferences {
       return false;
     }
     return true;
+  }
+
+  /** Returns the ingredients that do not fit the diet, or null with an error message when the check could not run. */
+  private async checkDiet(): Promise<string[] | null> {
+    this.hasDietCheckError.set(false);
+    try {
+      return await findUnsuitableIngredients(this.readIngredientNames(), this.preferencesForm.controls.diet.value);
+    } catch {
+      this.hasDietCheckError.set(true);
+      return null;
+    }
   }
 
   /** Returns the names of all ingredients in the list. */

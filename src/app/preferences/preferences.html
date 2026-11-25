@@ -53,6 +53,11 @@
 
       <div class="preferences__submit">
         <app-button variant="secondary" [disabled]="isQuotaUsedUp()" (click)="generateRecipe()">Generate a recipe</app-button>
+        @if (hasDietCheckError()) {
+          <p class="preferences__error" role="alert">
+            We could not check your diet. Please check your connection and try again.
+          </p>
+        }
         @if (quota(); as quotaInfo) {
           <p class="preferences__quota" aria-live="polite">
             @if (quotaInfo.remaining > 0) {

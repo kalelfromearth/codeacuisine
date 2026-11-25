@@ -19,6 +19,41 @@
   }
 }
 
+// Shown above every page when a page could not be loaded, for example without network.
+.load-error {
+  @include flex($gap: 12px 24px);
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 90;
+  flex-wrap: wrap;
+  padding: 12px 16px;
+  background-color: $color-error;
+  color: $color-cream;
+
+  &__text {
+    @include font(1rem, 500);
+    margin: 0;
+    text-align: center;
+  }
+
+  &__button {
+    @include font(1rem, 600, $color: $color-error);
+    min-height: 44px;
+    padding: 0 24px;
+    border: none;
+    border-radius: 999px;
+    background-color: $color-cream;
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 3px solid $color-cream;
+      outline-offset: 2px;
+    }
+  }
+}
+
 // The footer sits below every page, its colour follows the page (light text on the dark pages).
 .site-footer {
   color: var(--page-text);

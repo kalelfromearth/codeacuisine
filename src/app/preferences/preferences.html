@@ -71,7 +71,11 @@
 <app-popup heading="Ups! Check your diet" [isOpen]="isDietPopupOpen()" (closed)="closeDietPopup()">
   <p class="preferences__popup-text">{{ dietMessage() }}</p>
   <button class="preferences__popup-link" type="button" (click)="closeDietPopup()">
-    Change preferences or ingredients
+    Change preferences
+    <span class="preferences__popup-arrow" aria-hidden="true"></span>
+  </button>
+  <button class="preferences__popup-link" type="button" (click)="changeIngredients()">
+    Change ingredients
     <span class="preferences__popup-arrow" aria-hidden="true"></span>
   </button>
   @if (canContinueWithout()) {

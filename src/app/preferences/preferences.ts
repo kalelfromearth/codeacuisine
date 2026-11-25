@@ -116,6 +116,12 @@ export class Preferences {
     this.unsuitableIngredients.set([]);
   }
 
+  /** Closes the diet popup and goes back to the ingredients page, where the list can be changed. */
+  changeIngredients(): void {
+    this.closeDietPopup();
+    this.router.navigateByUrl('/generate-recipe');
+  }
+
   /** Starts the recipe request with only the ingredients that fit the diet. */
   continueWithoutUnsuitable(): void {
     const unsuitable = this.unsuitableIngredients();

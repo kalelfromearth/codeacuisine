@@ -20,7 +20,7 @@ describe('buildQrPath', function () {
 
 describe('createQrCode', function () {
   it('creates a square code with a path for a recipe address', async function () {
-    const code = await createQrCode('https://codeacuisne.andreas-kissner.cloud/recipes/abc123');
+    const code = await createQrCode('https://codeacuisine.homehelper.website/recipes/abc123');
     expect(code.size).toBeGreaterThanOrEqual(21);
     expect(code.path).toMatch(/^M\d+ \d+h1v1h-1z/);
   });

@@ -6,7 +6,7 @@ Code à Cuisine is an AI recipe generator built with Angular 21, Firebase and an
 
 I built it as the final project of my training as a frontend developer at the Developer Akademie.
 
-**Live demo:** [codeacuisne.andreas-kissner.cloud](https://codeacuisne.andreas-kissner.cloud)
+**Live demo:** [codeacuisine.homehelper.website](https://codeacuisine.homehelper.website)
 
 [![CI](https://github.com/AndreasKissner/codeacuisine/actions/workflows/ci.yml/badge.svg)](https://github.com/AndreasKissner/codeacuisine/actions/workflows/ci.yml)
 

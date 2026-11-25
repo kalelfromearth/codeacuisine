@@ -41,8 +41,8 @@ Browser: Chrome, Firefox und Edge. Getestet auf localhost und auf der Live-Seite
 - [x] Better-Life-Knopf: Popup öffnet, nach dem Schließen ist der Knopf weg, nach Neuladen bleibt er weg
 - [x] Drucken: Rezeptkarte und Einkaufsliste, QR-Code mit dem Handy gescannt
 - [x] Test-Snippet `docs/test-recipes-snippet.js` läuft und stellt `fetch` wieder her
-- [ ] Quota-Anzeige "N of M recipe requests left today" und gesperrter Knopf bei 0 (mit Quota 3/12, nach der Bestätigung der Akademie)
-- [ ] "Just a moment" mit Zähler und "That's it for today" (mit Quota 3/12)
+- [x] Quota-Anzeige und gesperrter Knopf bei 0 ("You have used all recipe requests for today. Please come back tomorrow."), mit Quota 3/12 auf der Live-Seite geprüft am 2026-11-25
+- [ ] "Just a moment" mit Zähler und "That's it for today" (nach Mitternacht mit freien Durchgängen: ein Rezept erzeugen und sofort noch einmal versuchen)
 
 ## 3. Bedienung (Tastatur und Barrierefreiheit)
 
@@ -63,5 +63,5 @@ Browser: Chrome, Firefox und Edge. Getestet auf localhost und auf der Live-Seite
 - [x] `.htaccess` auf dem Server getestet (Rückweg: Datei in `.htaccess-aus` umbenennen)
 - [ ] Nach der Abnahme: Test-Rezepte in Firestore löschen ("List Test …", die Rezepte aus dem Live-Test und aus dem Browser-Test)
 - [ ] Nach der Abnahme: API-Key einschränken (zwei Domains plus localhost, nur Cloud Firestore API), Budget-Warnung (Spark oder Blaze klären)
-- [ ] Quota in n8n auf 3 pro IP und 12 gesamt stellen (nach der Bestätigung der Akademie)
+- [x] Quota in n8n auf 3 pro IP und 12 gesamt gestellt (2026-11-25), mit Test-IP geprüft
 - [ ] Nach der Abnahme: nginx-Limits, Port 5678 schließen, CORS einschränken (siehe `docs/errorhandling.md`)

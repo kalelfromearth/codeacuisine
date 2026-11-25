@@ -8,7 +8,7 @@ I built it as the final project of my training as a frontend developer at the De
 
 **Live demo:** [codeacuisine.homehelper.website](https://codeacuisine.homehelper.website)
 
-[![CI](https://github.com/AndreasKissner/codeacuisine/actions/workflows/ci.yml/badge.svg)](https://github.com/AndreasKissner/codeacuisine/actions/workflows/ci.yml)
+[![CI](https://github.com/kalelfromearth/codeacuisine/actions/workflows/ci.yml/badge.svg)](https://github.com/kalelfromearth/codeacuisine/actions/workflows/ci.yml)
 
 ![Start page on desktop](docs/screenshots/start.webp)
 
@@ -105,7 +105,7 @@ flowchart LR
 ### 1. Install
 
 ```bash
-git clone https://github.com/AndreasKissner/codeacuisine.git
+git clone https://github.com/kalelfromearth/codeacuisine.git
 cd codeacuisine
 npm install
 ```

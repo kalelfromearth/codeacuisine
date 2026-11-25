@@ -29,7 +29,7 @@ const SUGGESTION_DELAY_MS = 300;
 
 type IngredientFormControls = {
   name: FormControl<string>;
-  amount: FormControl<number>;
+  amount: FormControl<number | null>;
   unit: FormControl<IngredientUnit>;
 };
 
@@ -60,18 +60,18 @@ export class IngredientForm {
       nonNullable: true,
       validators: [Validators.required, Validators.pattern(/\S/), plausibleIngredientName],
     }),
-    amount: createAmountControl(100),
+    amount: createAmountControl(null),
     unit: new FormControl<IngredientUnit>('gram', { nonNullable: true }),
   });
 
   /** Adds the entered ingredient to the shared list and resets the form. */
   addIngredient(): void {
-    if (this.ingredientForm.invalid) {
+    const entered = this.ingredientForm.getRawValue();
+    if (this.ingredientForm.invalid || entered.amount === null) {
       this.ingredientForm.markAllAsTouched();
       return;
     }
-    const entered = this.ingredientForm.getRawValue();
-    this.ingredientList.addIngredient({ ...entered, name: capitalizeIngredientName(entered.name) });
+    this.ingredientList.addIngredient({ name: capitalizeIngredientName(entered.name), amount: entered.amount, unit: entered.unit });
     this.resetForm();
   }
 
@@ -193,7 +193,7 @@ export class IngredientForm {
   /** Closes the suggestions and sets the form back to its empty start values. */
   private resetForm(): void {
     this.closeSuggestions();
-    this.ingredientForm.reset({ name: '', amount: 100, unit: 'gram' });
+    this.ingredientForm.reset({ name: '', amount: null, unit: 'gram' });
     // The amount was reset before the unit, so its check used the old unit and has to run again.
     this.ingredientForm.controls.amount.updateValueAndValidity();
   }

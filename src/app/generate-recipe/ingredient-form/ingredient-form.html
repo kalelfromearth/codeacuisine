@@ -63,6 +63,7 @@
         step="1"
         inputmode="numeric"
         formControlName="amount"
+        placeholder="100"
         (keydown)="blockNonWholeNumberKeys($event)"
         (input)="limitAmountToMaximum($event)"
         [attr.aria-invalid]="ingredientForm.controls.amount.touched && ingredientForm.controls.amount.invalid"
@@ -89,7 +90,7 @@
     }
   </div>
 
-  @if (ingredientForm.controls.amount.value >= getCurrentMaxAmount()) {
+  @if ((ingredientForm.controls.amount.value ?? 0) >= getCurrentMaxAmount()) {
     <p class="ingredient-form__hint" role="status">
       Maximum of {{ getCurrentMaxAmount() }} {{ getCurrentUnitLabel() }} reached.
     </p>

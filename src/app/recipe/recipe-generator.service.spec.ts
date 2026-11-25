@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { IngredientListService } from '../generate-recipe/ingredient-list.service';
 import { RecipeGeneratorService } from './recipe-generator.service';
 import { RecipeRequestService } from './recipe-request.service';
 import { RecipeStoreService, SaveResult } from './recipe-store.service';
@@ -84,5 +85,21 @@ describe('RecipeGeneratorService', function () {
     expect(generator.status()).toBe('success');
     expect(generator.recipes().length).toBe(3);
     expect(savedBatches.length).toBe(1);
+  });
+
+  it('empties the ingredient list only when the recipes are saved', async function () {
+    saveResults.push({ saved: [toRecipe(drafts[0])], failed: [drafts[1], drafts[2]] });
+    saveResults.push({ saved: [toRecipe(drafts[1]), toRecipe(drafts[2])], failed: [] });
+    const ingredientList = TestBed.inject(IngredientListService);
+    ingredientList.addIngredient({ name: 'Pasta', amount: 100, unit: 'gram' });
+    const generator = TestBed.inject(RecipeGeneratorService);
+
+    await generator.generate();
+    expect(generator.status()).toBe('error');
+    expect(ingredientList.ingredients().length).toBe(1);
+
+    await generator.retry();
+    expect(generator.status()).toBe('success');
+    expect(ingredientList.ingredients().length).toBe(0);
   });
 });

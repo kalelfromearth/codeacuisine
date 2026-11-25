@@ -19,7 +19,7 @@ import { IngredientListService, MIN_INGREDIENTS } from '../ingredient-list.servi
 import { UnitSelect } from '../unit-select/unit-select';
 
 type IngredientEditControls = {
-  amount: FormControl<number>;
+  amount: FormControl<number | null>;
   unit: FormControl<IngredientUnit>;
 };
 
@@ -76,11 +76,12 @@ export class IngredientList {
     if (position === null || this.closingPosition() !== null) {
       return;
     }
-    if (this.editForm.invalid) {
+    const edited = this.editForm.getRawValue();
+    if (this.editForm.invalid || edited.amount === null) {
       this.editForm.markAllAsTouched();
       return;
     }
-    const changedIngredient = { ...this.ingredients()[position], ...this.editForm.getRawValue() };
+    const changedIngredient = { ...this.ingredients()[position], amount: edited.amount, unit: edited.unit };
     this.ingredientList.updateIngredient(position, changedIngredient);
     this.beginClosing(position);
   }

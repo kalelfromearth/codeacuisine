@@ -27,18 +27,17 @@ export function buildAmountErrorMessage(errors: ValidationErrors | null, unit: I
 }
 
 /** Lowers the amount to the limit of the given unit when it is above it, then revalidates it. */
-export function capAmountToUnitLimit(amountControl: FormControl<number>, unit: IngredientUnit): void {
+export function capAmountToUnitLimit(amountControl: FormControl<number | null>, unit: IngredientUnit): void {
   const maxAmount = MAX_AMOUNT_BY_UNIT[unit];
-  if (amountControl.value > maxAmount) {
+  if ((amountControl.value ?? 0) > maxAmount) {
     amountControl.setValue(maxAmount);
   }
   amountControl.updateValueAndValidity();
 }
 
-/** Creates the form control of an amount field with all checks that belong to it. */
-export function createAmountControl(startValue: number): FormControl<number> {
-  return new FormControl(startValue, {
-    nonNullable: true,
+/** Creates the form control of an amount field with all checks that belong to it. An empty field (null) is not valid. */
+export function createAmountControl(startValue: number | null): FormControl<number | null> {
+  return new FormControl<number | null>(startValue, {
     validators: [
       Validators.required,
       Validators.min(MIN_INGREDIENT_AMOUNT),
@@ -56,7 +55,7 @@ export function blockNonWholeNumberKey(event: KeyboardEvent): void {
 }
 
 /** Caps the amount at the maximum of the given unit while the user is typing. */
-export function limitTypedAmount(event: Event, amountControl: FormControl<number>, unit: IngredientUnit): void {
+export function limitTypedAmount(event: Event, amountControl: FormControl<number | null>, unit: IngredientUnit): void {
   const typedAmount = Number((event.target as HTMLInputElement).value);
   if (typedAmount > MAX_AMOUNT_BY_UNIT[unit]) {
     amountControl.setValue(MAX_AMOUNT_BY_UNIT[unit]);

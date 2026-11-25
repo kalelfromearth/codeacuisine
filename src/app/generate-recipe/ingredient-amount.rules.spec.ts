@@ -1,5 +1,5 @@
 import { FormControl } from '@angular/forms';
-import { buildAmountErrorMessage, capAmountToUnitLimit } from './ingredient-amount.rules';
+import { buildAmountErrorMessage, capAmountToUnitLimit, createAmountControl } from './ingredient-amount.rules';
 import { describeIngredientAmount } from './ingredient.model';
 
 describe('buildAmountErrorMessage', function () {
@@ -17,13 +17,13 @@ describe('buildAmountErrorMessage', function () {
 
 describe('capAmountToUnitLimit', function () {
   it('lowers an amount above the limit of the new unit', function () {
-    const amount = new FormControl(5000, { nonNullable: true });
+    const amount = new FormControl<number | null>(5000);
     capAmountToUnitLimit(amount, 'piece');
     expect(amount.value).toBe(30);
   });
 
   it('keeps an amount within the limit', function () {
-    const amount = new FormControl(100, { nonNullable: true });
+    const amount = new FormControl<number | null>(100);
     capAmountToUnitLimit(amount, 'gram');
     expect(amount.value).toBe(100);
   });
@@ -35,5 +35,22 @@ describe('describeIngredientAmount', function () {
     expect(describeIngredientAmount({ name: 'Egg', amount: 2, unit: 'piece' })).toBe('2 pieces');
     expect(describeIngredientAmount({ name: 'Pasta', amount: 80, unit: 'gram' })).toBe('80g');
     expect(describeIngredientAmount({ name: 'Milk', amount: 250, unit: 'ml' })).toBe('250ml');
+  });
+});
+
+describe('createAmountControl', function () {
+  it('starts empty and is not valid until an amount is typed', function () {
+    const amount = createAmountControl(null);
+    expect(amount.value).toBeNull();
+    expect(amount.errors?.['required']).toBe(true);
+  });
+
+  it('accepts a whole number', function () {
+    expect(createAmountControl(200).valid).toBe(true);
+  });
+
+  it('rejects a number with decimals and a number below the minimum', function () {
+    expect(createAmountControl(1.5).errors?.['pattern']).toBeTruthy();
+    expect(createAmountControl(0).errors?.['min']).toBeTruthy();
   });
 });

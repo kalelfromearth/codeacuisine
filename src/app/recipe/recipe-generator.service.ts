@@ -1,5 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { environment } from '../../environments/environment';
+import { IngredientListService } from '../generate-recipe/ingredient-list.service';
 import { QuotaService, isQuotaUsedUp, readWaitSeconds } from './quota.service';
 import { RecipeRequestService } from './recipe-request.service';
 import { RecipeStoreService } from './recipe-store.service';
@@ -34,6 +35,7 @@ export class RecipeGeneratorService {
   private readonly recipeRequestService = inject(RecipeRequestService);
   private readonly recipeStore = inject(RecipeStoreService);
   private readonly quotaService = inject(QuotaService);
+  private readonly ingredientList = inject(IngredientListService);
   private unsavedDrafts: RecipeDraft[] = [];
   private savedRecipes: Recipe[] = [];
 
@@ -156,7 +158,7 @@ export class RecipeGeneratorService {
     this.fail(this.describeFailure(response.status, body?.message));
   }
 
-  /** Saves the drafts as recipes and shows them, or sets the error state when some could not be saved. */
+  /** Saves the drafts as recipes and shows them, then empties the ingredient list. Sets the error state when some could not be saved. */
   private async saveDrafts(drafts: RecipeDraft[]): Promise<void> {
     const result = await this.recipeStore.saveRecipes(drafts);
     this.savedRecipes = [...this.savedRecipes, ...result.saved];
@@ -168,6 +170,7 @@ export class RecipeGeneratorService {
     rememberResultIds(this.savedRecipes.map(getRecipeId));
     this.recipes.set(this.savedRecipes);
     this.status.set('success');
+    this.ingredientList.clearIngredients();
   }
 
   /** Returns the JSON body of the response, or null when it is not valid JSON. */
